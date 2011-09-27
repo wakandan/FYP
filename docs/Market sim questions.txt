@@ -1,0 +1,26 @@
+How many buyers and sellers a simulation should have?
+Should we seperate attack models and defense models?
+How should we collect the input data?
+	There should be a module to collect input data from real website
+	A module to correlate the data so that generated data look relevant 
+	A module to generate attack data 
+		Base on an attack model
+
+
+
+The simulation will be composed of a defined number of sellers and buyers. Each seller will have a number of items to sell, and buyers should have some random distribution of number of items to buy. 
+
+The model will be run synchronously
+Set up:
+?	Each seller will have a number of items to sell
+?	Each seller has a track record or history of trading, a trust level
+?	Each buyers has a track record or history of trading, a trust level
+At each time step: 
+?	A buyer could place a rating to an unlimited number of buyers
+?	A buyer could only have 1 vote for each author at any one time
+
+Questions: 
+?	Is this a market place (like ebay, where you need to purchase an item before commenting the seller) or is it a common site where everyone could register and leave feedback (something like imdb.com)
+?	Should we focus on the voting part, or the simulation of a market place – including buying, selling, bidding and commenting?
+?	How could we realistically learn the data and inject them into our model?
+?	What is the number of buyers and sellers in the system? Could we have only one seller and many buyers? In the simplest case, could we have 1 buyer and 1 sellers – may be it depends on the type of the attack
