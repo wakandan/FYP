@@ -1,0 +1,51 @@
+0. Problem definition:
+======================
+The simulation will be composed of a defined number of sellers and buyers. Each seller will have a number of items to sell, and buyers should have some random distribution of number of items to buy. 
+
+1. Requirements:
+================
+- The market place will be like amazon.com
+- It should be realistic 
+- It should be flexible so that additional extensions can be plugged in easily 
+- It should allow multiple models to measures their effectiveness, may be concurrently
+- It should be able to learn statiscal characteristics from real data from other sites and then generate similar data
+- It should have many buyers and sellers interacting with each others
+- Buyers and sellers should be able to attach to action model which are defined externally, or behave by default with pre-defined set of actions
+- The market place's parameters should be defineable and easily configured	
+
+2. Set up:
+==========
+- Each seller will have a number of items to sell
+- Each sellers, buyers has 0 records or history of trading or trust level
+
+3. Runtime defintion: 
+=====================
+	3.1 Runtime requirements:
+	=========================
+	- A buyer could place a rating to an unlimited number of buyers
+	- A buyer could only have 1 vote for each author at any one time
+	- A buyer could only rate a seller after purchasing stuff from the other party
+	
+	3.1 At each time step: 
+	======================
+	- Buyers place their requests into the database
+	- Seller will pull the request from the database and choose to accept/decline the request
+		+ If the request is confirmed, buyer does nothing
+		+ If the request is declined, buyer sends back refusal email to the buyer. The transaction is then finished and then quit
+	- If no decline is observed, buyer then transfer the money over to the seller
+	- Seller ships the purchased good to the buyers
+	- After some time, the buyer receive the item 
+	- Buyer leave comment/feedback about the seller
+	- Seller leave comment/feedback about the buyer 
+	- Transaction is recorded and finished
+
+4. Questions: 
+=============
+- How could we realistically learn the data and inject them into our model?
+- How could we pass messages between agents in the system? 
+	-> We could do it sequentially, save requests in a database after each step, and then in the next step we consolidate the requests and then calculate at once. Doing so will make the program simple but may need deadlock prevention or conflict resolution measures.
+- What is the metric of effectiveness for each model/buyer/seller
+- How should we collect the input data?
+	-> There should be a module to collect input data from real website
+	-> module to correlate the data so that generated data look relevant 
+	-> A module to generate attack data based on an attack model

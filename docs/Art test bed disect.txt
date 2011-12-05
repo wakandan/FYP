@@ -1,0 +1,19 @@
+Simulation tasks in each steps:
+1.	Client Assignment & notification of the demand
+-	Setting market shares
+2.	Reputation management
+-	Manage reputation requests
+-	Manage reputation accepts and declines
+-	Managing Reputation Replies
+3.	Certainty and Opinion transactions among appraisers.
+-	Managing Certainty Requests
+-	Managing Certainty Replies
+-	Managing Opinion Requests
+-	Fulfilling Opinion Orders
+-	Collecting Weights
+-	Managing Opinion Replies
+4.	Calculate and distribute appraisal data
+-	Calculating Appraisals
+-	Distributing Appraisal Data
+5.	Assigning new expertise: 
+
