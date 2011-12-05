@@ -1,5 +1,7 @@
 package modelbase;
 
-public abstract class Model {
+import generatorbase.Distribution;
 
+public abstract class Model {
+	Distribution distribution;
 }

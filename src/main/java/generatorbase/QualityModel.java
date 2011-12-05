@@ -1,5 +1,5 @@
 package generatorbase;
 
-public class QualityModel extends MathModel {
+public class QualityModel extends Model {
 
 }
