@@ -1,6 +1,0 @@
-1. Initialization
-2. Client assignment & notification of the demand	
-3. Manage buy requests/declines
-4. Manage money transactions
-5. Calculate money amount
-6. Calculate reputation data
