@@ -1,25 +1,49 @@
 package productbase;
 
+import java.io.File;
+
+import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+
+import com.almworks.sqlite4java.SQLiteConnection;
+import com.almworks.sqlite4java.SQLiteException;
+import com.almworks.sqlite4java.SQLiteStatement;
+
 import configbase.ProductConfig;
 
 /**
  * @author akai
+ * @todo: 
+ * 	- Add database support
  */
 public class ProductManager {
-	/* Current max index of product list array */
-	int				index;
-	int				maxNum;
-	Product			products[];
-	ProductConfig	prodConfig;
+	/*
+	 * Current max index of product list array Terms: - Product: Type of
+	 * tradable entity - Item: One among several entity for a type of product
+	 */
+	int						index;
+	int						maxNum;
+	Product					products[];
+	ProductConfig			prodConfig;
+	int						prodPrcRangesOffset	= 10;
+	String					sessionId;
+	SQLiteConnection		db;
+	int						totalQuantity;
+	private static Logger	logger				= Logger.getLogger("ProductManager");
 
-	/* Store the total number of items in each price ranges */
-	int				prodPrcRanges[];
+	public ProductManager() throws SQLiteException {
+		sessionId = (new DateTime()).toString();
+		logger.debug("Initiating new product base with sessionId: "+sessionId);
+		totalQuantity = 0;
+	}
 
-	/* Check if total number of items in each range was calculated */
-	boolean			prodPrcRangeSet[];
-	int				numProdPrcRange;
-	int				prodPrcPeriod;
-	int				prodPrcRangesOffset	= 10;
+	public SQLiteConnection getDb() {
+		return db;
+	}
+
+	public void setDb(SQLiteConnection db) {
+		this.db = db;
+	}
 
 	public ProductConfig getProdConfig() {
 		return prodConfig;
@@ -29,64 +53,21 @@ public class ProductManager {
 		this.products = new Product[prodConfig.getNumProducts()+prodPrcRangesOffset];
 		this.index = -1;
 		this.prodConfig = prodConfig;
-		this.prodPrcRanges = new int[prodConfig.getNumRanges()+prodPrcRangesOffset];
-		this.prodPrcRangeSet = new boolean[prodConfig.getNumRanges()];
-		for (int i = 0; i<prodConfig.getNumRanges(); i++)
-			this.prodPrcRangeSet[i] = false;
-		prodPrcPeriod = (int) ((prodConfig.getPriceMax()-prodConfig.getPriceMin())*1.0/prodConfig.getNumRanges());
 	}
 
-	/* Given the price range, return the total number of items in that range */
-	public int getNumProdInRange(double minPrice, double maxPrice) {
-		return (int) Math.round(prodConfig.getNumProducts()*prodConfig.getDistribution().cdf_range(minPrice, maxPrice));
-	}
-
-	/*
-	 * Get or calculate total number of products in the noRange_th range number.
-	 * If the number is already saved in previous calculations, use it.
-	 * Otherwise calculate that number and then return
-	 */
-	public int getNumProdInRange(int noRange) {
-		if (prodPrcRangeSet[noRange])
-			return prodPrcRanges[noRange];
-		else {
-			int tmp = getNumProdInRange(getMinPrice(noRange), getMaxPrice(noRange));
-			prodPrcRanges[noRange] = tmp;
-			prodPrcRangeSet[noRange] = true;
-			return tmp;
-		}
-	}
-
-	/* Get min price of items in the rangeNum_th range */
-	public double getMinPrice(int rangeNum) {
-		return prodConfig.getPriceMin()+rangeNum*prodPrcPeriod;
-	}
-
-	/* Get max price of items in the rangeNum_th range */
-	public double getMaxPrice(int rangeNum) {
-		return prodConfig.getPriceMin()+(rangeNum+1)*prodPrcPeriod;
-	}
-
-	public int[] getProdPrcRanges() {
-		return prodPrcRanges;
-	}
-
-	public void setProdPrcRanges(int[] prodPrcRanges) {
-		this.prodPrcRanges = prodPrcRanges;
-	}
-
-	/*
-	 * Add new product to product list. If there are more than max # of products
-	 * specified, then just increase the capacity
-	 */
-	public void add(Product prod) {
+	/* Add new products to the database */
+	public void add(Product prod) throws SQLiteException {
+		SQLiteStatement st = db.prepare(""+"INSERT INTO products(sessionID, name, price, quantity)  "+"VALUES (?, ?, ?, ?)");
+		st.bind(1, sessionId).bind(2, prod.name).bind(3, prod.price).bind(4, prod.quantity);
+		st.step();
 		if (index+1>prodConfig.getNumProducts())
 			prodConfig.setNumProducts(index+2);
 		products[++index] = prod;
+		totalQuantity += prod.quantity;
 	}
 
-	/* Total number of products generated */
-	public int size() {
-		return index+1;
+	/* Total number of items generated */
+	public int getTotalQuantity() {
+		return totalQuantity;
 	}
 }

@@ -1,8 +1,11 @@
 package agentbase;
 
-public class Agent {
+import productbase.Product;
+
+public abstract class Agent {
 	String name;
 	int balance;
+	Product inventory[];
 	public void registerTransaction() {
 		
 	}

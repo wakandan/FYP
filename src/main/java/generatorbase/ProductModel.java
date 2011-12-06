@@ -3,51 +3,99 @@ package generatorbase;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+
+import com.almworks.sqlite4java.SQLiteException;
+
 import configbase.Config;
 import configbase.ProductConfig;
 import productbase.Product;
 import productbase.ProductManager;
 
-public class ProductModel extends Model {
+public class ProductModel extends EntityModel {
 	/*
 	 * Generate products based on the provided config object. How it works? -
-	 * Divide the distribution into a number of equal ranges, work the total
-	 * number of items in this price range. Each range will correspond to a
-	 * price range. The total area under the distribution curve in the range is
-	 * the total of possible products to have this price range - For each of the
-	 * product in the price range, randomize the price and create a new product.
+	 * Divide the distribution by the number of product types, work the total
+	 * number of items in this price range. Each range will correspond to a 
+	 * product. The total area under the distribution curve in the range is
+	 * the product quantity. 
 	 */
 
+	
+	int						prodPrcRanges[];		/* Store the total number of items in each price ranges */
+	ProductConfig			prodcf;	
+	boolean					prodPrcRangeSet[];		/* Check if total number of items in each range was calculated */
+	int						numProdPrcRange;
+	int						prodPrcPeriod;
 	private static Logger	logger	= Logger.getLogger("ProductModel");
 
-	/*Generate a list of products following the specified distribution*/
-	public ProductManager genProducts() {
-		ProductConfig cf = (ProductConfig) config;
-		double prcMin;
-		double prcMax;
-		int numProdInRange;
-		logger.info("Start generating Products");
-		Random rand = new Random();
-		ProductManager prodManager = new ProductManager();
-		prodManager.setProdConfig(cf);		
-		for (int i = 0; i<cf.getNumRanges(); i++) {
-			/* Divide the price range */
-			prcMin = prodManager.getMinPrice(i);
-			prcMax = prodManager.getMaxPrice(i);
-
-			/* Work out total number of products in range */
-			numProdInRange = prodManager.getNumProdInRange(i);
-			
-			logger.debug("Generating "+numProdInRange+" products in range "+prcMin+" to "+prcMax);
-			for (int j = 0; j<numProdInRange; j++) {
-				Product prod = new Product(i+"_"+j);
-				prod.setPrice(prcMin+rand.nextInt((int) ((prcMax-prcMin)*10000))/10000.0);
-				prodManager.add(prod);
-			}
-		}
-		logger.info("Done generating Products");
-		logger.info("No. products generated: "+prodManager.size());
-		return prodManager;
+	public ProductModel(Config config) {
+		super();
+		prodcf = (ProductConfig) config;
+		this.prodPrcRanges = new int[prodcf.getNumTypes()];
+		this.prodPrcRangeSet = new boolean[prodcf.getNumTypes()];
+		for (int i = 0; i<prodcf.getNumTypes(); i++)
+			this.prodPrcRangeSet[i] = false;
+		prodPrcPeriod = (int) ((prodcf.getPriceMax()-prodcf.getPriceMin())*1.0/prodcf.getNumTypes());
 	}
 
+	/* Generate a list of products following the specified distribution */
+	public void genProducts(ProductManager prodManager) throws SQLiteException {
+		double prcMin;
+		double prcMax;
+		int prodQuantity;
+		int tmpProdQuantity = 0;
+		logger.info("Start generating Products");
+		
+		Random rand = new Random();
+		prodManager.setProdConfig(prodcf);
+
+		for (int i = 0; i<prodcf.getNumTypes(); i++) {
+			/* Divide the price range */
+			prcMin = getMinPrice(i);
+			prcMax = getMaxPrice(i);
+
+			/* Work out total number of products in range */
+			prodQuantity = getNumProdInRange(i);
+			if (prodQuantity<1)
+				continue;
+			logger.debug("Generating "+prodQuantity+" products in range "+prcMin+" to "+prcMax);
+			Product prod = new Product(i+"");
+			prod.setPrice(prcMin+rand.nextInt((int) ((prcMax-prcMin)*10000))/10000.0);
+			prod.setQuantity(prodQuantity);
+			prodManager.add(prod);
+		}
+		logger.info("Done generating Products");
+		logger.info("No. products generated: "+prodManager.getTotalQuantity());
+	}
+
+	/* Given the price range, return the total number of items in that range */
+	public int getNumProdInRange(double minPrice, double maxPrice) {
+		return (int) Math.round(prodcf.getNumProducts()*prodcf.getDistribution().cdf_range(minPrice, maxPrice));
+	}
+
+	/*
+	 * Get or calculate total number of products in the noRange_th range number.
+	 * If the number is already saved in previous calculations, use it.
+	 * Otherwise calculate that number and then return
+	 */
+	public int getNumProdInRange(int noRange) {
+		if (prodPrcRangeSet[noRange])
+			return prodPrcRanges[noRange];
+		else {
+			int tmp = getNumProdInRange(getMinPrice(noRange), getMaxPrice(noRange));
+			prodPrcRanges[noRange] = tmp;
+			prodPrcRangeSet[noRange] = true;
+			return tmp;
+		}
+	}
+
+	/* Get min price of items in the rangeNum_th range */
+	public double getMinPrice(int rangeNum) {
+		return prodcf.getPriceMin()+rangeNum*prodPrcPeriod;
+	}
+
+	/* Get max price of items in the rangeNum_th range */
+	public double getMaxPrice(int rangeNum) {
+		return prodcf.getPriceMin()+(rangeNum+1)*prodPrcPeriod;
+	}
 }

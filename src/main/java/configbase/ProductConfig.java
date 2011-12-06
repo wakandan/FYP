@@ -3,14 +3,23 @@ package configbase;
 import generatorbase.Distribution;
 
 public class ProductConfig extends Config {
-	int				numRanges;
-	int				numProducts;
-	int				priceMin;
-	int				priceMax;
+	int	numTypes;
+	int	numProducts;
+	int	priceMin;
+	int	priceMax;
+
+	/* Distribution for products range <-> price range */
 	Distribution	distribution;
 
-	public void setNumRanges(int numRanges) {
-		this.numRanges = numRanges;
+	/* Distribution for product price <-> product quantity */
+	Distribution	quantityDistribution;
+
+	public Distribution getQuantityDistribution() {
+		return quantityDistribution;
+	}
+
+	public void setQuantityDistribution(Distribution quantityDistribution) {
+		this.quantityDistribution = quantityDistribution;
 	}
 
 	public void setNumProducts(int numProducts) {
@@ -29,8 +38,12 @@ public class ProductConfig extends Config {
 		this.distribution = distribution;
 	}
 
-	public int getNumRanges() {
-		return numRanges;
+	public int getNumTypes() {
+		return numTypes;
+	}
+
+	public void setNumTypes(int numTypes) {
+		this.numTypes = numTypes;
 	}
 
 	public int getNumProducts() {

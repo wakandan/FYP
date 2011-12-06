@@ -2,6 +2,6 @@ package modelbase;
 
 import generatorbase.Distribution;
 
-public abstract class Model {
+public abstract class LogicModel {
 	Distribution distribution;
 }

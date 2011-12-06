@@ -19,5 +19,26 @@
   		<artifactId>log4j</artifactId>
   		<version>1.2.16</version>
   	</dependency>
+  	<dependency>
+  		<groupId>org.xerial</groupId>
+  		<artifactId>sqlite-jdbc</artifactId>
+  		<version>3.7.2</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.almworks.sqlite4java</groupId>
+  		<artifactId>sqlite4java</artifactId>
+  		<version>0.213</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>joda-time</groupId>
+  		<artifactId>joda-time</artifactId>
+  		<version>2.0</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.almworks.sqlite4java</groupId>
+  		<artifactId>sqlite4java-win32-x86</artifactId>
+  		<version>0.213</version>
+  		<type>dll</type>
+  	</dependency>
   </dependencies>
 </project>
