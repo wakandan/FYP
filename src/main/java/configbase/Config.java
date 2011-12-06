@@ -1,5 +1,5 @@
 package configbase;
 
-public class Config {
+public abstract class Config {
 
 }

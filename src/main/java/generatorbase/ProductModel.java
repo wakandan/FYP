@@ -30,42 +30,12 @@ public class ProductModel extends EntityModel {
 
 	public ProductModel(Config config) {
 		super();
-		prodcf = (ProductConfig) config;
+		prodcf = ((ProductConfig)config);		
 		this.prodPrcRanges = new int[prodcf.getNumTypes()];
 		this.prodPrcRangeSet = new boolean[prodcf.getNumTypes()];
 		for (int i = 0; i<prodcf.getNumTypes(); i++)
 			this.prodPrcRangeSet[i] = false;
 		prodPrcPeriod = (int) ((prodcf.getPriceMax()-prodcf.getPriceMin())*1.0/prodcf.getNumTypes());
-	}
-
-	/* Generate a list of products following the specified distribution */
-	public void genProducts(ProductManager prodManager) throws SQLiteException {
-		double prcMin;
-		double prcMax;
-		int prodQuantity;
-		int tmpProdQuantity = 0;
-		logger.info("Start generating Products");
-		
-		Random rand = new Random();
-		prodManager.setProdConfig(prodcf);
-
-		for (int i = 0; i<prodcf.getNumTypes(); i++) {
-			/* Divide the price range */
-			prcMin = getMinPrice(i);
-			prcMax = getMaxPrice(i);
-
-			/* Work out total number of products in range */
-			prodQuantity = getNumProdInRange(i);
-			if (prodQuantity<1)
-				continue;
-			logger.debug("Generating "+prodQuantity+" products in range "+prcMin+" to "+prcMax);
-			Product prod = new Product(i+"");
-			prod.setPrice(prcMin+rand.nextInt((int) ((prcMax-prcMin)*10000))/10000.0);
-			prod.setQuantity(prodQuantity);
-			prodManager.add(prod);
-		}
-		logger.info("Done generating Products");
-		logger.info("No. products generated: "+prodManager.getTotalQuantity());
 	}
 
 	/* Given the price range, return the total number of items in that range */
@@ -98,4 +68,40 @@ public class ProductModel extends EntityModel {
 	public double getMaxPrice(int rangeNum) {
 		return prodcf.getPriceMin()+(rangeNum+1)*prodPrcPeriod;
 	}
+
+	/* (non-Javadoc)
+	 * @see generatorbase.EntityModel#generate(generatorbase.EntityManager)
+	 */
+	@Override
+	public void generate(EntityManager manager) throws Exception {
+		double prcMin;
+		double prcMax;
+		int prodQuantity;
+		logger.info("Start generating Products");
+		
+		Random rand = new Random();
+		manager.setConfig(prodcf);		
+		manager.beginTransaction();
+		for (int i = 0; i<prodcf.getNumTypes(); i++) {
+			/* Divide the price range */
+			prcMin = getMinPrice(i);
+			prcMax = getMaxPrice(i);
+
+			/* Work out total number of products in range */
+			prodQuantity = getNumProdInRange(i);
+			if (prodQuantity<1)
+				continue;
+			logger.debug("Generating "+prodQuantity+" products in range "+prcMin+" to "+prcMax);
+			Product prod = new Product(i+"");
+			prod.setPriceMin(prcMin);
+			prod.setPriceMax(prcMax);
+			prod.setQuantity(prodQuantity);
+			
+			((ProductManager)manager).add(prod);
+		}
+		manager.commitTransaction();
+		logger.info("Done generating Products");
+		logger.info("No. items generated: "+((ProductManager)manager).getTotalQuantity());
+	}
+
 }

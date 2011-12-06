@@ -1,5 +1,5 @@
 package agentbase;
 
-public class BuyerManager {
+public class BuyerManager extends AgentManager {
 
 }

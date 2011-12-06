@@ -1,12 +1,14 @@
 package agentbase;
 
+import modelbase.Entity;
+import modelbase.LogicModel;
 import productbase.Product;
 
-public abstract class Agent {
-	String name;
+public abstract class Agent extends Entity{
 	int balance;
 	Product inventory[];
-	public void registerTransaction() {
+	LogicModel logicModel;
+	public void registerTransaction(Action action) {
 		
 	}
 	

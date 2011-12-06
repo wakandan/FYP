@@ -33,12 +33,12 @@ public class TestProductModel {
 		db = new SQLiteConnection();
 		db.open(true);
 		SQLiteStatement st;
-		db.exec("PRAGMA SYNCHRONOUS=OFF");
 		st = db.prepare("" +
 				"CREATE TABLE Products(sessionId TEXT, " +
 				"						quantity NUMERIC, " +
 				"						name TEXT, " +
-				"						price NUMERIC)");
+				"						priceMin NUMERIC," +
+				"						priceMax NUMERIC)");
 		st.step();
 	}
 
@@ -51,19 +51,24 @@ public class TestProductModel {
 
 	@Test
 	public void testProductGen() {
+		int numTypes = 50;
+		int numProds = 10000; 
+		int prcMax = 1000;
+		int prcMin = 1;
+		int prcMean = 500;
+		int prcDeviation = 300*300;
 		ProductConfig config = new ProductConfig();
-		config.setDistribution(new NormalDistribution(500, 300*300));
-		config.setNumProducts(10000);
-		config.setNumTypes(50);
-		config.setPriceMax(1000);
-		config.setPriceMin(1);
+		config.setDistribution(new NormalDistribution(prcMean, prcDeviation));
+		config.setNumProducts(numProds);
+		config.setNumTypes(numTypes);
+		config.setPriceMax(prcMax);
+		config.setPriceMin(prcMin);
 		ProductModel prodModel = new ProductModel(config);
 		try {
 			ProductManager prodManager = new ProductManager();
-			System.out.println(this.db);
 			prodManager.setDb(this.db);
-			prodManager.setProdConfig(config);			
-			prodModel.genProducts(prodManager);
+			prodManager.setConfig(config);			
+			prodModel.generate(prodManager);
 			SQLiteStatement st = db.prepare("SELECT AVG(quantity) FROM products");
 			st.step();
 			assertTrue(st.columnDouble(0)>0);
@@ -71,13 +76,20 @@ public class TestProductModel {
 			st.step();
 			assertTrue(st.columnDouble(0)>0);
 			st = db.prepare("SELECT SUM(quantity) FROM products");
-			st.step();
+			st.step();			
 			assertTrue(Math.abs(10000-st.columnDouble(0))<=2000);
+			assertEquals(numTypes, prodManager.getSize());
+			st = db.prepare("SELECT AVG(priceMin) FROM products");
+			st.step();			
+			assertTrue(Math.abs(10000-st.columnDouble(0))>0);
 			
 		} catch (SQLiteException e) {
 			System.out.println(e);
 		}				
-		/* Test with a few pre-calculated values */
+		/* Test with a few pre-calculated values */ catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
