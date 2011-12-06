@@ -3,14 +3,14 @@ package productbase;
 public class Product {
 	String name;
 	String category;
-	int price;
+	double price;
 	int quality;
 	int shipmentDelay;
 	public Product(String name) {
 		this.name = name;
 	}
-	public void setPrice(int price) {
-		this.price = price;
+	public void setPrice(double d) {
+		this.price = d;
 	}
 	
 }

@@ -1,3 +1,8 @@
+/*
+ * @author: akai
+ * @note:
+ * 	- Parameters used in this class are mean & VARIANCE. If user wants to use
+ * 	standard deviation as their parameter, notice them to square that no.*/
 package generatorbase;
 
 public abstract class Distribution {
@@ -6,6 +11,7 @@ public abstract class Distribution {
 	
 	public Distribution(double mean, double variance) {
 		this.mean = mean;
+		/*EASY to get confused here*/
 		this.var = variance;
 	}
 	public double getMean() {
