@@ -23,15 +23,13 @@ import configbase.ProductConfig;
  * @author akai
  * 
  */
-public class TestProductModel {
-	SQLiteConnection db;
+public class TestProductModel extends TestWithDBParent{	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		db = new SQLiteConnection();
-		db.open(true);
+		super.setUp();
 		SQLiteStatement st;
 		st = db.prepare("" +
 				"CREATE TABLE Products(sessionId TEXT, " +

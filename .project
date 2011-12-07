@@ -3,6 +3,8 @@
 	<name>sim</name>
 	<comment></comment>
 	<projects>
+		<project>art-testbed</project>
+		<project>FYP_Siwei_Code</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

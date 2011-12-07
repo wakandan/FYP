@@ -34,15 +34,7 @@ public class Product extends Entity{
 	}
 
 	public Product(String name) {
-		super();
-		this.name = name;
-	}
-
-	/**
-	 * @param entity
-	 */
-	public Product(Entity entity) {
-		super();
+		super(name);
 	}
 
 	public String toString() {

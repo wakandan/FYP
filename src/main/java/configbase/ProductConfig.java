@@ -1,5 +1,6 @@
 package configbase;
 
+import modelbase.Entity;
 import generatorbase.Distribution;
 
 public class ProductConfig extends Config {
@@ -60,5 +61,14 @@ public class ProductConfig extends Config {
 
 	public Distribution getDistribution() {
 		return distribution;
+	}
+
+	/* (non-Javadoc)
+	 * @see configbase.Config#configure(modelbase.Entity)
+	 */
+	@Override
+	public void configure(Entity e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -1,5 +1,7 @@
 package configbase;
 
-public abstract class Config {
+import modelbase.Entity;
 
+public abstract class Config {
+	public abstract void configure(Entity e);
 }

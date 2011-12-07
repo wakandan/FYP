@@ -3,6 +3,7 @@
  */ 
 package modelbase;
 
+
 /**
  * @author akai
  *
@@ -18,4 +19,11 @@ public abstract class Entity {
 		this.name = name;
 	}
 	
+	public Entity(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return
+	 */
 }

@@ -22,7 +22,7 @@ import configbase.Config;
  * @author akai
  * 
  */
-public abstract class EntityManager {
+public class EntityManager {
 	protected Config			config;
 	protected String			sessionId;
 	protected SQLiteConnection	db;
@@ -63,13 +63,21 @@ public abstract class EntityManager {
 		sessionId = (new DateTime()).toString();
 		entities = new ArrayList<Entity>();
 	}
-	
-	public void add(Entity e) throws Exception{
+
+	public void add(Entity e) throws Exception {
 		entities.add(e);
 	}
-	
-	public int getSize(){
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public int getSize() {
 		return entities.size();
+	}
+
+	public Entity get(int i) {
+		return entities.get(i);
 	}
 
 }
