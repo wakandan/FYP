@@ -4,23 +4,20 @@ import modelbase.Entity;
 import generatorbase.Distribution;
 
 public class ProductConfig extends Config {
-	int	numTypes;
-	int	numProducts;
-	int	priceMin;
-	int	priceMax;
-
+	int				numTypes;
+	int				numProducts;
+	int				priceMin;
+	int				priceMax;
+	int				numCategories;
 	/* Distribution for products range <-> price range */
 	Distribution	distribution;
 
-	/* Distribution for product price <-> product quantity */
-	Distribution	quantityDistribution;
-
-	public Distribution getQuantityDistribution() {
-		return quantityDistribution;
+	public int getNumCategories() {
+		return numCategories;
 	}
 
-	public void setQuantityDistribution(Distribution quantityDistribution) {
-		this.quantityDistribution = quantityDistribution;
+	public void setNumCategories(int numCategories) {
+		this.numCategories = numCategories;
 	}
 
 	public void setNumProducts(int numProducts) {
@@ -63,12 +60,14 @@ public class ProductConfig extends Config {
 		return distribution;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see configbase.Config#configure(modelbase.Entity)
 	 */
 	@Override
 	public void configure(Entity e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

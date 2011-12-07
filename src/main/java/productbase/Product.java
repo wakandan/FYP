@@ -2,9 +2,21 @@ package productbase;
 
 import modelbase.Entity;
 
-public class Product extends Entity{
-	String	category;
+public class Product extends Entity {
+	int category;
 	double	priceMin, priceMax;
+	int		quality;
+	int		shipmentDelay;
+	int		quantity;
+
+	public int getCategory() {
+		return category;
+	}
+
+	public void setCategory(int i) {
+		this.category = i;
+	}
+
 	public double getPriceMin() {
 		return priceMin;
 	}
@@ -20,10 +32,6 @@ public class Product extends Entity{
 	public void setPriceMax(double priceMax) {
 		this.priceMax = priceMax;
 	}
-
-	int		quality;
-	int		shipmentDelay;
-	int		quantity;
 
 	public int getQuantity() {
 		return quantity;

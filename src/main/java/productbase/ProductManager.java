@@ -3,6 +3,8 @@ package productbase;
 import generatorbase.EntityManager;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import modelbase.Entity;
 
@@ -28,11 +30,13 @@ public class ProductManager extends EntityManager {
 	 */
 	int						totalQuantity;
 	private static Logger	logger				= Logger.getLogger("ProductManager");
+	HashMap<Integer, ArrayList> categoryList;
 
-	public ProductManager() throws SQLiteException {
+	public ProductManager() {
 		super();
 		logger.debug("Initiating new product base with sessionId: "+sessionId);
 		totalQuantity = 0;
+		categoryList = new HashMap<Integer, ArrayList>();
 	}
 	
 	/* Add new products to the database */
@@ -41,10 +45,24 @@ public class ProductManager extends EntityManager {
 		super.add(entity);
 		Product prod = (Product)entity;
 		
-		SQLiteStatement st = db.prepare(""+"INSERT INTO products(sessionID, name, priceMin, priceMax, quantity)  "+"VALUES (?, ?, ?, ?, ?)");
-		st.bind(1, sessionId).bind(2, prod.getName()).bind(3, prod.getPriceMin()).bind(4, prod.getPriceMin()).bind(5, prod.getQuantity());
+		SQLiteStatement st = db.prepare("INSERT INTO products(sessionID, name, priceMin, priceMax, quantity, category)" +
+				"VALUES (?, ?, ?, ?, ?, ?)");
+		st.bind(1, sessionId)
+			.bind(2, prod.getName())
+			.bind(3, prod.getPriceMin())
+			.bind(4, prod.getPriceMin())
+			.bind(5, prod.getQuantity())
+			.bind(6, prod.getCategory());
 		st.step();
 		totalQuantity += prod.quantity;
+		if(!categoryList.containsKey(prod.getCategory())) {
+			categoryList.put(prod.getCategory(), new ArrayList<Product>());
+		}
+		categoryList.get(prod.getCategory()).add(prod);
+	}
+
+	public HashMap<Integer, ArrayList> getCategoryList() {
+		return categoryList;
 	}
 
 	/* Total number of items generated */

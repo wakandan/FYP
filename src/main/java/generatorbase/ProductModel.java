@@ -77,6 +77,7 @@ public class ProductModel extends EntityModel {
 		double prcMin;
 		double prcMax;
 		int prodQuantity;
+		int category;
 		logger.info("Start generating Products");
 		
 		Random rand = new Random();
@@ -86,7 +87,6 @@ public class ProductModel extends EntityModel {
 			/* Divide the price range */
 			prcMin = getMinPrice(i);
 			prcMax = getMaxPrice(i);
-
 			/* Work out total number of products in range */
 			prodQuantity = getNumProdInRange(i);
 			if (prodQuantity<1)
@@ -96,7 +96,7 @@ public class ProductModel extends EntityModel {
 			prod.setPriceMin(prcMin);
 			prod.setPriceMax(prcMax);
 			prod.setQuantity(prodQuantity);
-			
+			prod.setCategory(rand.nextInt(prodcf.getNumCategories()));
 			((ProductManager)manager).add(prod);
 		}
 		manager.commitTransaction();
