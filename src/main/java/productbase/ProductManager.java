@@ -30,7 +30,7 @@ public class ProductManager extends EntityManager {
 	 */
 	int						totalQuantity;
 	private static Logger	logger				= Logger.getLogger("ProductManager");
-	HashMap<Integer, ArrayList> categoryList;
+	HashMap<Integer, ArrayList> categoryList;	
 
 	public ProductManager() {
 		super();
@@ -69,4 +69,26 @@ public class ProductManager extends EntityManager {
 	public int getTotalQuantity() {
 		return totalQuantity;
 	}
+	
+	public int getNumCategories() {
+		return categoryList.size();
+	}	
+	
+	/*Return all products in one categories*/
+	public ArrayList getCategory(int i) {
+		if(categoryList.containsKey(i)) {
+			return categoryList.get(i);
+		}
+		return null;
+	}
+
+	/**
+	 * Remove an entity from entity list
+	 * @param i
+	 */
+	public void remove(int i) {
+		
+		entities.remove(i);
+	}
+
 }

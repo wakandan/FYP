@@ -3,6 +3,8 @@
  */
 package configbase;
 
+import java.io.IOException;
+
 import modelbase.Entity;
 
 /**
@@ -47,6 +49,15 @@ public class SimConfig extends Config {
 
 	public void setMaxTimestep(int maxTimestep) {
 		this.maxTimestep = maxTimestep;
+	}
+
+	/* (non-Javadoc)
+	 * @see configbase.Config#readConfig(java.lang.String)
+	 */
+	@Override
+	public void readConfig(String filename) throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

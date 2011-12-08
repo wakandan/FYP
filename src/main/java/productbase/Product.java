@@ -9,6 +9,14 @@ public class Product extends Entity {
 	int		shipmentDelay;
 	int		quantity;
 
+	public Product(Product prod) {
+		super(prod.getName());
+		this.priceMax  = prod.getPriceMax();
+		this.priceMin  = prod.getPriceMin();
+		this.quantity = prod.getQuantity();
+		this.category = prod.getCategory();	
+	}
+	
 	public int getCategory() {
 		return category;
 	}

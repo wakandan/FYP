@@ -1,19 +1,22 @@
 package agentbase;
 
+import java.util.ArrayList;
+
 import modelbase.Entity;
 import modelbase.LogicModel;
 import productbase.Product;
 
 public abstract class Agent extends Entity {
-	int			balance;
-	Product		inventory[];
-	LogicModel	logicModel;
+	int					balance;
+	ArrayList<Product>	inventory;
+	LogicModel			logicModel;
 
 	/**
 	 * @param name
 	 */
 	public Agent(String name) {
 		super(name);
+		inventory = new ArrayList<Product>();		
 	}
 
 	public void registerTransaction(Action action) {
@@ -44,5 +47,11 @@ public abstract class Agent extends Entity {
 		this.logicModel = logicModel;
 	}
 	
-
+	public void addProduct(Product prod) {
+		this.inventory.add(prod);
+	}
+	
+	public Product getProduct(int i) {
+		return (Product)this.inventory.get(i);
+	}
 }

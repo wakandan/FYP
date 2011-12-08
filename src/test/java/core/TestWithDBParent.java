@@ -1,18 +1,14 @@
 /**
  *
  */
-package generatorbase;
+package core;
 
-import static org.junit.Assert.*;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.junit.Before;
-import org.junit.Test;
 
 import com.almworks.sqlite4java.SQLiteConnection;
 
@@ -22,7 +18,7 @@ import com.almworks.sqlite4java.SQLiteConnection;
  *        set up a in-memory database for testing.
  */
 public class TestWithDBParent {
-	SQLiteConnection	db;
+	protected SQLiteConnection	db;
 
 	@Before
 	public void setUp() throws Exception {

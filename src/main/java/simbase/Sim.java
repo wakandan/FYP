@@ -3,28 +3,72 @@
  */
 package simbase;
 
+import generatorbase.AgentModel;
+import generatorbase.EntityManager;
+import generatorbase.ProductModel;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import org.apache.log4j.Logger;
+
+import productbase.Product;
 import productbase.ProductManager;
+import agentbase.AgentManager;
+import agentbase.Seller;
 
 import com.almworks.sqlite4java.SQLiteConnection;
 
+import configbase.ProductConfig;
 import configbase.SimConfig;
-
-import generatorbase.AgentModel;
-import agentbase.AgentManager;
 
 /**
  * @author akai
  * 
  */
 public class Sim {
-	AgentManager		agentManager;
-	AgentModel			agentModel;
-	SQLiteConnection	db;
-	SimConfig			simConfig;
-	int					timeStep;
-	Scheduler			scheduler;
-	ProductManager	prodManager;
- 
+	AgentManager			agentManager;
+	AgentModel				agentModel;
+	SQLiteConnection		db;
+	SimConfig				simConfig;
+	int						timeStep;
+	Scheduler				scheduler;
+	ProductManager			prodManager;
+	ProductModel			prodModel;
+	private static Logger	logger	= Logger.getLogger("Sim");
+
+	public AgentManager getAgentManager() {
+		return agentManager;
+	}
+
+	public void setAgentManager(AgentManager agentManager) {
+		this.agentManager = agentManager;
+	}
+
+	public SimConfig getSimConfig() {
+		return simConfig;
+	}
+
+	public void setSimConfig(SimConfig simConfig) {
+		this.simConfig = simConfig;
+	}
+
+	public Scheduler getScheduler() {
+		return scheduler;
+	}
+
+	public void setScheduler(Scheduler scheduler) {
+		this.scheduler = scheduler;
+	}
+
+	public ProductManager getProdManager() {
+		return prodManager;
+	}
+
+	public void setProdManager(ProductManager prodManager) {
+		this.prodManager = prodManager;
+	}
+
 	public Sim() {
 		db = setUpDb();
 		agentManager = new AgentManager();
@@ -43,21 +87,105 @@ public class Sim {
 		return conn;
 	}
 
-	public void initialize() {
+	public void initialize() throws Exception {
 		agentModel.setConfig(simConfig.getAgentConfig());
+		prodModel = new ProductModel(simConfig.getProdConfig());
+		prodModel.generate(prodManager);
+		agentModel.generate(agentManager);
 	}
 
 	public static void main(String[] args) {
 		int timeStep = 0;
 		int maxTimeStep;
 		Sim sim = new Sim();
-		sim.initialize();
+		try {
+			sim.initialize();
+			sim.assignProducts();
+		} catch (Exception e) {
+			logger.error("Can't initialize the simulation");
+			logger.error("Exiting...");
+			System.exit(1);
+		}
 		maxTimeStep = sim.simConfig.getMaxTimestep();
 		while (timeStep<maxTimeStep) {
 			sim.scheduler.advanceTime();
-			/*Market movement will be here*/ 
+			sim.topUpBalance();
+			/* Market movement will be here */
 			sim.scheduler.finalizeTimeStep();
 		}
+	}
+
+	/**
+	 * At each time step, all balance will be credit a fixed amount of money
+	 */
+	private void topUpBalance() {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Assign products to sellers base on categories, as in the market, usually
+	 * a seller will sell related products.
+	 */
+	public void assignProducts() {
+		int numProd;
+		int prodNum;
+		boolean prodPicked = false;
+		Product prod, tmpProd = null;
+		Seller seller;
+		Random prodRandom = new Random();
+		Random prodNumRandom = new Random();
+		Random prodPriceRandom = new Random();
+		EntityManager sellers = agentManager.getSellers();
+		prodPicked = false;
+		logger.info("Start assigning products to sellers");
+		for (int i = 0; i<sellers.getSize()&&!prodPicked; i++) {
+			seller = (Seller) sellers.get(i);
+
+			/* Pick products until a non-zero number of items is picked */
+			/* No more products to assign, terminate */
+			if (prodManager.getSize()==0) {
+				logger.info("Products exhausted, no more products to be assigned");
+				logger.info("Total of "+(i+1)+" sellers were assigned products");
+				prodPicked = true;
+				break;  
+			}
+
+			/* Pick a random product */
+			prodNum = prodRandom.nextInt(prodManager.getSize());
+			prod = (Product) prodManager.get(prodNum);
+			tmpProd = new Product(prod);
+			numProd = prodNumRandom.nextInt(prod.getQuantity());
+			while (numProd==0) {
+				numProd = prodNumRandom.nextInt(prod.getQuantity());
+				if (numProd==0) {
+					numProd = prod.getQuantity();
+					break;
+				}
+			}
+			tmpProd.setQuantity(numProd);
+			tmpProd.setPriceMin(prod.getPriceMin());
+			tmpProd.setPriceMax(prod.getPriceMin()+prodPriceRandom.nextDouble()*
+					(prod.getPriceMax()-prod.getPriceMin()));
+			seller.addProduct(tmpProd);
+			prod.setQuantity(prod.getQuantity()-tmpProd.getQuantity());
+			if (prod.getQuantity()==0) {
+				prodManager.remove(prodNum);
+				logger.debug("Product "+prod.getName()+" is up!");
+			}
+			logger.debug("Assigned product "+prod.getName()+"("+tmpProd.getQuantity()+") to seller "+seller.getName());
+
+		}
+		logger.info("Finished assigning products to sellers");
+	}
+
+	/**
+	 * @param db2
+	 */
+	public void setDb(SQLiteConnection db2) {
+		// TODO Auto-generated method stub
+		this.db = db;
+
 	}
 
 }

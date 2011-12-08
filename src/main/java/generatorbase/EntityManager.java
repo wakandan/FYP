@@ -80,4 +80,9 @@ public class EntityManager {
 		return entities.get(i);
 	}
 
+	public Config getConfig() {
+		return config;
+	}
+
+	
 }

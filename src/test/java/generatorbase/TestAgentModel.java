@@ -16,6 +16,7 @@ import com.almworks.sqlite4java.SQLiteStatement;
 
 import configbase.AgentConfig;
 import configbase.SimpleAgentConfig;
+import core.TestWithDBParent;
 
 /**
  * @author akai
@@ -43,33 +44,27 @@ public class TestAgentModel extends TestWithDBParent{
 	@Test
 	public void testAddAgents() throws Exception{
 		AgentConfig aConfig = new AgentConfig();
-		int buyerNum = 100;
-		int sellerNum = 100;
+		aConfig.readConfig("src/test/resources/generatorbase/TestAgentModelConfig.ini");
 		SQLiteStatement st;
-		aConfig.setBuyerNum(buyerNum);
-		aConfig.setSellerNum(sellerNum);
 		AgentModel aModel = new AgentModel();
 		AgentManager aManager = new AgentManager();
 		aManager.setDb(db);
 		aModel.setConfig(aConfig);
 		aModel.generate(aManager);
-		assertEquals(buyerNum, aManager.getBuyerNum());
-		assertEquals(sellerNum, aManager.getSellerNum());
+		assertEquals(aConfig.getBuyerNum(), aManager.getBuyerNum());
+		assertEquals(aConfig.getSellerNum(), aManager.getSellerNum());
 		st = db.prepare("SELECT COUNT(*) FROM Agents " +
 				"WHERE sessionId = ? AND aType = ?");
 		st.bind(1, aManager.getSessionId()).bind(2, AgentManager.BUYER_AGENT_TYPE);
 		st.step();
-		assertEquals(buyerNum, st.columnInt(0));
+		assertEquals(aConfig.getBuyerNum(), st.columnInt(0));
 	}
 	
 	@Test 
 	public void testSimpleAgentConfig() throws Exception{
 		AgentConfig aConfig = new SimpleAgentConfig();
-		int buyerNum = 100;
-		int sellerNum = 100;
+		aConfig.readConfig("src/test/resources/generatorbase/TestAgentModelConfig.ini");
 		SQLiteStatement st;
-		aConfig.setBuyerNum(buyerNum);
-		aConfig.setSellerNum(sellerNum);
 		AgentModel aModel = new AgentModel();
 		AgentManager aManager = new SimpleAgentManager();
 		aManager.setDb(db);

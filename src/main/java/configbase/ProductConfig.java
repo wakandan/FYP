@@ -1,5 +1,8 @@
 package configbase;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 import modelbase.Entity;
 import generatorbase.Distribution;
 
@@ -9,6 +12,7 @@ public class ProductConfig extends Config {
 	int				priceMin;
 	int				priceMax;
 	int				numCategories;
+	int				maxItemNum;
 	/* Distribution for products range <-> price range */
 	Distribution	distribution;
 
@@ -69,5 +73,36 @@ public class ProductConfig extends Config {
 	public void configure(Entity e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * @return
+	 */
+	public int getMaxItemNum() {
+		// TODO Auto-generated method stub
+		return maxItemNum;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see configbase.Config#readConfig(java.lang.String)
+	 */
+	@Override
+	public void readConfig(String filename) throws IOException {
+		HashMap<String, String> configFile = Config.readConfigFile(filename);
+		String value;
+		for(String key:configFile.keySet()) {
+			value = configFile.get(key.trim());
+			if(key.equalsIgnoreCase("numProducts")) 
+				this.numProducts = Integer.parseInt(value);
+			else if(key.equalsIgnoreCase("priceMin"))
+				this.priceMin= Integer.parseInt(value);
+			else if(key.equalsIgnoreCase("priceMax"))
+				this.priceMax= Integer.parseInt(value);
+			else if(key.equalsIgnoreCase("numTypes"))
+				this.numTypes= Integer.parseInt(value);
+		}
+		
 	}
 }

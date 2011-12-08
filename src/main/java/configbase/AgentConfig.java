@@ -1,5 +1,8 @@
 package configbase;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 import modelbase.DishonestAutoBuyerLogicModel;
 import modelbase.DishonestAutoSellerLogicModel;
 import modelbase.Entity;
@@ -13,9 +16,9 @@ public class AgentConfig extends Config {
 	/**
 	 * @param config
 	 */
-	int	buyerNum;
-	int	sellerNum;
-	double initialBalance;
+	int		buyerNum;
+	int		sellerNum;
+	double	initialBalance;
 
 	public void setBuyerNum(int buyerNum) {
 		this.buyerNum = buyerNum;
@@ -41,9 +44,31 @@ public class AgentConfig extends Config {
 		return initialBalance;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see configbase.Config#configure(modelbase.Entity)
 	 */
 	@Override
-	public void configure(Entity e) {} 
+	public void configure(Entity e) {}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see configbase.Config#readConfig(java.lang.String)
+	 */
+	@Override
+	public void readConfig(String filename) throws IOException {
+		HashMap<String, String> configFile = Config.readConfigFile(filename);
+		String value;
+		for (String key : configFile.keySet()) {
+			value = configFile.get(key);
+			if (key.equalsIgnoreCase("buyerNum"))
+				this.buyerNum = Integer.parseInt(value);
+			else if (key.equalsIgnoreCase("sellerNum"))
+				this.sellerNum = Integer.parseInt(value);
+			else if (key.equalsIgnoreCase("initialBalance"))
+				this.initialBalance = Double.parseDouble(value);
+		}
+	}
 }
