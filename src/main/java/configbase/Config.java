@@ -24,7 +24,7 @@ public abstract class Config {
 				continue;
 			lineData = line.split("=");
 			if(!result.containsKey(lineData[0])) {
-				result.put(lineData[0], lineData[1]);
+				result.put(lineData[0].trim(), lineData[1].trim());
 			}
 		}
 		return result;

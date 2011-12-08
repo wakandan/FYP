@@ -30,9 +30,10 @@ public class TestConfigRead {
 		String filename = "src/test/resources/configbase/testProductConfig.ini";
 		ProductConfig pc = new ProductConfig();
 		pc.readConfig(filename);
-		assertEquals(1000, pc.getNumProducts());
-		assertEquals(9999, pc.getPriceMax());
-		assertEquals(100, pc.getPriceMin());
+		assertEquals(10000, pc.getNumProducts());
+		assertEquals(1000, pc.getPriceMax());
+		assertEquals(1, pc.getPriceMin());
+		assertEquals(15, pc.getNumCategories());
 	}
 
 	@Test

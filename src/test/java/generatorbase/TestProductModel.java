@@ -44,25 +44,14 @@ public class TestProductModel extends TestWithDBParent {
 
 	@Test
 	public void testProductGen() throws Exception {
-		int numTypes = 50;
-		int numProds = 10000;
-		int prcMax = 1000;
-		int prcMin = 1;
 		int prcMean = 500;
-		int numCategories = 15;
 		int prcDeviation = 300*300;
 		ProductConfig config = new ProductConfig();
-		config.readConfig("src/test/resources/generatorbase/testProductConfig.ini");
+		config.readConfig("src/test/resources/generatorbase/TestProductConfig.ini");
 		config.setDistribution(new NormalDistribution(prcMean, prcDeviation));
-		config.setNumProducts(numProds);
-		config.setNumTypes(numTypes);
-		config.setPriceMax(prcMax);
-		config.setPriceMin(prcMin);
-		config.setNumCategories(numCategories);
 		ProductModel prodModel = new ProductModel(config);
 		ProductManager prodManager = new ProductManager();
 		prodManager.setDb(this.db);
-		prodManager.setConfig(config);
 		prodModel.generate(prodManager);
 		SQLiteStatement st = db.prepare("SELECT AVG(quantity) FROM products");
 		st.step();
@@ -73,16 +62,16 @@ public class TestProductModel extends TestWithDBParent {
 		st = db.prepare("SELECT SUM(quantity) FROM products");
 		st.step();
 		assertTrue(Math.abs(10000-st.columnDouble(0))<=2000);
-		assertEquals(numTypes, prodManager.getSize());
+		assertEquals(config.getNumTypes(), prodManager.getSize());
 		st = db.prepare("SELECT AVG(priceMin) FROM products");
 		st.step();
 		assertTrue(Math.abs(10000-st.columnDouble(0))>0);
 		
 		/*Test with 50% sure that all the categories will be created*/
-		assertTrue(prodManager.getCategoryList().size()>=numCategories/2);
+		assertTrue(prodManager.getCategoryList().size()>=config.getNumCategories()/2);
 		st = db.prepare("SELECT COUNT(category) FROM products");
 		st.step();
-		assertTrue(st.columnDouble(0)>=numCategories/2);
+		assertTrue(st.columnDouble(0)>=config.getNumCategories()/2);
 	}
 
 }

@@ -93,7 +93,7 @@ public class ProductConfig extends Config {
 		HashMap<String, String> configFile = Config.readConfigFile(filename);
 		String value;
 		for(String key:configFile.keySet()) {
-			value = configFile.get(key.trim());
+			value = configFile.get(key);
 			if(key.equalsIgnoreCase("numProducts")) 
 				this.numProducts = Integer.parseInt(value);
 			else if(key.equalsIgnoreCase("priceMin"))
@@ -102,6 +102,8 @@ public class ProductConfig extends Config {
 				this.priceMax= Integer.parseInt(value);
 			else if(key.equalsIgnoreCase("numTypes"))
 				this.numTypes= Integer.parseInt(value);
+			else if(key.equalsIgnoreCase("numCategories"))
+				this.numCategories= Integer.parseInt(value);
 		}
 		
 	}
