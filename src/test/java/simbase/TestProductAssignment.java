@@ -3,6 +3,7 @@
  */
 package simbase;
 
+import static org.junit.Assert.*;
 import generatorbase.AgentModel;
 import generatorbase.NormalDistribution;
 import generatorbase.ProductModel;
@@ -62,6 +63,9 @@ public class TestProductAssignment extends TestWithDBParent {
 		sim.setProdManager(prodManager);
 		sim.setDb(db);
 		sim.assignProducts();
+		/*Agent and products generate in a same simulation run must have the 
+		 * same session id*/
+		assertEquals(sim.getAgentManager().getSessionId(), sim.getProdManager().getSessionId());
 	}
 
 }

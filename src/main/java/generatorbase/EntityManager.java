@@ -28,6 +28,10 @@ public class EntityManager {
 	protected SQLiteConnection	db;
 	protected ArrayList<Entity>	entities;
 
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
 	/**
 	 * @param prodcf
 	 */
@@ -84,5 +88,4 @@ public class EntityManager {
 		return config;
 	}
 
-	
 }

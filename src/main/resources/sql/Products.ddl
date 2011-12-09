@@ -4,5 +4,6 @@ CREATE TABLE Products(
     name TEXT,
     category NUMERIC,
     priceMin NUMERIC, 
-    priceMax NUMERIC
+    priceMax NUMERIC,
+    PRIMARY KEY(sessionId, name)
 );

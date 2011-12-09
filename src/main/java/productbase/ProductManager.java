@@ -34,7 +34,6 @@ public class ProductManager extends EntityManager {
 
 	public ProductManager() {
 		super();
-		logger.debug("Initiating new product base with sessionId: "+sessionId);
 		totalQuantity = 0;
 		categoryList = new HashMap<Integer, ArrayList>();
 	}

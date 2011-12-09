@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 
 import productbase.Product;
 import productbase.ProductManager;
@@ -35,14 +36,20 @@ public class Sim {
 	Scheduler				scheduler;
 	ProductManager			prodManager;
 	ProductModel			prodModel;
+	String					sessionId;
 	private static Logger	logger	= Logger.getLogger("Sim");
 
 	public AgentManager getAgentManager() {
 		return agentManager;
 	}
 
+	public String getSessionId() {
+		return sessionId;
+	}
+
 	public void setAgentManager(AgentManager agentManager) {
 		this.agentManager = agentManager;
+		this.agentManager.setSessionId(this.sessionId);
 	}
 
 	public SimConfig getSimConfig() {
@@ -67,16 +74,21 @@ public class Sim {
 
 	public void setProdManager(ProductManager prodManager) {
 		this.prodManager = prodManager;
+		this.prodManager.setSessionId(this.sessionId);
 	}
 
 	public Sim() {
+		sessionId = (new DateTime()).toString();
 		db = setUpDb();
-		agentManager = new AgentManager();
 		prodManager = new ProductManager();
+		agentManager = new AgentManager();		
 		agentManager.setDb(db);
+		prodManager.setDb(db);
 		agentModel = new AgentModel();
 		simConfig = new SimConfig();
 		scheduler = new Scheduler();
+		agentManager.setSessionId(sessionId);
+		prodManager.setSessionId(sessionId);
 	}
 
 	/**
@@ -148,7 +160,7 @@ public class Sim {
 				logger.info("Products exhausted, no more products to be assigned");
 				logger.info("Total of "+(i+1)+" sellers were assigned products");
 				prodPicked = true;
-				break;  
+				break;
 			}
 
 			/* Pick a random product */
@@ -165,8 +177,7 @@ public class Sim {
 			}
 			tmpProd.setQuantity(numProd);
 			tmpProd.setPriceMin(prod.getPriceMin());
-			tmpProd.setPriceMax(prod.getPriceMin()+prodPriceRandom.nextDouble()*
-					(prod.getPriceMax()-prod.getPriceMin()));
+			tmpProd.setPriceMax(prod.getPriceMin()+prodPriceRandom.nextDouble()*(prod.getPriceMax()-prod.getPriceMin()));
 			seller.addProduct(tmpProd);
 			prod.setQuantity(prod.getQuantity()-tmpProd.getQuantity());
 			if (prod.getQuantity()==0) {

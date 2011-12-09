@@ -5,6 +5,7 @@ package generatorbase;
 
 import static org.junit.Assert.*;
 
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,11 +51,10 @@ public class TestAgentModel extends TestWithDBParent{
 		AgentManager aManager = new AgentManager();
 		aManager.setDb(db);
 		aModel.setConfig(aConfig);
-		aModel.generate(aManager);
+		aModel.generate(aManager);		
 		assertEquals(aConfig.getBuyerNum(), aManager.getBuyerNum());
 		assertEquals(aConfig.getSellerNum(), aManager.getSellerNum());
-		st = db.prepare("SELECT COUNT(*) FROM Agents " +
-				"WHERE sessionId = ? AND aType = ?");
+		st = db.prepare("SELECT COUNT(*) FROM Agents WHERE sessionId = ? AND aType = ?");
 		st.bind(1, aManager.getSessionId()).bind(2, AgentManager.BUYER_AGENT_TYPE);
 		st.step();
 		assertEquals(aConfig.getBuyerNum(), st.columnInt(0));

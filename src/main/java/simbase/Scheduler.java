@@ -1,8 +1,9 @@
 package simbase;
 
 public class Scheduler {
+	int currentTimestep;
 	public int advanceTime() {
-		return 0;
+		return currentTimestep++;
 	}
 
 	/**

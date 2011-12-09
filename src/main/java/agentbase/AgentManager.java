@@ -42,7 +42,7 @@ public class AgentManager extends EntityManager {
 			sellers.add(e);
 			aType = SELLER_AGENT_TYPE;
 		}
-		st = db.prepare("INSERT INTO Agents(sessionId, name, balance, atype)"+"		VALUES(?, ?, ?, ?)");
+		st = db.prepare("INSERT INTO Agents(sessionId, name, balance, atype) VALUES(?, ?, ?, ?)");
 		st.bind(1, this.getSessionId()).bind(2, e.getName()).bind(3, ((AgentConfig) this.config).getInitialBalance()).bind(4, aType);
 		st.step();
 	}
