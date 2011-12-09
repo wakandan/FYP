@@ -21,6 +21,7 @@ import agentbase.AgentManager;
 import agentbase.Seller;
 
 import com.almworks.sqlite4java.SQLiteConnection;
+import com.almworks.sqlite4java.SQLiteException;
 
 import configbase.ProductConfig;
 import configbase.SimConfig;
@@ -225,5 +226,16 @@ public class Sim {
 		this.db = db;
 		this.inventoryManager.setDb(db);
 
+	}
+
+	/**
+	 * Advance the simulation. At the beginning of each time step, all buyers 
+	 * will be credited an amount of money
+	 * @throws SQLiteException 
+	 * 
+	 */
+	public void advanceTime() throws SQLiteException {
+		scheduler.advanceTime();
+		agentManager.creditAllBuyers(simConfig.getCreditPerTurn());
 	}
 }

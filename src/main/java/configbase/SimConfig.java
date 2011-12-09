@@ -4,6 +4,7 @@
 package configbase;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import modelbase.Entity;
 
@@ -15,6 +16,15 @@ public class SimConfig extends Config {
 	int				maxTimestep;
 	AgentConfig		agentConfig;
 	ProductConfig	prodConfig;
+	public double	creditPerTurn;
+
+	public double getCreditPerTurn() {
+		return creditPerTurn;
+	}
+
+	public void setCreditPerTurn(double creditPerTurn) {
+		this.creditPerTurn = creditPerTurn;
+	}
 
 	public AgentConfig getAgentConfig() {
 		return agentConfig;
@@ -51,13 +61,23 @@ public class SimConfig extends Config {
 		this.maxTimestep = maxTimestep;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see configbase.Config#readConfig(java.lang.String)
 	 */
 	@Override
 	public void readConfig(String filename) throws IOException {
-		// TODO Auto-generated method stub
-		
+		HashMap<String, String> configFile = Config.readConfigFile(filename);
+		String value;
+		for (String key : configFile.keySet()) {
+			value = configFile.get(key);
+			if (key.equalsIgnoreCase("creditPerTurn")) {
+				this.creditPerTurn = Double.parseDouble(value);
+			} else if (key.equalsIgnoreCase("maxTimestep")) {
+				this.maxTimestep = Integer.parseInt(value);
+			}
+		}
 	}
 
 }

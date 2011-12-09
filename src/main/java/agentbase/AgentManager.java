@@ -2,6 +2,7 @@ package agentbase;
 
 import java.util.ArrayList;
 
+import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 
 import configbase.AgentConfig;
@@ -60,5 +61,22 @@ public class AgentManager extends EntityManager {
 	public int getSellerNum() {
 		// TODO Auto-generated method stub
 		return sellers.getSize();
+	}
+
+	/**
+	 * Credit all buyers an amount of money
+	 * @param creditPerTurn
+	 * @throws SQLiteException 
+	 */
+	public void creditAllBuyers(double creditPerTurn) throws SQLiteException {
+		for(Entity e: getBuyers().getAll()) {
+			((Buyer)e).setBalance(((Buyer)e).getBalance()+creditPerTurn);			
+		}
+		
+		/*Update their credit in the database*/
+		st = db.prepare("UPDATE Agents SET balance=balance+? WHERE aType=?");
+		st.bind(1, creditPerTurn)
+			.bind(2, AgentManager.BUYER_AGENT_TYPE);
+		st.step();		
 	}
 }

@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 
 import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
+import com.almworks.sqlite4java.SQLiteStatement;
 
 import configbase.Config;
 
@@ -27,6 +28,7 @@ public class EntityManager {
 	protected String			sessionId;
 	protected SQLiteConnection	db;
 	protected ArrayList<Entity>	entities;
+	protected SQLiteStatement				st;
 
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
@@ -86,6 +88,10 @@ public class EntityManager {
 
 	public Config getConfig() {
 		return config;
+	}
+
+	public ArrayList<Entity> getAll() {
+		return entities;
 	}
 
 }

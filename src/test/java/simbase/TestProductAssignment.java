@@ -29,7 +29,7 @@ import core.TestWithDBParent;
  * @author akai
  * 
  */
-public class TestProductAssignment extends TestWithDBParent {
+public class TestProductAssignment extends TestSimParent {
 
 	@Before
 	public void setUp() throws Exception {
@@ -37,32 +37,7 @@ public class TestProductAssignment extends TestWithDBParent {
 	}
 
 	@Test
-	public void testProductAssignment() throws Exception {
-		/* Generate agents */
-		AgentConfig aConfig = new AgentConfig();
-		aConfig.readConfig("src/test/resources/generatorbase/TestAgentModelConfig.ini");
-		Random random = new Random();
-		AgentModel aModel = new AgentModel();
-		AgentManager aManager = new AgentManager();
-		aModel.setConfig(aConfig);
-		aManager.setDb(db);
-		aModel.generate(aManager);
-
-		/* Generate products */
-		int prcMean = 500;
-		int prcDeviation = 300*300;
-		ProductConfig config = new ProductConfig();
-		config.setDistribution(new NormalDistribution(prcMean, prcDeviation));
-		config.readConfig("src/test/resources/generatorbase/TestProductConfig.ini");
-		ProductModel prodModel = new ProductModel(config);
-		ProductManager prodManager = new ProductManager();
-		prodManager.setDb(this.db);
-		prodModel.generate(prodManager);
-
-		Sim sim = new Sim();
-		sim.setAgentManager(aManager);
-		sim.setProdManager(prodManager);
-		sim.setDb(db);
+	public void testProductAssignment() throws Exception {		
 		sim.assignProducts();
 		/*
 		 * Agent and products generate in a same simulation run must have the
@@ -80,7 +55,7 @@ public class TestProductAssignment extends TestWithDBParent {
 		st.bind(1, agent.getName()).bind(2, product.getName());
 		st.step();
 		assertEquals(product.getQuantity(), st.columnInt(0));
-		
+
 		st = db.prepare("SELECT COUNT(agent_name) FROM Inventories");
 		st.step();
 		assertEquals(sim.getNumSellerAssigned(), st.columnInt(0));
