@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import org.junit.Before;
 
 import com.almworks.sqlite4java.SQLiteConnection;
+import com.almworks.sqlite4java.SQLiteStatement;
 
 /**
  * @author akai
@@ -19,11 +20,18 @@ import com.almworks.sqlite4java.SQLiteConnection;
  */
 public class TestWithDBParent {
 	protected SQLiteConnection	db;
+	protected SQLiteStatement st;
 
 	@Before
 	public void setUp() throws Exception {
 		db = new SQLiteConnection();
 		db.open(true);
+		st = db.prepare(readDDL("src/main/resources/sql/Products.ddl"));
+		st.step();
+		st = db.prepare(readDDL("src/main/resources/sql/Agents.ddl"));
+		st.step();
+		st = db.prepare(readDDL("src/main/resources/sql/Inventories.ddl"));
+		st.step();
 	}
 
 	/*

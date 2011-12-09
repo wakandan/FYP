@@ -3,5 +3,5 @@ CREATE TABLE Agents(
     name TEXT,  
     balance NUMERIC, 
     aType NUMERIC,
-    PRIMARY KEY(sessionId, name)
+    PRIMARY KEY(name)
 );

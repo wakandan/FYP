@@ -54,4 +54,16 @@ public abstract class Agent extends Entity {
 	public Product getProduct(int i) {
 		return (Product)this.inventory.get(i);
 	}
+	
+	public int getInventorySize() {
+		return inventory.size();
+	}
+	
+	public ArrayList getInventory() {
+		return inventory;
+	}
+	
+	public void removeProduct(int i) {
+		this.inventory.remove(i);
+	}
 }

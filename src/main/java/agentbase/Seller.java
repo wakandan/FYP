@@ -18,4 +18,8 @@ public class Seller extends Agent{
 	public Product getProduct() {
 		return null;
 	}
+	
+	public void addProduct(Product prod) {
+		super.addProduct(prod);
+	}
 }

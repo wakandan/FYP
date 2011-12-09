@@ -13,11 +13,21 @@ public class ProductConfig extends Config {
 	int				priceMax;
 	int				numCategories;
 	int				maxItemNum;
+	int				quantityAssignmentThreadshold;	/*
+													 * Quantity threadshold of
+													 * an product for not
+													 * randomizing when
+													 * assigning to agents
+													 */
 	/* Distribution for products range <-> price range */
 	Distribution	distribution;
 
 	public int getNumCategories() {
 		return numCategories;
+	}
+
+	public int getQuantityAssignmentThreadshold() {
+		return quantityAssignmentThreadshold;
 	}
 
 	public void setNumCategories(int numCategories) {
@@ -92,19 +102,21 @@ public class ProductConfig extends Config {
 	public void readConfig(String filename) throws IOException {
 		HashMap<String, String> configFile = Config.readConfigFile(filename);
 		String value;
-		for(String key:configFile.keySet()) {
+		for (String key : configFile.keySet()) {
 			value = configFile.get(key);
-			if(key.equalsIgnoreCase("numProducts")) 
+			if (key.equalsIgnoreCase("numProducts"))
 				this.numProducts = Integer.parseInt(value);
-			else if(key.equalsIgnoreCase("priceMin"))
-				this.priceMin= Integer.parseInt(value);
-			else if(key.equalsIgnoreCase("priceMax"))
-				this.priceMax= Integer.parseInt(value);
-			else if(key.equalsIgnoreCase("numTypes"))
-				this.numTypes= Integer.parseInt(value);
-			else if(key.equalsIgnoreCase("numCategories"))
-				this.numCategories= Integer.parseInt(value);
+			else if (key.equalsIgnoreCase("priceMin"))
+				this.priceMin = Integer.parseInt(value);
+			else if (key.equalsIgnoreCase("priceMax"))
+				this.priceMax = Integer.parseInt(value);
+			else if (key.equalsIgnoreCase("numTypes"))
+				this.numTypes = Integer.parseInt(value);
+			else if (key.equalsIgnoreCase("numCategories"))
+				this.numCategories = Integer.parseInt(value);
+			else if (key.equalsIgnoreCase("quantityAssignmentThreadshold"))
+				this.quantityAssignmentThreadshold = Integer.parseInt(value);
 		}
-		
+
 	}
 }

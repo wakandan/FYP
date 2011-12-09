@@ -25,7 +25,7 @@ public class ProductModel extends EntityModel {
 	ProductConfig			prodcf;	
 	boolean					prodPrcRangeSet[];		/* Check if total number of items in each range was calculated */
 	int						numProdPrcRange;
-	int						prodPrcPeriod;
+	int						prodPrcPeriod;	
 	private static Logger	logger	= Logger.getLogger("ProductModel");	
 
 	public ProductModel(Config config) {

@@ -31,9 +31,6 @@ public class TestAgentModel extends TestWithDBParent{
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		SQLiteStatement st;
-		st = db.prepare(readDDL("src/main/resources/sql/Agents.ddl"));
-		st.step();
 	}
 
 	/**

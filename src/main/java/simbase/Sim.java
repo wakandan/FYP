@@ -13,6 +13,8 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
+import productbase.Inventory;
+import productbase.InventoryManager;
 import productbase.Product;
 import productbase.ProductManager;
 import agentbase.AgentManager;
@@ -37,10 +39,21 @@ public class Sim {
 	ProductManager			prodManager;
 	ProductModel			prodModel;
 	String					sessionId;
+	InventoryManager		inventoryManager;
+	int						quantityAssigned;
+	int						numSellerAssigned;
 	private static Logger	logger	= Logger.getLogger("Sim");
+
+	public int getNumSellerAssigned() {
+		return numSellerAssigned;
+	}
 
 	public AgentManager getAgentManager() {
 		return agentManager;
+	}
+
+	public int getQuantityAssigned() {
+		return quantityAssigned;
 	}
 
 	public String getSessionId() {
@@ -81,14 +94,17 @@ public class Sim {
 		sessionId = (new DateTime()).toString();
 		db = setUpDb();
 		prodManager = new ProductManager();
-		agentManager = new AgentManager();		
+		agentManager = new AgentManager();
+		inventoryManager = new InventoryManager();
 		agentManager.setDb(db);
 		prodManager.setDb(db);
+		inventoryManager.setDb(db);
 		agentModel = new AgentModel();
 		simConfig = new SimConfig();
 		scheduler = new Scheduler();
 		agentManager.setSessionId(sessionId);
 		prodManager.setSessionId(sessionId);
+		numSellerAssigned = 0;
 	}
 
 	/**
@@ -138,12 +154,16 @@ public class Sim {
 	/**
 	 * Assign products to sellers base on categories, as in the market, usually
 	 * a seller will sell related products.
+	 * 
+	 * @throws Exception
 	 */
-	public void assignProducts() {
+	public void assignProducts() throws Exception {
 		int numProd;
 		int prodNum;
+		int quantityAssignThres = ((ProductConfig) prodManager.getConfig()).getQuantityAssignmentThreadshold();
 		boolean prodPicked = false;
 		Product prod, tmpProd = null;
+		quantityAssigned = 0;
 		Seller seller;
 		Random prodRandom = new Random();
 		Random prodNumRandom = new Random();
@@ -160,6 +180,7 @@ public class Sim {
 				logger.info("Products exhausted, no more products to be assigned");
 				logger.info("Total of "+(i+1)+" sellers were assigned products");
 				prodPicked = true;
+				numSellerAssigned = i+1;
 				break;
 			}
 
@@ -167,24 +188,30 @@ public class Sim {
 			prodNum = prodRandom.nextInt(prodManager.getSize());
 			prod = (Product) prodManager.get(prodNum);
 			tmpProd = new Product(prod);
-			numProd = prodNumRandom.nextInt(prod.getQuantity());
-			while (numProd==0) {
+			if (prod.getQuantity()<=quantityAssignThres)
+				numProd = prod.getQuantity();
+			else {
 				numProd = prodNumRandom.nextInt(prod.getQuantity());
-				if (numProd==0) {
-					numProd = prod.getQuantity();
-					break;
+				while (numProd==0) {
+					numProd = prodNumRandom.nextInt(prod.getQuantity());
+					if (numProd==0) {
+						numProd = prod.getQuantity();
+						break;
+					}
 				}
 			}
+			quantityAssigned += numProd;
 			tmpProd.setQuantity(numProd);
 			tmpProd.setPriceMin(prod.getPriceMin());
 			tmpProd.setPriceMax(prod.getPriceMin()+prodPriceRandom.nextDouble()*(prod.getPriceMax()-prod.getPriceMin()));
-			seller.addProduct(tmpProd);
+			inventoryManager.add(seller, tmpProd);
 			prod.setQuantity(prod.getQuantity()-tmpProd.getQuantity());
 			if (prod.getQuantity()==0) {
 				prodManager.remove(prodNum);
 				logger.debug("Product "+prod.getName()+" is up!");
 			}
 			logger.debug("Assigned product "+prod.getName()+"("+tmpProd.getQuantity()+") to seller "+seller.getName());
+			numSellerAssigned++;
 
 		}
 		logger.info("Finished assigning products to sellers");
@@ -193,10 +220,10 @@ public class Sim {
 	/**
 	 * @param db2
 	 */
-	public void setDb(SQLiteConnection db2) {
+	public void setDb(SQLiteConnection db) {
 		// TODO Auto-generated method stub
 		this.db = db;
+		this.inventoryManager.setDb(db);
 
 	}
-
 }

@@ -30,10 +30,7 @@ public class TestProductModel extends TestWithDBParent {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		super.setUp();
-		SQLiteStatement st;
-		st = db.prepare(readDDL("src/main/resources/sql/Products.ddl"));
-		st.step();
+		super.setUp();		
 	}
 
 	/**

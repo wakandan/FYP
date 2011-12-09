@@ -5,5 +5,5 @@ CREATE TABLE Products(
     category NUMERIC,
     priceMin NUMERIC, 
     priceMax NUMERIC,
-    PRIMARY KEY(sessionId, name)
+    PRIMARY KEY(name)
 );
