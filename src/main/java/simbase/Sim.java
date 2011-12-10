@@ -7,13 +7,10 @@ import generatorbase.AgentModel;
 import generatorbase.EntityManager;
 import generatorbase.ProductModel;
 
-import java.util.ArrayList;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
-import productbase.Inventory;
 import productbase.InventoryManager;
 import productbase.Product;
 import productbase.ProductManager;
@@ -25,25 +22,26 @@ import com.almworks.sqlite4java.SQLiteException;
 
 import configbase.ProductConfig;
 import configbase.SimConfig;
+import core.BaseObject;
 
 /**
  * @author akai
  * 
  */
-public class Sim {
-	AgentManager			agentManager;
-	AgentModel				agentModel;
-	SQLiteConnection		db;
-	SimConfig				simConfig;
-	int						timeStep;
-	Scheduler				scheduler;
-	ProductManager			prodManager;
-	ProductModel			prodModel;
-	String					sessionId;
-	InventoryManager		inventoryManager;
-	int						quantityAssigned;
-	int						numSellerAssigned;
-	private static Logger	logger	= Logger.getLogger("Sim");
+public class Sim extends BaseObject {
+	AgentManager		agentManager;
+	AgentModel			agentModel;
+	SQLiteConnection	db;
+	SimConfig			simConfig;
+	int					timeStep;
+	Scheduler			scheduler;
+	ProductManager		prodManager;
+	ProductModel		prodModel;
+	String				sessionId;
+	InventoryManager	inventoryManager;
+	int					quantityAssigned;
+	int					numSellerAssigned;
+	Bank				bank;
 
 	public int getNumSellerAssigned() {
 		return numSellerAssigned;
@@ -64,6 +62,7 @@ public class Sim {
 	public void setAgentManager(AgentManager agentManager) {
 		this.agentManager = agentManager;
 		this.agentManager.setSessionId(this.sessionId);
+		bank.setAgentManger(agentManager);
 	}
 
 	public SimConfig getSimConfig() {
@@ -91,21 +90,16 @@ public class Sim {
 		this.prodManager.setSessionId(this.sessionId);
 	}
 
-	public Sim() {
+	public Sim(Bank bank) {
+		numSellerAssigned = 0;
 		sessionId = (new DateTime()).toString();
 		db = setUpDb();
-		prodManager = new ProductManager();
-		agentManager = new AgentManager();
-		inventoryManager = new InventoryManager();
-		agentManager.setDb(db);
-		prodManager.setDb(db);
-		inventoryManager.setDb(db);
-		agentModel = new AgentModel();
-		simConfig = new SimConfig();
-		scheduler = new Scheduler();
-		agentManager.setSessionId(sessionId);
-		prodManager.setSessionId(sessionId);
-		numSellerAssigned = 0;
+
+		this.initObjects();
+		this.bank = bank;
+		this.setAgentManager(agentManager);
+		this.setDb(db);
+
 	}
 
 	/**
@@ -116,7 +110,18 @@ public class Sim {
 		return conn;
 	}
 
+	public void initObjects() {
+		prodManager = new ProductManager();
+		agentManager = new AgentManager();
+		inventoryManager = new InventoryManager();
+		agentModel = new AgentModel();
+		simConfig = new SimConfig();
+		scheduler = new Scheduler();
+	}
+
 	public void initialize() throws Exception {
+		agentManager.setSessionId(sessionId);
+		prodManager.setSessionId(sessionId);
 		agentModel.setConfig(simConfig.getAgentConfig());
 		prodModel = new ProductModel(simConfig.getProdConfig());
 		prodModel.generate(prodManager);
@@ -126,13 +131,14 @@ public class Sim {
 	public static void main(String[] args) {
 		int timeStep = 0;
 		int maxTimeStep;
-		Sim sim = new Sim();
+		Bank bank = new Bank();
+		Sim sim = new Sim(bank);
 		try {
 			sim.initialize();
 			sim.assignProducts();
 		} catch (Exception e) {
-			logger.error("Can't initialize the simulation");
-			logger.error("Exiting...");
+			sim.logger.error("Can't initialize the simulation");
+			sim.logger.error("Exiting...");
 			System.exit(1);
 		}
 		maxTimeStep = sim.simConfig.getMaxTimestep();
@@ -224,18 +230,30 @@ public class Sim {
 	public void setDb(SQLiteConnection db) {
 		// TODO Auto-generated method stub
 		this.db = db;
-		this.inventoryManager.setDb(db);
+		agentManager.setDb(db);
+		prodManager.setDb(db);
+		inventoryManager.setDb(db);
+		bank.setDb(db);
 
 	}
 
 	/**
-	 * Advance the simulation. At the beginning of each time step, all buyers 
+	 * Advance the simulation. At the beginning of each time step, all buyers
 	 * will be credited an amount of money
-	 * @throws SQLiteException 
+	 * 
+	 * @throws SQLiteException
 	 * 
 	 */
 	public void advanceTime() throws SQLiteException {
 		scheduler.advanceTime();
-		agentManager.creditAllBuyers(simConfig.getCreditPerTurn());
+		bank.creditAllBuyers(simConfig.getCreditPerTurn());
+	}
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	public double getBalance(String accountName) {
+		return bank.getBalance(accountName);
 	}
 }

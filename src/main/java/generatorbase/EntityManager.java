@@ -14,6 +14,7 @@ import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 
 import configbase.Config;
+import core.BaseObject;
 
 /**
  * @author akai
@@ -23,12 +24,12 @@ import configbase.Config;
  * @author akai
  * 
  */
-public class EntityManager {
+public class EntityManager extends BaseObject {
 	protected Config			config;
 	protected String			sessionId;
 	protected SQLiteConnection	db;
 	protected ArrayList<Entity>	entities;
-	protected SQLiteStatement				st;
+	protected SQLiteStatement	st;
 
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
@@ -66,6 +67,7 @@ public class EntityManager {
 	}
 
 	public EntityManager() {
+		super();
 		sessionId = (new DateTime()).toString();
 		entities = new ArrayList<Entity>();
 	}

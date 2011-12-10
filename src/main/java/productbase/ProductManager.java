@@ -29,7 +29,6 @@ public class ProductManager extends EntityManager {
 	 * tradable entity - Item: One among several entity for a type of product
 	 */
 	int						totalQuantity;
-	private static Logger	logger				= Logger.getLogger("ProductManager");
 	HashMap<Integer, ArrayList> categoryList;	
 
 	public ProductManager() {

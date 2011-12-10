@@ -10,7 +10,6 @@ import agentbase.Buyer;
 import agentbase.Seller;
 
 public class AgentModel extends EntityModel {
-	private static Logger		logger				= Logger.getLogger("AgentModel");
 	public final static String	BUYER_NAME_PREFIX	= "B";
 	public final static String	SELLER_NAME_PREFIX	= "S";
 

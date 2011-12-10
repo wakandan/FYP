@@ -1,15 +1,16 @@
 /**
  *
- */ 
+ */
 package modelbase;
 
+import core.BaseObject;
 
 /**
  * @author akai
- *
+ * 
  */
-public abstract class Entity {
-	protected String name;
+public abstract class Entity extends BaseObject {
+	protected String	name;
 
 	public String getName() {
 		return name;
@@ -18,7 +19,7 @@ public abstract class Entity {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public Entity(String name) {
 		this.name = name;
 	}
