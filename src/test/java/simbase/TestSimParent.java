@@ -24,10 +24,10 @@ import core.TestWithDBParent;
  */
 public class TestSimParent extends TestWithDBParent {
 
-	AgentConfig		aConfig;
-	ProductConfig	pConfig;
-	AgentModel		aModel;
-	AgentManager	aManager;
+	AgentConfig		agentConfig;
+	ProductConfig	prodConfig;
+	AgentModel		agentModel;
+	AgentManager	agentManager;
 	ProductModel	prodModel;
 	ProductManager	prodManager;
 	Sim				sim;
@@ -37,23 +37,23 @@ public class TestSimParent extends TestWithDBParent {
 	public void setUp() throws Exception {
 		super.setUp();
 		/* Generate agents */
-		aConfig = new AgentConfig();
-		aConfig.readConfig("src/test/resources/generatorbase/TestAgentModelConfig.ini");
-		aModel = new AgentModel();
-		aManager = new AgentManager();
+		agentConfig = new AgentConfig();
+		agentConfig.readConfig("src/test/resources/generatorbase/TestAgentModelConfig.ini");
+		agentModel = new AgentModel();
+		agentManager = new AgentManager();
 		
-		aModel.setConfig(aConfig);
-		aManager.setDb(db);
-		aModel.generate(aManager);
+		agentModel.setConfig(agentConfig);
+		agentManager.setDb(db);
+		agentModel.generate(agentManager);
 
 		/* Generate products */
 		int prcMean = 500;
 		int prcDeviation = 300*300;
-		pConfig = new ProductConfig();
-		pConfig.setDistribution(new NormalDistribution(prcMean, prcDeviation));
-		pConfig.readConfig("src/test/resources/generatorbase/TestProductConfig.ini");
+		prodConfig = new ProductConfig();
+		prodConfig.setDistribution(new NormalDistribution(prcMean, prcDeviation));
+		prodConfig.readConfig("src/test/resources/generatorbase/TestProductConfig.ini");
 		
-		prodModel = new ProductModel(pConfig);
+		prodModel = new ProductModel(prodConfig);
 		prodManager = new ProductManager();
 		prodManager.setDb(this.db);
 		prodModel.generate(prodManager);
@@ -65,7 +65,7 @@ public class TestSimParent extends TestWithDBParent {
 		simConfig = new SimConfig();
 		simConfig.readConfig("src/test/resources/simbase/TestSimConfig.ini");
 		sim.setSimConfig(simConfig);
-		sim.setAgentManager(aManager);
+		sim.setAgentManager(agentManager);
 		sim.setProdManager(prodManager);
 		
 	}
