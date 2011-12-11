@@ -9,6 +9,8 @@ import generatorbase.ProductModel;
 
 import java.util.Random;
 
+import modelbase.Entity;
+
 import org.joda.time.DateTime;
 
 import productbase.InventoryManager;
@@ -29,19 +31,29 @@ import core.BaseObject;
  * 
  */
 public class Sim extends BaseObject {
+	int					timeStep;
+	int					quantityAssigned;
+	int					numSellerAssigned;
 	AgentManager		agentManager;
 	AgentModel			agentModel;
 	SQLiteConnection	db;
 	SimConfig			simConfig;
-	int					timeStep;
 	Scheduler			scheduler;
 	ProductManager		prodManager;
 	ProductModel		prodModel;
 	String				sessionId;
 	InventoryManager	inventoryManager;
-	int					quantityAssigned;
-	int					numSellerAssigned;
 	Bank				bank;
+	TransactionManager	transactionManager;
+
+	public TransactionManager getTransactionManager() {
+		return transactionManager;
+	}
+
+	public void setTransactionManager(TransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+		this.transactionManager.setSim(this);
+	}
 
 	public int getNumSellerAssigned() {
 		return numSellerAssigned;
@@ -177,23 +189,29 @@ public class Sim extends BaseObject {
 		Random prodPriceRandom = new Random();
 		EntityManager sellers = agentManager.getSellers();
 		prodPicked = false;
-		logger.info("Start assigning products to sellers");
-		for (int i = 0; i<sellers.getSize()&&!prodPicked; i++) {
-			seller = (Seller) sellers.get(i);
+		logger.info("Start assigning products to sellers");	
+		numSellerAssigned = 0;
+		for(Entity e: sellers.getAll()) {
+			if(prodPicked)
+				break;
+			
+//		for (int i = 0; i<sellers.getSize()&&!prodPicked; i++) {
+//			seller = (Seller) sellers.get(i);
+			seller = (Seller) e;
 
 			/* Pick products until a non-zero number of items is picked */
 			/* No more products to assign, terminate */
 			if (prodManager.getSize()==0) {
+				numSellerAssigned++;
 				logger.info("Products exhausted, no more products to be assigned");
-				logger.info("Total of "+(i+1)+" sellers were assigned products");
+				logger.info("Total of "+(numSellerAssigned)+" sellers were assigned products");
 				prodPicked = true;
-				numSellerAssigned = i+1;
 				break;
 			}
 
 			/* Pick a random product */
 			prodNum = prodRandom.nextInt(prodManager.getSize());
-			prod = (Product) prodManager.get(prodNum);
+			prod = (Product) prodManager.get(prodNum+"");
 			tmpProd = new Product(prod);
 			if (prod.getQuantity()<=quantityAssignThres)
 				numProd = prod.getQuantity();

@@ -1,31 +1,29 @@
 /**
  *
- */ 
+ */
 package agentbase;
 
 import modelbase.AgentLogicModel;
-import generatorbase.EntityManager;
+import modelbase.Entity;
 
 /**
  * @author akai
- *
+ * 
  */
 public class SimpleAgentManager extends AgentManager {
 	public int getHonestBuyerNum() {
 		int honestBuyerNum = 0;
-		EntityManager buyers = getBuyers();
-		for(int i=0; i<buyers.getSize(); i++)
-			if(((AgentLogicModel)((Agent)buyers.get(i)).getLogicModel()).responseQuery()){
+		for (Entity e : getBuyers().getAll())
+			if (((AgentLogicModel) ((Agent) e).getLogicModel()).responseQuery()) {
 				honestBuyerNum++;
 			}
 		return honestBuyerNum;
 	}
-	
+
 	public int getHonestSellerNum() {
 		int honestSellerNum = 0;
-		EntityManager sellers= getSellers();
-		for(int i=0; i<sellers.getSize(); i++)
-			if(((AgentLogicModel)((Agent)sellers.get(i)).getLogicModel()).responseQuery()){
+		for (Entity e : getSellers().getAll())
+			if (((AgentLogicModel) ((Agent) e).getLogicModel()).responseQuery()) {
 				honestSellerNum++;
 			}
 		return honestSellerNum;

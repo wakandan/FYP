@@ -3,7 +3,8 @@
  */
 package generatorbase;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import modelbase.Entity;
 
@@ -25,11 +26,11 @@ import core.BaseObject;
  * 
  */
 public class EntityManager extends BaseObject {
-	protected Config			config;
-	protected String			sessionId;
-	protected SQLiteConnection	db;
-	protected ArrayList<Entity>	entities;
-	protected SQLiteStatement	st;
+	protected Config					config;
+	protected String					sessionId;
+	protected SQLiteConnection			db;
+	protected HashMap<String, Entity>	entities;
+	protected SQLiteStatement			st;
 
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
@@ -69,11 +70,11 @@ public class EntityManager extends BaseObject {
 	public EntityManager() {
 		super();
 		sessionId = (new DateTime()).toString();
-		entities = new ArrayList<Entity>();
+		entities = new HashMap<String, Entity>();
 	}
 
 	public void add(Entity e) throws Exception {
-		entities.add(e);
+		entities.put(e.getName(), e);
 	}
 
 	public String getSessionId() {
@@ -84,16 +85,15 @@ public class EntityManager extends BaseObject {
 		return entities.size();
 	}
 
-	public Entity get(int i) {
-		return entities.get(i);
+	public Entity get(String agentName) {
+		return entities.get(agentName);
 	}
 
 	public Config getConfig() {
 		return config;
 	}
 
-	public ArrayList<Entity> getAll() {
-		return entities;
+	public Collection<Entity> getAll() {
+		return entities.values();
 	}
-
 }

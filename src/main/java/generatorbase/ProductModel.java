@@ -2,34 +2,35 @@ package generatorbase;
 
 import java.util.Random;
 
-import org.apache.log4j.Logger;
-
-import com.almworks.sqlite4java.SQLiteException;
-
-import configbase.Config;
-import configbase.ProductConfig;
 import productbase.Product;
 import productbase.ProductManager;
+import configbase.Config;
+import configbase.ProductConfig;
 
 public class ProductModel extends EntityModel {
 	/*
 	 * Generate products based on the provided config object. How it works? -
 	 * Divide the distribution by the number of product types, work the total
-	 * number of items in this price range. Each range will correspond to a 
-	 * product. The total area under the distribution curve in the range is
-	 * the product quantity. 
+	 * number of items in this price range. Each range will correspond to a
+	 * product. The total area under the distribution curve in the range is the
+	 * product quantity.
 	 */
 
-	
-	int						prodPrcRanges[];		/* Store the total number of items in each price ranges */
-	ProductConfig			prodcf;	
-	boolean					prodPrcRangeSet[];		/* Check if total number of items in each range was calculated */
-	int						numProdPrcRange;
-	int						prodPrcPeriod;	
+	int				prodPrcRanges[];	/*
+										 * Store the total number of items in
+										 * each price ranges
+										 */
+	ProductConfig	prodcf;
+	boolean			prodPrcRangeSet[];	/*
+										 * Check if total number of items in
+										 * each range was calculated
+										 */
+	int				numProdPrcRange;
+	int				prodPrcPeriod;
 
 	public ProductModel(Config config) {
 		super();
-		prodcf = ((ProductConfig)config);		
+		prodcf = ((ProductConfig) config);
 		this.prodPrcRanges = new int[prodcf.getNumTypes()];
 		this.prodPrcRangeSet = new boolean[prodcf.getNumTypes()];
 		for (int i = 0; i<prodcf.getNumTypes(); i++)
@@ -68,7 +69,9 @@ public class ProductModel extends EntityModel {
 		return prodcf.getPriceMin()+(rangeNum+1)*prodPrcPeriod;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see generatorbase.EntityModel#generate(generatorbase.EntityManager)
 	 */
 	@Override
@@ -78,9 +81,9 @@ public class ProductModel extends EntityModel {
 		int prodQuantity;
 		int category;
 		logger.info("Start generating Products");
-		
+
 		Random rand = new Random();
-		manager.setConfig(prodcf);		
+		manager.setConfig(prodcf);
 		manager.beginTransaction();
 		for (int i = 0; i<prodcf.getNumTypes(); i++) {
 			/* Divide the price range */
@@ -96,11 +99,11 @@ public class ProductModel extends EntityModel {
 			prod.setPriceMax(prcMax);
 			prod.setQuantity(prodQuantity);
 			prod.setCategory(rand.nextInt(prodcf.getNumCategories()));
-			((ProductManager)manager).add(prod);
+			((ProductManager) manager).add(prod);
 		}
 		manager.commitTransaction();
 		logger.info("Done generating Products");
-		logger.info("No. items generated: "+((ProductManager)manager).getTotalQuantity());
+		logger.info("No. items generated: "+((ProductManager) manager).getTotalQuantity());
 	}
 
 }

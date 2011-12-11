@@ -48,7 +48,7 @@ public class TestProductAssignment extends TestSimParent {
 		st = db.prepare("SELECT SUM(quantity) FROM Inventories");
 		st.step();
 		assertEquals(sim.getQuantityAssigned(), st.columnInt(0));
-		Agent agent = (Agent) agentManager.getSellers().get(0);
+		Agent agent = (Agent) agentManager.getSellers().get("S0");
 		Product product = agent.getProduct(0);
 
 		st = db.prepare("SELECT quantity FROM Inventories WHERE agent_name=? AND prod_name=?");

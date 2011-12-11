@@ -1,13 +1,10 @@
 package generatorbase;
 
-import org.apache.log4j.Logger;
-
-import configbase.AgentConfig;
-import configbase.Config;
 import agentbase.Agent;
 import agentbase.AgentManager;
 import agentbase.Buyer;
 import agentbase.Seller;
+import configbase.AgentConfig;
 
 public class AgentModel extends EntityModel {
 	public final static String	BUYER_NAME_PREFIX	= "B";

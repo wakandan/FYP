@@ -7,8 +7,6 @@ import generatorbase.AgentModel;
 import generatorbase.NormalDistribution;
 import generatorbase.ProductModel;
 
-import java.util.Random;
-
 import org.junit.Before;
 
 import productbase.ProductManager;
@@ -41,7 +39,7 @@ public class TestSimParent extends TestWithDBParent {
 		agentConfig.readConfig("src/test/resources/generatorbase/TestAgentModelConfig.ini");
 		agentModel = new AgentModel();
 		agentManager = new AgentManager();
-		
+
 		agentModel.setConfig(agentConfig);
 		agentManager.setDb(db);
 		agentModel.generate(agentManager);
@@ -52,14 +50,14 @@ public class TestSimParent extends TestWithDBParent {
 		prodConfig = new ProductConfig();
 		prodConfig.setDistribution(new NormalDistribution(prcMean, prcDeviation));
 		prodConfig.readConfig("src/test/resources/generatorbase/TestProductConfig.ini");
-		
+
 		prodModel = new ProductModel(prodConfig);
 		prodManager = new ProductManager();
 		prodManager.setDb(this.db);
 		prodModel.generate(prodManager);
 
 		Bank bank = new Bank();
-		
+
 		sim = new Sim(bank);
 		sim.setDb(db);
 		simConfig = new SimConfig();
@@ -67,6 +65,5 @@ public class TestSimParent extends TestWithDBParent {
 		sim.setSimConfig(simConfig);
 		sim.setAgentManager(agentManager);
 		sim.setProdManager(prodManager);
-		
 	}
 }

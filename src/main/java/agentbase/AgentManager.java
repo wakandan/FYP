@@ -1,15 +1,12 @@
 package agentbase;
 
-import java.util.ArrayList;
+import generatorbase.EntityManager;
+import modelbase.Entity;
 
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 
 import configbase.AgentConfig;
-
-import modelbase.Entity;
-import generatorbase.Distribution;
-import generatorbase.EntityManager;
 
 public class AgentManager extends EntityManager {
 	EntityManager			buyers;
@@ -62,4 +59,18 @@ public class AgentManager extends EntityManager {
 		// TODO Auto-generated method stub
 		return sellers.getSize();
 	}
+
+	/**
+	 * @param sellerName
+	 * @return
+	 * @throws SQLiteException
+	 */
+	public Agent getAgentByName(String agentName) {
+		Entity e = buyers.get(agentName);
+		if (e==null) {
+			e = sellers.get(agentName);
+		}
+		return (Agent) e;
+	}
+
 }

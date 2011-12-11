@@ -25,7 +25,7 @@ public class TestBank extends TestSimParent {
 
 	@Test
 	public void testCreditPerturn() throws SQLiteException {
-		Buyer buyer1 = (Buyer) agentManager.get(0);
+		Buyer buyer1 = (Buyer) agentManager.get("B0");
 		double oldBalance = sim.getBalance(buyer1.getName());
 		sim.advanceTime();
 		assertEquals(simConfig.getCreditPerTurn(), sim.getBalance(buyer1.getName())-oldBalance, 0.1);
