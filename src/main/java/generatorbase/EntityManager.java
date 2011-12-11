@@ -85,8 +85,8 @@ public class EntityManager extends BaseObject {
 		return entities.size();
 	}
 
-	public Entity get(String agentName) {
-		return entities.get(agentName);
+	public Entity get(String entityName) {
+		return entities.get(entityName);
 	}
 
 	public Config getConfig() {

@@ -21,6 +21,7 @@ public class ProductManager extends EntityManager {
 	 */
 	int							totalQuantity;
 	HashMap<Integer, ArrayList>	categoryList;
+	HashMap<String, Double>		value;
 
 	public ProductManager() {
 		super();
@@ -75,8 +76,11 @@ public class ProductManager extends EntityManager {
 		entities.remove(i);
 	}
 
-	/*Get quantity of a product by its name
-	 * @return: product's quantity on successs, -1 on failure*/
+	/*
+	 * Get quantity of a product by its name
+	 * 
+	 * @return: product's quantity on successs, -1 on failure
+	 */
 	public int getQuantityByName(String prodName) {
 		try {
 			st = db.prepare("SELECT quantity FROM Products WHERE name=?");
@@ -90,5 +94,4 @@ public class ProductManager extends EntityManager {
 			return -1;
 		}
 	}
-
 }

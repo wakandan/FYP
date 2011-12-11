@@ -29,9 +29,9 @@ public class TestAgent {
 		assertEquals(1, agent.getInventorySize());
 		agent.addProduct(prod2);
 		assertEquals(2, agent.getInventorySize());
-		agent.removeProduct(0);
-		assertEquals(prodName2, agent.getProduct(0).getName());
-		agent.removeProduct(0);
+		agent.removeProduct(prodName);
+		assertEquals(prodName2, agent.getProduct(prodName2).getName());
+		agent.removeProduct(prodName2);
 	}
 
 }

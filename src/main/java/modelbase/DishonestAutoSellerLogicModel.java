@@ -3,6 +3,8 @@
  */ 
 package modelbase;
 
+import simbase.Execution;
+
 /**
  * @author akai
  *
@@ -16,6 +18,15 @@ public class DishonestAutoSellerLogicModel extends AgentLogicModel {
 	public boolean responseQuery() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see modelbase.LogicModel#processTransaction(simbase.Execution)
+	 */
+	@Override
+	public void processTransaction(Execution execution) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

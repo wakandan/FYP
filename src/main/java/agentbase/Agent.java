@@ -1,15 +1,17 @@
 package agentbase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 import modelbase.Entity;
 import modelbase.LogicModel;
 import productbase.Product;
 
 public abstract class Agent extends Entity {
-	double				balance;
-	ArrayList<Product>	inventory;
-	LogicModel			logicModel;
+	double						balance;
+	HashMap<String, Product>	inventory;
+	LogicModel					logicModel;
 
 	public double getBalance() {
 		return balance;
@@ -24,7 +26,7 @@ public abstract class Agent extends Entity {
 	 */
 	public Agent(String name) {
 		super(name);
-		inventory = new ArrayList<Product>();
+		inventory = new HashMap<String, Product>();
 	}
 
 	public void registerTransaction(Action action) {
@@ -56,22 +58,26 @@ public abstract class Agent extends Entity {
 	}
 
 	public void addProduct(Product prod) {
-		this.inventory.add(prod);
+		this.inventory.put(prod.getName(), prod);
 	}
 
-	public Product getProduct(int i) {
-		return (Product) this.inventory.get(i);
+	public Product getProduct(String prodName) {
+		return (Product) this.inventory.get(prodName);
 	}
 
 	public int getInventorySize() {
 		return inventory.size();
 	}
 
-	public ArrayList getInventory() {
-		return inventory;
+	/**
+	 * @param prodName
+	 */
+	public void removeProduct(String prodName) {
+		inventory.remove(prodName);
+	}
+	
+	public Set<String> getProductNames() {
+		return inventory.keySet();
 	}
 
-	public void removeProduct(int i) {
-		this.inventory.remove(i);
-	}
 }

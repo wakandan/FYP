@@ -38,7 +38,6 @@ public class TestProductAssignment extends TestSimParent {
 
 	@Test
 	public void testProductAssignment() throws Exception {		
-		sim.assignProducts();
 		/*
 		 * Agent and products generate in a same simulation run must have the
 		 * same session id
@@ -49,7 +48,8 @@ public class TestProductAssignment extends TestSimParent {
 		st.step();
 		assertEquals(sim.getQuantityAssigned(), st.columnInt(0));
 		Agent agent = (Agent) agentManager.getSellers().get("S0");
-		Product product = agent.getProduct(0);
+		assertTrue(agent.getProductNames().size()>0);
+		Product product = agent.getProduct((String)agent.getProductNames().toArray()[0]);
 
 		st = db.prepare("SELECT quantity FROM Inventories WHERE agent_name=? AND prod_name=?");
 		st.bind(1, agent.getName()).bind(2, product.getName());
@@ -59,6 +59,8 @@ public class TestProductAssignment extends TestSimParent {
 		st = db.prepare("SELECT COUNT(agent_name) FROM Inventories");
 		st.step();
 		assertEquals(sim.getNumSellerAssigned(), st.columnInt(0));
+		
+		
 	}
 
 }

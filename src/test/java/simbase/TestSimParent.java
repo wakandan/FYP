@@ -14,6 +14,7 @@ import agentbase.AgentManager;
 import configbase.AgentConfig;
 import configbase.ProductConfig;
 import configbase.SimConfig;
+import configbase.SimpleAgentConfig;
 import core.TestWithDBParent;
 
 /**
@@ -35,7 +36,7 @@ public class TestSimParent extends TestWithDBParent {
 	public void setUp() throws Exception {
 		super.setUp();
 		/* Generate agents */
-		agentConfig = new AgentConfig();
+		agentConfig = new SimpleAgentConfig();
 		agentConfig.readConfig("src/test/resources/generatorbase/TestAgentModelConfig.ini");
 		agentModel = new AgentModel();
 		agentManager = new AgentManager();
@@ -65,5 +66,7 @@ public class TestSimParent extends TestWithDBParent {
 		sim.setSimConfig(simConfig);
 		sim.setAgentManager(agentManager);
 		sim.setProdManager(prodManager);
+		
+		sim.assignProducts();
 	}
 }

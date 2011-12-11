@@ -19,6 +19,7 @@ public class ProductConfig extends Config {
 													 * randomizing when
 													 * assigning to agents
 													 */
+	double			qualityRatio;
 	/* Distribution for products range <-> price range */
 	Distribution	distribution;
 

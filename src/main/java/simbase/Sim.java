@@ -189,14 +189,14 @@ public class Sim extends BaseObject {
 		Random prodPriceRandom = new Random();
 		EntityManager sellers = agentManager.getSellers();
 		prodPicked = false;
-		logger.info("Start assigning products to sellers");	
+		logger.info("Start assigning products to sellers");
 		numSellerAssigned = 0;
-		for(Entity e: sellers.getAll()) {
-			if(prodPicked)
+		for (Entity e : sellers.getAll()) {
+			if (prodPicked)
 				break;
-			
-//		for (int i = 0; i<sellers.getSize()&&!prodPicked; i++) {
-//			seller = (Seller) sellers.get(i);
+
+			// for (int i = 0; i<sellers.getSize()&&!prodPicked; i++) {
+			// seller = (Seller) sellers.get(i);
 			seller = (Seller) e;
 
 			/* Pick products until a non-zero number of items is picked */
@@ -273,5 +273,13 @@ public class Sim extends BaseObject {
 	 */
 	public double getBalance(String accountName) {
 		return bank.getBalance(accountName);
+	}
+
+	/**
+	 * @param item
+	 * @return the real_value/price_value ratio
+	 */
+	public double getValue(String item) {
+		return 1.1;
 	}
 }
