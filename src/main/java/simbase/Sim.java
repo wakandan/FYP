@@ -27,8 +27,7 @@ import configbase.SimConfig;
 import core.BaseObject;
 
 /**
- * @author akai
- * 
+ * @author akai Main file of the project.
  */
 public class Sim extends BaseObject {
 	int					timeStep;
@@ -83,6 +82,8 @@ public class Sim extends BaseObject {
 
 	public void setSimConfig(SimConfig simConfig) {
 		this.simConfig = simConfig;
+		this.prodManager.setConfig(simConfig.getProdConfig());
+		this.agentManager.setConfig(simConfig.getAgentConfig());
 	}
 
 	public Scheduler getScheduler() {
@@ -102,16 +103,23 @@ public class Sim extends BaseObject {
 		this.prodManager.setSessionId(this.sessionId);
 	}
 
+	public Sim() {
+		this.bank = new Bank();
+		_constructor_helper();
+	}
+
 	public Sim(Bank bank) {
+		this.bank = bank;
+		_constructor_helper();
+	}
+
+	/* A wrapper of necessity functions when initiating a new object */
+	private void _constructor_helper() {
 		numSellerAssigned = 0;
 		sessionId = (new DateTime()).toString();
 		db = setUpDb();
-
 		this.initObjects();
-		this.bank = bank;
-		this.setAgentManager(agentManager);
 		this.setDb(db);
-
 	}
 
 	/**
@@ -143,22 +151,22 @@ public class Sim extends BaseObject {
 	public static void main(String[] args) {
 		int timeStep = 0;
 		int maxTimeStep;
-		Bank bank = new Bank();
-		Sim sim = new Sim(bank);
+		Sim sim = new Sim();
 		try {
 			sim.initialize();
 			sim.assignProducts();
+			maxTimeStep = sim.simConfig.getMaxTimestep();
+			while (timeStep<maxTimeStep) {
+				sim.advanceTime();
+				/* Market movement will be here */
+			}
+		} catch (SQLiteException e) {
+			sim.logger.error("Error with the database. Please review the log file");
 		} catch (Exception e) {
 			sim.logger.error("Can't initialize the simulation");
+		} finally {
 			sim.logger.error("Exiting...");
 			System.exit(1);
-		}
-		maxTimeStep = sim.simConfig.getMaxTimestep();
-		while (timeStep<maxTimeStep) {
-			sim.scheduler.advanceTime();
-			sim.topUpBalance();
-			/* Market movement will be here */
-			sim.scheduler.finalizeTimeStep();
 		}
 	}
 
@@ -263,6 +271,7 @@ public class Sim extends BaseObject {
 	 * 
 	 */
 	public void advanceTime() throws SQLiteException {
+		scheduler.finalizeTimeStep();
 		scheduler.advanceTime();
 		bank.creditAllBuyers(simConfig.getCreditPerTurn());
 	}
@@ -281,5 +290,15 @@ public class Sim extends BaseObject {
 	 */
 	public double getValue(String item) {
 		return 1.1;
+	}
+
+	public void run() throws Exception {
+		initialize();
+		assignProducts();
+		int maxTimeStep = simConfig.getMaxTimestep();
+		while (timeStep<=maxTimeStep) {
+			advanceTime();
+			timeStep++;
+		}
 	}
 }

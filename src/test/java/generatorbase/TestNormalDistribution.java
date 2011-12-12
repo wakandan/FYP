@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import configbase.DistributionConfig;
+
 /**
  *
  */
@@ -33,7 +35,8 @@ public class TestNormalDistribution {
 		double mean = 1;
 		double variance = 2;
 		double delta = 0.0000001;
-		NormalDistribution dis = new NormalDistribution(mean, variance);
+		DistributionConfig distributionConfig = new DistributionConfig(mean, variance);
+		NormalDistribution dis = new NormalDistribution(distributionConfig);
 		/* Test obvious facts first */
 		assertTrue(dis.pdf(0)>0);
 		assertTrue(Math.abs(dis.cdf(1)-0.5)<=delta);
@@ -44,7 +47,7 @@ public class TestNormalDistribution {
 		 * http://www.math.csusb.edu/
 		 * faculty/stanton/probstat/normal_distribution.html
 		 */
-		dis = new NormalDistribution(500, 50*50);
+		dis = new NormalDistribution(new DistributionConfig(500, 50*50));
 		assertTrue(Math.abs(dis.cdf_range(100, 400)-0.0227501)<=delta);
 
 	}

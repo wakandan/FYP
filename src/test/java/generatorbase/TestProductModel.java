@@ -17,6 +17,7 @@ import com.almworks.sqlite4java.SQLiteStatement;
 
 import productbase.ProductManager;
 
+import configbase.DistributionConfig;
 import configbase.ProductConfig;
 import core.TestWithDBParent;
 
@@ -45,7 +46,7 @@ public class TestProductModel extends TestWithDBParent {
 		int prcDeviation = 300*300;
 		ProductConfig config = new ProductConfig();
 		config.readConfig("src/test/resources/generatorbase/TestProductConfig.ini");
-		config.setDistribution(new NormalDistribution(prcMean, prcDeviation));
+		config.setDistribution(new NormalDistribution(new DistributionConfig(prcMean, prcDeviation)));
 		ProductModel prodModel = new ProductModel(config);
 		ProductManager prodManager = new ProductManager();
 		prodManager.setDb(this.db);

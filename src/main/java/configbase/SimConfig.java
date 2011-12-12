@@ -76,7 +76,14 @@ public class SimConfig extends Config {
 				this.creditPerTurn = Double.parseDouble(value);
 			} else if (key.equalsIgnoreCase("maxTimestep")) {
 				this.maxTimestep = Integer.parseInt(value);
+			} else if (key.equalsIgnoreCase("agentConfigFile")) {
+				this.agentConfig = new AgentConfig();
+				this.agentConfig.readConfig(value);
+			} else if (key.equalsIgnoreCase("productConfigFile")) {
+				this.prodConfig = new ProductConfig();
+				this.prodConfig.readConfig(value);
 			}
+			
 		}
 	}
 

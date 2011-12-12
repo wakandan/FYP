@@ -1,19 +1,20 @@
 package generatorbase;
 
+import configbase.Config;
+
 public class NormalDistribution extends Distribution {
 
 	/**
-	 * @param mean
-	 * @param variance
+	 * @param config
 	 */
-	public NormalDistribution(double mean, double variance) {
-		super(mean, variance);
+	public NormalDistribution(Config config) {
+		super(config);
+		// TODO Auto-generated constructor stub
 	}
 
 	/* Return probability density value at the point of x */
 	public double pdf(double x) {
-		return (double) (Math.exp(-(x-mean)*(x-mean)/(2*var))/
-				Math.sqrt(2*Math.PI*var));
+		return (double) (Math.exp(-(x-getMean())*(x-getMean())/(2*getVar()))/Math.sqrt(2*Math.PI*getVar()));
 	}
 
 	/*
@@ -32,12 +33,12 @@ public class NormalDistribution extends Distribution {
 
 	/* Estimate cdf cdf of the function, making use of cdf_range() above */
 	public double cdf(double x) {
-		return cdf_range(x-var*100, x);
+		return cdf_range(x-getVar()*100, x);
 	}
 
 	/* Substitution function for exponential part in the */
 	double _exp_part(double x) {
-		return (double) Math.exp(-(x-mean)*(x-mean)/(2*var));
+		return (double) Math.exp(-(x-getMean())*(x-getMean())/(2*getVar()));
 	}
 
 }

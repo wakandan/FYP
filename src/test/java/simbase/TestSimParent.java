@@ -12,6 +12,7 @@ import org.junit.Before;
 import productbase.ProductManager;
 import agentbase.AgentManager;
 import configbase.AgentConfig;
+import configbase.DistributionConfig;
 import configbase.ProductConfig;
 import configbase.SimConfig;
 import configbase.SimpleAgentConfig;
@@ -49,7 +50,7 @@ public class TestSimParent extends TestWithDBParent {
 		int prcMean = 500;
 		int prcDeviation = 300*300;
 		prodConfig = new ProductConfig();
-		prodConfig.setDistribution(new NormalDistribution(prcMean, prcDeviation));
+		prodConfig.setDistribution(new NormalDistribution(new DistributionConfig(prcMean, prcDeviation)));
 		prodConfig.readConfig("src/test/resources/generatorbase/TestProductConfig.ini");
 
 		prodModel = new ProductModel(prodConfig);

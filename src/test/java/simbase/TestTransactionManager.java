@@ -53,7 +53,6 @@ public class TestTransactionManager extends TestSimParent {
 		transactionManager.processTransactions();
 		assertTrue(sim.getBalance(buyer0.getName())>0);
 		assertTrue(buyer0.getProduct(prod.getName())!=null);
-		System.out.println(sim.getBalance(buyer1.getName()));
 		assertTrue(sim.getBalance(buyer1.getName())>0);
 	}
 }

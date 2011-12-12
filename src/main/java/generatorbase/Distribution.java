@@ -5,28 +5,35 @@
  * 	standard deviation as their parameter, notice them to square that no.*/
 package generatorbase;
 
+import configbase.Config;
+import configbase.DistributionConfig;
+
 public abstract class Distribution {
-	double mean;
-	double var;
-	
-	public Distribution(double mean, double variance) {
-		this.mean = mean;
-		/*EASY to get confused here*/
-		this.var = variance;
+	DistributionConfig	config;
+
+	public Distribution(Config config) {
+		this.config = (DistributionConfig) config;
 	}
+
 	public double getMean() {
-		return mean;
+		return config.getMean();
 	}
+
 	public void setMean(double mean) {
-		this.mean = mean;
+		config.setMean(mean);
 	}
+
 	public double getVar() {
-		return var;
+		return config.getVariance();
 	}
+
 	public void setVar(double variance) {
-		this.var = variance;
+		config.setVariance(variance);
 	}
+
 	public abstract double pdf(double x);
+
 	public abstract double cdf_range(double x, double y);
+
 	public abstract double cdf(double x);
 }

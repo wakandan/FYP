@@ -10,6 +10,8 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
+import simbase.Sim;
+
 /**
  * @author akai
  *
@@ -44,6 +46,17 @@ public class TestConfigRead {
 		assertEquals(100, ac.getBuyerNum());
 		assertEquals(100, ac.getSellerNum());
 		assertEquals(100.54, ac.getInitialBalance(), 0.1);
+	}
+	
+	@Test
+	public void testRunSim() throws IOException {
+		SimConfig simConfig = new SimConfig();
+		simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
+		Sim sim = new Sim();
+		sim.setSimConfig(simConfig);
+		assertTrue(sim.getAgentManager().getConfig()!=null);
+		assertTrue(sim.getProdManager().getConfig()!=null);
+		assertEquals(100, ((AgentConfig)sim.getAgentManager().getConfig()).getBuyerNum());
 	}
 	
 }
