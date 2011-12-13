@@ -71,4 +71,13 @@ public class AgentConfig extends Config {
 				this.initialBalance = Double.parseDouble(value);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see configbase.Config#processConfigKey(java.lang.String, java.lang.String)
+	 */
+	@Override
+	protected boolean processConfigKey(String key, String value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

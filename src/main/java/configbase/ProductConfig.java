@@ -97,27 +97,53 @@ public class ProductConfig extends Config {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see configbase.Config#readConfig(java.lang.String)
+	 * @see configbase.Config#processConfigKey(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
-	public void readConfig(String filename) throws IOException {
-		HashMap<String, String> configFile = Config.readConfigFile(filename);
-		String value;
-		for (String key : configFile.keySet()) {
-			value = configFile.get(key);
-			if (key.equalsIgnoreCase("numProducts"))
-				this.numProducts = Integer.parseInt(value);
-			else if (key.equalsIgnoreCase("priceMin"))
-				this.priceMin = Integer.parseInt(value);
-			else if (key.equalsIgnoreCase("priceMax"))
-				this.priceMax = Integer.parseInt(value);
-			else if (key.equalsIgnoreCase("numTypes"))
-				this.numTypes = Integer.parseInt(value);
-			else if (key.equalsIgnoreCase("numCategories"))
-				this.numCategories = Integer.parseInt(value);
-			else if (key.equalsIgnoreCase("quantityAssignmentThreadshold"))
-				this.quantityAssignmentThreadshold = Integer.parseInt(value);
-		}
+	protected boolean processConfigKey(String key, String value) {
+		String configFileNameEntry = "distributionConfigFile";
+		ClassLoader classLoader = Distribution.class.getClassLoader();
+		if (key.equalsIgnoreCase("numProducts"))
+			this.numProducts = Integer.parseInt(value);
+		else if (key.equalsIgnoreCase("priceMin"))
+			this.priceMin = Integer.parseInt(value);
+		else if (key.equalsIgnoreCase("priceMax"))
+			this.priceMax = Integer.parseInt(value);
+		else if (key.equalsIgnoreCase("numTypes"))
+			this.numTypes = Integer.parseInt(value);
+		else if (key.equalsIgnoreCase("numCategories"))
+			this.numCategories = Integer.parseInt(value);
+		else if (key.equalsIgnoreCase("quantityAssignmentThreadshold"))
+			this.quantityAssignmentThreadshold = Integer.parseInt(value);
+		else if (key.equalsIgnoreCase("distributionClassName")) {
+			try {
+				Class<Distribution> distributionClass = (Class<Distribution>) classLoader.loadClass("generatorbase."+value);
+				logger.debug("Initiating distribution class "+distributionClass.getName());
+				this.distribution = distributionClass.newInstance();
+				String configFilename = getConfigEntry(configFileNameEntry);
+				if (configFilename==null)
+					throw new InstantiationException();
+				String configClassName = "configbase."+value+"Config";
+				Class<DistributionConfig> disConfigClass = (Class<DistributionConfig>) classLoader.loadClass(configClassName);
+				logger.debug("Initiating distribution config class "+disConfigClass.getName());
+				DistributionConfig configInstance = disConfigClass.newInstance();
+				configInstance.readConfig(configFilename);
+				this.distribution.setConfig(configInstance);
+			} catch (ClassNotFoundException e) {
+				logger.error("Class "+value+" cannot be found");
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				logger.error("Class "+value+" cannot be instantiated. Does your class have a default constructor?");
+				e.printStackTrace();
+			} catch (Exception e) {
+				logger.error("Error loading class: "+value);
+				e.printStackTrace();
+			}
+		} else if (key.equalsIgnoreCase("distributionConfigFile")) {
 
+		} else
+			return false;
+		return true;
 	}
 }

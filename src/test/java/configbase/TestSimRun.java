@@ -28,12 +28,12 @@ public class TestSimRun {
 
 	@Test
 	public void testRunSim() throws Exception {
-//		SimConfig simConfig = new SimConfig();
-//		simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
-//		Sim sim = new Sim();
-//		sim.setSimConfig(simConfig);
-//		sim.setDb(dbConfig.setUpDb());
-//		sim.run();
+		SimConfig simConfig = new SimConfig();
+		simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
+		Sim sim = new Sim();
+		sim.setSimConfig(simConfig);
+		sim.setDb(dbConfig.setUpDb());
+		sim.run();
 	}
 
 }

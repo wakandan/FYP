@@ -4,6 +4,7 @@
 package configbase;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import modelbase.Entity;
 
@@ -14,6 +15,10 @@ import modelbase.Entity;
 public class DistributionConfig extends Config {
 	double	mean;
 	double	variance;
+
+	public DistributionConfig() {
+		super();
+	}
 
 	public DistributionConfig(double mean, double variance) {
 		super();
@@ -51,12 +56,18 @@ public class DistributionConfig extends Config {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see configbase.Config#readConfig(java.lang.String)
+	 * @see configbase.Config#processConfigKey(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
-	public void readConfig(String filename) throws IOException {
-		// TODO Auto-generated method stub
-
+	protected boolean processConfigKey(String key, String value) {
+		if (key.equalsIgnoreCase("mean"))
+			this.mean = Double.parseDouble(value);
+		else if (key.equalsIgnoreCase("variance"))
+			this.variance = Double.parseDouble(value);
+		else
+			return false;
+		return true;
 	}
 
 }

@@ -64,14 +64,12 @@ public class SimConfig extends Config {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see configbase.Config#readConfig(java.lang.String)
+	 * @see configbase.Config#processConfigKey(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
-	public void readConfig(String filename) throws IOException {
-		HashMap<String, String> configFile = Config.readConfigFile(filename);
-		String value;
-		for (String key : configFile.keySet()) {
-			value = configFile.get(key);
+	protected boolean processConfigKey(String key, String value) {
+		try {
 			if (key.equalsIgnoreCase("creditPerTurn")) {
 				this.creditPerTurn = Double.parseDouble(value);
 			} else if (key.equalsIgnoreCase("maxTimestep")) {
@@ -82,9 +80,13 @@ public class SimConfig extends Config {
 			} else if (key.equalsIgnoreCase("productConfigFile")) {
 				this.prodConfig = new ProductConfig();
 				this.prodConfig.readConfig(value);
-			}
-			
+			} else
+				return false;
+			return true;
+		} catch (Exception e) {
+			logger.error(e);
 		}
+		return false;
 	}
 
 }

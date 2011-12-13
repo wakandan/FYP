@@ -7,9 +7,22 @@ package generatorbase;
 
 import configbase.Config;
 import configbase.DistributionConfig;
+import core.BaseObject;
 
-public abstract class Distribution {
+public abstract class Distribution extends BaseObject {
 	DistributionConfig	config;
+
+	public Distribution() {
+		super();
+	}
+
+	public DistributionConfig getConfig() {
+		return config;
+	}
+
+	public void setConfig(DistributionConfig config) {
+		this.config = config;
+	}
 
 	public Distribution(Config config) {
 		this.config = (DistributionConfig) config;

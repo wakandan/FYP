@@ -4,6 +4,10 @@ import configbase.Config;
 
 public class NormalDistribution extends Distribution {
 
+	public NormalDistribution() {
+		super();
+	}
+	
 	/**
 	 * @param config
 	 */
