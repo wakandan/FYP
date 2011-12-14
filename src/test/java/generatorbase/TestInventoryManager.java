@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import core.TestWithDBParent;
 
+import productbase.Inventory;
 import productbase.InventoryManager;
 import productbase.Product;
 
@@ -50,6 +51,33 @@ public class TestInventoryManager extends TestWithDBParent{
 		st = db.prepare("SELECT SUM(quantity) FROM Inventories");		
 		st.step();
 		assertEquals(prod.getQuantity()+prod2.getQuantity(), st.columnInt(0));
+		
 	}
-
+	
+	@Test
+	public void testInventoryOperations() throws Exception {
+		String agentName1 = "Agent1";
+		String prodName1 = "Product1";
+		Agent seller1 = new Seller(agentName1);
+		Product prod1 = new Product(prodName1);
+		prod1.setPriceMax(1000);
+		prod1.setQuantity(100);
+		inventoryManager.add(seller1, prod1);
+		boolean found = false;
+		for(Inventory inventory: inventoryManager.getProductsBySellerName(seller1.getName())) {
+			if(inventory.getProdName().equalsIgnoreCase(prod1.getName()))
+				found = true;
+		}
+		assertTrue(found);
+		
+		found = false;
+		for(Inventory inventory: inventoryManager.getSellersByProductName(prod1.getName())){
+			if(inventory.getAgentName().equalsIgnoreCase(seller1.getName()))
+				found = true;
+		}
+		assertTrue(found);
+		assertEquals(1000, inventoryManager.getPrice(seller1.getName(), prod1.getName()), 0.1);
+		assertEquals(100, inventoryManager.getInventory(seller1.getName(), prod1.getName()).getQuantity(), 0.1);
+	}
+	
 }

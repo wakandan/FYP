@@ -3,6 +3,7 @@
  */
 package generatorbase;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -31,6 +32,11 @@ public class EntityManager extends BaseObject {
 	protected SQLiteConnection			db;
 	protected HashMap<String, Entity>	entities;
 	protected SQLiteStatement			st;
+	ArrayList<String>					entitiesNames;
+
+	public ArrayList<String> getEntitiesNames() {
+		return entitiesNames;
+	}
 
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
@@ -71,10 +77,12 @@ public class EntityManager extends BaseObject {
 		super();
 		sessionId = (new DateTime()).toString();
 		entities = new HashMap<String, Entity>();
+		entitiesNames = new ArrayList<String>();
 	}
 
 	public void add(Entity e) throws Exception {
 		entities.put(e.getName(), e);
+		entitiesNames.add(e.getName());
 	}
 
 	public String getSessionId() {

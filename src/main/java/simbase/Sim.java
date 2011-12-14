@@ -7,6 +7,7 @@ import generatorbase.AgentModel;
 import generatorbase.EntityManager;
 import generatorbase.ProductModel;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import modelbase.Entity;
@@ -17,6 +18,7 @@ import productbase.InventoryManager;
 import productbase.Product;
 import productbase.ProductManager;
 import agentbase.AgentManager;
+import agentbase.Buyer;
 import agentbase.Seller;
 
 import com.almworks.sqlite4java.SQLiteConnection;
@@ -293,10 +295,23 @@ public class Sim extends BaseObject {
 	}
 
 	public void run() throws Exception {
+		Buyer buyer;
+		Seller seller;
+		Product product;
 		initialize();
+		ArrayList<String> sellersNames = getAgentManager().getSellers().getEntitiesNames();
+		ArrayList<String> productList = getProdManager().getEntitiesNames();
 		assignProducts();
 		int maxTimeStep = simConfig.getMaxTimestep();
 		while (timeStep<=maxTimeStep) {
+			for (Entity e : getAgentManager().getBuyers().getAll()) {
+				buyer = (Buyer) e;
+				product = buyer.chooseProduct(productList);
+				seller = buyer.chooseSeller(sellersNames);
+				if(product!=null && seller!=null) {
+					transactionManager.addTransaction(buyer, seller, product,  inventoryManager.getPrice(seller, product));
+				}
+			}
 			advanceTime();
 			timeStep++;
 		}

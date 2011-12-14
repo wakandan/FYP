@@ -24,7 +24,6 @@ public class Seller extends Agent {
 		Execution execution;
 		for (Transaction transaction : transactions) {
 			execution = new Execution(transaction, false);
-			/* Check if the price is good */
 			logicModel.processTransaction(execution);
 			executions.add(execution);
 		}

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import productbase.Product;
 
 import modelbase.Entity;
+import agentbase.Buyer;
 import agentbase.Seller;
 
 public class TransactionManager extends EntityManager {
@@ -30,10 +31,27 @@ public class TransactionManager extends EntityManager {
 	 * valid - If quantity requested <= quantity available
 	 */
 	public boolean addTransaction(String buyerName, String sellerName, String item, int quantity, double price) {
+		return addTransaction(new Transaction(buyerName, sellerName, item, quantity, price));
+	}
+	
+	/*Quick function to buy a single item of product*/
+	public boolean addTransaction(String buyerName, String sellerName, String item, double price) {
+		return addTransaction(new Transaction(buyerName, sellerName, item, 1, price));
+	}
+
+	public boolean addTransaction(Buyer buyer, Seller seller, Product product, double price) {
+		return addTransaction(new Transaction(buyer.getName(), seller.getName(), product.getName(), 1, price));
+	}
+	
+	public boolean addTransaction(Transaction transaction) {
 		int tmpQuantity = -1;
 		Seller seller;
 		Product product;
-		Transaction transaction = new Transaction(buyerName, sellerName, item, quantity, price);
+		String buyerName = transaction.buyer;
+		String sellerName = transaction.seller;
+		String item = transaction.item;
+		int quantity = transaction.quantity;
+		double price = transaction.price;
 		/* Check if the seller name is valid */		
 		if ((seller = (Seller) sim.getAgentManager().getAgentByName(sellerName))!=null) {
 			if (!transactions.containsKey(sellerName)) {
@@ -60,7 +78,7 @@ public class TransactionManager extends EntityManager {
 			return false;
 		}
 	}
-
+	
 	public void processTransactions() {
 		logger.info("Processing transactions");
 		for (String sellerName : transactions.keySet()) {
@@ -87,6 +105,7 @@ public class TransactionManager extends EntityManager {
 			Product prod = new Product(oldProd);
 			prod.setQuantity(execution.quantity);
 			oldProd.setQuantity(oldProd.getQuantity()-execution.quantity);
+//			sim.inventoryManager.add(execution .buyer, prod);
 			sim.agentManager.getAgentByName(execution.buyer).addProduct(prod);
 		}
 	}

@@ -72,5 +72,4 @@ public class AgentManager extends EntityManager {
 		}
 		return (Agent) e;
 	}
-
 }

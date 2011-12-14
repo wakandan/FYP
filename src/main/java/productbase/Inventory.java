@@ -12,12 +12,17 @@ import modelbase.Entity;
  * @author akai
  * @note Inventory is a class to represent the relationship between an agent &
  *       products he is in possess. It corresponds to database table Inventories
- *       in the database
+ *       in the database.
  */
 public class Inventory extends Entity {
 	String	agentName;
 	String	prodName;
 	int		quantity;
+	double	price;
+
+	public double getPrice() {
+		return price;
+	}
 
 	/**
 	 * @param name
@@ -26,12 +31,13 @@ public class Inventory extends Entity {
 	public Inventory(String name) {
 		super(name);
 	}
-	
+
 	public Inventory(Agent a, Product p) {
-		super("");	/*Dummy*/
+		super(""); /* Dummy */
 		this.agentName = a.getName();
 		this.prodName = p.getName();
 		this.quantity = p.getQuantity();
+		this.price = p.getPriceMax();
 	}
 
 	public String getAgentName() {
@@ -57,6 +63,5 @@ public class Inventory extends Entity {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	
 
 }
