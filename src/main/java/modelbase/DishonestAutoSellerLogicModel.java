@@ -22,11 +22,12 @@ public class DishonestAutoSellerLogicModel extends AgentLogicModel {
 
 	/* (non-Javadoc)
 	 * @see modelbase.LogicModel#processTransaction(simbase.Execution)
+	 * Dishonest seller will always decline transaction. This is just an 
+	 * example
 	 */
 	@Override
 	public void processTransaction(Execution execution) {
-		// TODO Auto-generated method stub
-		
+		execution.setSuccess(false);
 	}
 
 }

@@ -103,6 +103,7 @@ public class ProductConfig extends Config {
 	@Override
 	protected boolean processConfigKey(String key, String value) {
 		String configFileNameEntry = "distributionConfigFile";
+		String configClassNameEntry="distributionConfigClassName";
 		ClassLoader classLoader = Distribution.class.getClassLoader();
 		if (key.equalsIgnoreCase("numProducts"))
 			this.numProducts = Integer.parseInt(value);
@@ -118,13 +119,16 @@ public class ProductConfig extends Config {
 			this.quantityAssignmentThreadshold = Integer.parseInt(value);
 		else if (key.equalsIgnoreCase("distributionClassName")) {
 			try {
-				Class<Distribution> distributionClass = (Class<Distribution>) classLoader.loadClass("generatorbase."+value);
+				/*Dynamically create a new object from the distribution class*/
+				Class<Distribution> distributionClass = (Class<Distribution>) classLoader.loadClass(value);
 				logger.debug("Initiating distribution class "+distributionClass.getName());
 				this.distribution = distributionClass.newInstance();
+				
+				/*Dynamically load config data into the new object*/
 				String configFilename = getConfigEntry(configFileNameEntry);
-				if (configFilename==null)
-					throw new InstantiationException();
-				String configClassName = "configbase."+value+"Config";
+				String configClassName = getConfigEntry(configClassNameEntry);
+				if (configFilename==null || configClassName==null)
+					throw new InstantiationException();				
 				Class<DistributionConfig> disConfigClass = (Class<DistributionConfig>) classLoader.loadClass(configClassName);
 				logger.debug("Initiating distribution config class "+disConfigClass.getName());
 				DistributionConfig configInstance = disConfigClass.newInstance();
@@ -134,13 +138,14 @@ public class ProductConfig extends Config {
 				logger.error("Class "+value+" cannot be found");
 				e.printStackTrace();
 			} catch (InstantiationException e) {
-				logger.error("Class "+value+" cannot be instantiated. Does your class have a default constructor?");
+				logger.error("Class "+value+" cannot be instantiated. Unable to read config entries/Does your class have a default constructor?");
 				e.printStackTrace();
 			} catch (Exception e) {
 				logger.error("Error loading class: "+value);
 				e.printStackTrace();
 			}
-		} else if (key.equalsIgnoreCase("distributionConfigFile")) {
+		} else if (key.equalsIgnoreCase(configFileNameEntry) || 
+				key.equalsIgnoreCase(configClassNameEntry)) {
 
 		} else
 			return false;

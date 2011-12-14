@@ -34,7 +34,7 @@ public class TransactionManager extends EntityManager {
 		Seller seller;
 		Product product;
 		Transaction transaction = new Transaction(buyerName, sellerName, item, quantity, price);
-		/* Check if the seller name is valid */
+		/* Check if the seller name is valid */		
 		if ((seller = (Seller) sim.getAgentManager().getAgentByName(sellerName))!=null) {
 			if (!transactions.containsKey(sellerName)) {
 				transactions.put(sellerName, new ArrayList<Transaction>());
@@ -46,7 +46,7 @@ public class TransactionManager extends EntityManager {
 				logger.error("This item "+item+" does not belong to seller "+sellerName);
 				return false;
 			}
-
+			
 			/* Check if item quantity is valid */
 			tmpQuantity = ((Product) seller.getProduct(item)).getQuantity();
 			if (tmpQuantity<0||tmpQuantity<quantity) {
