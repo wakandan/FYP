@@ -10,13 +10,16 @@ import java.util.HashMap;
 import modelbase.Entity;
 import agentbase.Agent;
 import agentbase.AgentManager;
+import agentbase.Buyer;
 
 import com.almworks.sqlite4java.SQLiteException;
 
 import core.Account;
 
 /**
- * @author akai Class to manage system's account money
+ * Class to manage system's account money.
+ * 
+ * @author akai
  */
 public class Bank extends EntityManager {
 	HashMap<String, Account>	accounts;
@@ -75,11 +78,11 @@ public class Bank extends EntityManager {
 		}
 	}
 
-	public void creditBalance(String accountName, double value) {
-		if (accounts.containsKey(accountName)) {
-			accounts.get(accountName).setBalance(value+accounts.get(accountName).getBalance());
+	public void creditBalance(Buyer buyer, double value) {
+		if (accounts.containsKey(buyer.getName())) {
+			accounts.get(buyer.getName()).setBalance(value+accounts.get(buyer.getName()).getBalance());
 		} else {
-			accountNotExistError(accountName);
+			accountNotExistError(buyer.getName());
 		}
 	}
 

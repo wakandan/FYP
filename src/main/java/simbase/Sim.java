@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import productbase.InventoryManager;
 import productbase.Product;
 import productbase.ProductManager;
+import agentbase.Agent;
 import agentbase.AgentManager;
 import agentbase.Buyer;
 import agentbase.Seller;
@@ -189,7 +190,8 @@ public class Sim extends BaseObject {
 	public void assignProducts() throws Exception {
 		int numProd;
 		int prodNum;
-		int quantityAssignThres = ((ProductConfig) prodManager.getConfig()).getQuantityAssignmentThreadshold();
+		int quantityAssignThres = ((ProductConfig) prodManager.getConfig())
+				.getQuantityAssignmentThreadshold();
 		boolean prodPicked = false;
 		Product prod, tmpProd = null;
 		quantityAssigned = 0;
@@ -204,9 +206,6 @@ public class Sim extends BaseObject {
 		for (Entity e : sellers.getAll()) {
 			if (prodPicked)
 				break;
-
-			// for (int i = 0; i<sellers.getSize()&&!prodPicked; i++) {
-			// seller = (Seller) sellers.get(i);
 			seller = (Seller) e;
 
 			/* Pick products until a non-zero number of items is picked */
@@ -238,14 +237,16 @@ public class Sim extends BaseObject {
 			quantityAssigned += numProd;
 			tmpProd.setQuantity(numProd);
 			tmpProd.setPriceMin(prod.getPriceMin());
-			tmpProd.setPriceMax(prod.getPriceMin()+prodPriceRandom.nextDouble()*(prod.getPriceMax()-prod.getPriceMin()));
+			tmpProd.setPriceMax(prod.getPriceMin()+prodPriceRandom.nextDouble()
+					*(prod.getPriceMax()-prod.getPriceMin()));
 			inventoryManager.add(seller, tmpProd);
 			prod.setQuantity(prod.getQuantity()-tmpProd.getQuantity());
 			if (prod.getQuantity()==0) {
 				prodManager.remove(prodNum);
 				logger.debug("Product "+prod.getName()+" is up!");
 			}
-			logger.debug("Assigned product "+prod.getName()+"("+tmpProd.getQuantity()+") to seller "+seller.getName());
+			logger.debug("Assigned product "+prod.getName()+"("+tmpProd.getQuantity()
+					+") to seller "+seller.getName());
 			numSellerAssigned++;
 
 		}
@@ -286,12 +287,8 @@ public class Sim extends BaseObject {
 		return bank.getBalance(accountName);
 	}
 
-	/**
-	 * @param item
-	 * @return the real_value/price_value ratio
-	 */
-	public double getValue(String item) {
-		return 1.1;
+	public double getBalance(Agent agent) {
+		return bank.getBalance(agent.getName());
 	}
 
 	public void run() throws Exception {
@@ -308,8 +305,9 @@ public class Sim extends BaseObject {
 				buyer = (Buyer) e;
 				product = buyer.chooseProduct(productList);
 				seller = buyer.chooseSeller(sellersNames);
-				if(product!=null && seller!=null) {
-					transactionManager.addTransaction(buyer, seller, product,  inventoryManager.getPrice(seller, product));
+				if (product!=null&&seller!=null) {
+					transactionManager.addTransaction(buyer, seller, product,
+							inventoryManager.getPrice(seller, product));
 				}
 			}
 			advanceTime();

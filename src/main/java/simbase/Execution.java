@@ -15,7 +15,7 @@ public class Execution extends Transaction {
 	}
 
 	public Execution(Transaction transaction, boolean success) {
-		super(transaction.buyer, transaction.seller, transaction.item, transaction.quantity, transaction.price);
+		super(transaction.buyer, transaction.seller, transaction.prod, transaction.quantity, transaction.price);
 		this.success = success;
 	}
 

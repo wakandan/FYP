@@ -15,45 +15,26 @@ import modelbase.Entity;
  *       in the database.
  */
 public class Inventory extends Entity {
-	String	agentName;
-	String	prodName;
+	Agent	agent;
+	Product	prod;
 	int		quantity;
 	double	price;
+	double	value;
 
-	public double getPrice() {
-		return price;
+	public Agent getAgent() {
+		return agent;
 	}
 
-	/**
-	 * @param name
-	 *            : the timestampt when the relationship is made
-	 */
-	public Inventory(String name) {
-		super(name);
+	public void setAgent(Agent agent) {
+		this.agent = agent;
 	}
 
-	public Inventory(Agent a, Product p) {
-		super(""); /* Dummy */
-		this.agentName = a.getName();
-		this.prodName = p.getName();
-		this.quantity = p.getQuantity();
-		this.price = p.getPriceMax();
+	public Product getProd() {
+		return prod;
 	}
 
-	public String getAgentName() {
-		return agentName;
-	}
-
-	public void setAgentName(String agentName) {
-		this.agentName = agentName;
-	}
-
-	public String getProdName() {
-		return prodName;
-	}
-
-	public void setProdName(String prodName) {
-		this.prodName = prodName;
+	public void setProd(Product prod) {
+		this.prod = prod;
 	}
 
 	public int getQuantity() {
@@ -64,4 +45,38 @@ public class Inventory extends Entity {
 		this.quantity = quantity;
 	}
 
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public double getValue() {
+		return value;
+	}
+
+	public void setValue(double value) {
+		this.value = value;
+	}
+
+	public Inventory(Agent agent, Product prod, int quantity, double price, double value) {
+		super();
+		this.agent = agent;
+		this.prod = prod;
+		this.quantity = quantity;
+		this.price = price;
+		this.value = value;
+	}
+	
+	public Inventory(Agent agent, Product prod) {
+		super();		
+		this.agent = agent;
+		this.prod = prod;
+		this.quantity = prod.getQuantity();
+		this.price = prod.getPriceMax();
+		this.value = 0;
+		
+	}
 }

@@ -104,4 +104,8 @@ public class EntityManager extends BaseObject {
 	public Collection<Entity> getAll() {
 		return entities.values();
 	}
+	
+	public Entity getEntityByName(String entityName) {
+		return entities.get(entityName);
+	}
 }

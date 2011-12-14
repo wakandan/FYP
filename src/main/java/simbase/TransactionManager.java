@@ -11,6 +11,10 @@ import modelbase.Entity;
 import agentbase.Buyer;
 import agentbase.Seller;
 
+/*
+ * Class to manage transaction (buying) between agents
+ * @author: akai
+ * */
 public class TransactionManager extends EntityManager {
 	Sim										sim;
 	/* A map between seller's name and an array list of transactions */
@@ -26,33 +30,25 @@ public class TransactionManager extends EntityManager {
 		setAgents(sim.getAgentManager().getSellers());
 	}
 
-	/*
-	 * Add a request into transaction list. Do checks: - If the seller name is
-	 * valid - If quantity requested <= quantity available
-	 */
-	public boolean addTransaction(String buyerName, String sellerName, String item, int quantity, double price) {
-		return addTransaction(new Transaction(buyerName, sellerName, item, quantity, price));
-	}
-	
-	/*Quick function to buy a single item of product*/
-	public boolean addTransaction(String buyerName, String sellerName, String item, double price) {
-		return addTransaction(new Transaction(buyerName, sellerName, item, 1, price));
+	public boolean addTransaction(Buyer buyer, Seller seller, Product product, double price) {
+		return addTransaction(new Transaction(buyer, seller, product, 1, price));
 	}
 
-	public boolean addTransaction(Buyer buyer, Seller seller, Product product, double price) {
-		return addTransaction(new Transaction(buyer.getName(), seller.getName(), product.getName(), 1, price));
+	public boolean addTransaction(Buyer buyer, Seller seller, Product product, int quantity,
+			double price) {
+		return addTransaction(new Transaction(buyer, seller, product, quantity, price));
 	}
-	
+
 	public boolean addTransaction(Transaction transaction) {
 		int tmpQuantity = -1;
 		Seller seller;
 		Product product;
-		String buyerName = transaction.buyer;
-		String sellerName = transaction.seller;
-		String item = transaction.item;
+		String buyerName = transaction.buyer.getName();
+		String sellerName = transaction.seller.getName();
+		String item = transaction.prod.getName();
 		int quantity = transaction.quantity;
 		double price = transaction.price;
-		/* Check if the seller name is valid */		
+		/* Check if the seller name is valid */
 		if ((seller = (Seller) sim.getAgentManager().getAgentByName(sellerName))!=null) {
 			if (!transactions.containsKey(sellerName)) {
 				transactions.put(sellerName, new ArrayList<Transaction>());
@@ -64,7 +60,7 @@ public class TransactionManager extends EntityManager {
 				logger.error("This item "+item+" does not belong to seller "+sellerName);
 				return false;
 			}
-			
+
 			/* Check if item quantity is valid */
 			tmpQuantity = ((Product) seller.getProduct(item)).getQuantity();
 			if (tmpQuantity<0||tmpQuantity<quantity) {
@@ -78,11 +74,12 @@ public class TransactionManager extends EntityManager {
 			return false;
 		}
 	}
-	
-	public void processTransactions() {
+
+	public void processTransactions() throws Exception {
 		logger.info("Processing transactions");
 		for (String sellerName : transactions.keySet()) {
-			transactions.put(sellerName, ((Seller) sim.agentManager.get(sellerName)).processTransactions(transactions.get(sellerName)));
+			transactions.put(sellerName, ((Seller) sim.agentManager.get(sellerName))
+					.processTransactions(transactions.get(sellerName)));
 		}
 		for (String sellerName : transactions.keySet()) {
 			for (Transaction t : transactions.get(sellerName)) {
@@ -97,16 +94,22 @@ public class TransactionManager extends EntityManager {
 
 	/**
 	 * @param execution
+	 * @throws Exception
 	 */
-	private void processExecution(Execution execution) {
+	private void processExecution(Execution execution) throws Exception {
 		if (execution.success) {
-			sim.bank.creditBalance(execution.buyer, execution.quantity*((sim.getValue(execution.item)-1)*execution.price));
-			Product oldProd = (Product) sim.prodManager.get(execution.item);
+			sim.bank.creditBalance(
+					execution.buyer,
+					execution.quantity
+							*((sim.inventoryManager.getValue(execution.seller, execution.prod)-1)*execution.price));
+			System.out.println("Product value: "+sim.inventoryManager.getValue(execution.seller, execution.prod));
+			Product oldProd = (Product) sim.inventoryManager.getInventory(execution.seller,
+					execution.prod).getProd();
 			Product prod = new Product(oldProd);
 			prod.setQuantity(execution.quantity);
 			oldProd.setQuantity(oldProd.getQuantity()-execution.quantity);
-//			sim.inventoryManager.add(execution .buyer, prod);
-			sim.agentManager.getAgentByName(execution.buyer).addProduct(prod);
+			sim.inventoryManager.add(execution.buyer, execution.prod);
+			// sim.agentManager.getAgentByName(execution.buyer).addProduct(prod);
 		}
 	}
 

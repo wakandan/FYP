@@ -65,14 +65,14 @@ public class TestInventoryManager extends TestWithDBParent{
 		inventoryManager.add(seller1, prod1);
 		boolean found = false;
 		for(Inventory inventory: inventoryManager.getProductsBySellerName(seller1.getName())) {
-			if(inventory.getProdName().equalsIgnoreCase(prod1.getName()))
+			if(inventory.getProd().getName().equalsIgnoreCase(prod1.getName()))
 				found = true;
 		}
 		assertTrue(found);
 		
 		found = false;
 		for(Inventory inventory: inventoryManager.getSellersByProductName(prod1.getName())){
-			if(inventory.getAgentName().equalsIgnoreCase(seller1.getName()))
+			if(inventory.getAgent().getName().equalsIgnoreCase(seller1.getName()))
 				found = true;
 		}
 		assertTrue(found);

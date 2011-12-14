@@ -1,45 +1,50 @@
 package simbase;
 
+import productbase.Product;
+import agentbase.Buyer;
+import agentbase.Seller;
 import core.BaseObject;
 
 public class Transaction extends BaseObject {
-	String	buyer;
-	String	seller;
-	String	item;
+	Buyer	buyer;
+	Seller	seller;
+	Product	prod;
 	int		quantity;
 	double	price;
+	
+	
 
-	public Transaction(String buyer, String seller, String item, int quantity, double price) {
+	public Transaction(Buyer buyer, Seller seller, Product prod, int quantity, double price) {
 		super();
 		this.buyer = buyer;
 		this.seller = seller;
-		this.item = item;
+		this.prod = prod;
 		this.quantity = quantity;
 		this.price = price;
 	}
 
-	public String getBuyer() {
+	public Buyer getBuyer() {
 		return buyer;
 	}
 
-	public void setBuyer(String buyer) {
+	public void setBuyer(Buyer buyer) {
 		this.buyer = buyer;
 	}
 
-	public String getSeller() {
+	public Seller getSeller() {
 		return seller;
 	}
 
-	public void setSeller(String seller) {
+	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
 
-	public String getItem() {
-		return item;
+	public Product getProd() {
+		return prod;
 	}
 
-	public void setItem(String item) {
-		this.item = item;
+	public void setProd(Product prod) {
+		this.prod = prod;
 	}
 
 	public int getQuantity() {

@@ -22,13 +22,13 @@ import generatorbase.EntityManager;
 public class InventoryManager extends EntityManager {
 
 	HashMap<String, ArrayList<Inventory>>	owners; /*
-										 * Hashmap for Seller's name ->
-										 * Inventories
-										 */
+													 * Hashmap for Seller's name
+													 * -> Inventories
+													 */
 	HashMap<String, ArrayList<Inventory>>	stores; /*
-										 * Hashmap for Inventory's name ->
-										 * Seller's names
-										 */
+													 * Hashmap for Inventory's
+													 * name -> Seller's names
+													 */
 
 	public InventoryManager() {
 		super();
@@ -41,18 +41,19 @@ public class InventoryManager extends EntityManager {
 		super.add(e);
 		String sql = "INSERT INTO Inventories(agent_name, prod_name, quantity) VALUES(?, ?, ?)";
 		SQLiteStatement st = db.prepare(sql);
-		st.bind(1, inventory.getAgentName()).bind(2, inventory.getProdName()).bind(3, inventory.getQuantity());
+		st.bind(1, inventory.getAgent().getName()).bind(2, inventory.getProd().getName())
+						.bind(3, inventory.getQuantity());
 		st.step();
 
-		if (!owners.containsKey(inventory.getAgentName())) {
-			owners.put(inventory.getAgentName(), new ArrayList<Inventory>());
+		if (!owners.containsKey(inventory.getAgent().getName())) {
+			owners.put(inventory.getAgent().getName(), new ArrayList<Inventory>());
 		}
-		owners.get(inventory.agentName).add(inventory);
+		owners.get(inventory.getAgent().getName()).add(inventory);
 
-		if (!stores.containsKey(inventory.getProdName())) {
-			stores.put(inventory.getProdName(), new ArrayList<Inventory>());
+		if (!stores.containsKey(inventory.getProd().getName())) {
+			stores.put(inventory.getProd().getName(), new ArrayList<Inventory>());
 		}
-		stores.get(inventory.prodName).add(inventory);
+		stores.get(inventory.getProd().getName()).add(inventory);
 
 	}
 
@@ -84,21 +85,39 @@ public class InventoryManager extends EntityManager {
 	public ArrayList<Inventory> getSellersByProductName(String prodName) {
 		return stores.get(prodName);
 	}
-	
+
 	public double getPrice(String sellerName, String prodName) {
 		try {
 			return getInventory(sellerName, prodName).getPrice();
-		} catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			logger.error("Seller "+sellerName+" does not have product: "+prodName);
 			return 0;
 		}
 	}
-	
+
+	public Inventory getInventory(Seller seller, Product prod) {
+		return getInventory(seller.getName(), prod.getName());
+	}
+
 	public Inventory getInventory(String sellerName, String prodName) {
-		for(Inventory inventory: owners.get(sellerName)) {
-			if(prodName.equalsIgnoreCase(inventory.getProdName()))
+		for (Inventory inventory : owners.get(sellerName)) {
+			if (prodName.equalsIgnoreCase(inventory.getProd().getName()))
 				return inventory;
 		}
 		return null;
-	}	
+	}
+
+	/**
+	 * @param seller
+	 * @param prod
+	 * @return
+	 */
+	public double getValue(Seller seller, Product prod) {
+		try {
+			return getInventory(seller, prod).getValue();
+		} catch (Exception e) {
+			logger.error("Unable to get value for product "+prod);
+			return 0;
+		}
+	}
 }
