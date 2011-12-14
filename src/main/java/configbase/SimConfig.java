@@ -6,6 +6,7 @@ package configbase;
 import java.io.IOException;
 import java.util.HashMap;
 
+import modelbase.AgentLogicModel;
 import modelbase.Entity;
 
 /**
@@ -69,18 +70,34 @@ public class SimConfig extends Config {
 	 */
 	@Override
 	protected boolean processConfigKey(String key, String value) {
+		ClassLoader classLoader = AgentLogicModel.class.getClassLoader();
 		try {
 			if (key.equalsIgnoreCase("creditPerTurn")) {
 				this.creditPerTurn = Double.parseDouble(value);
 			} else if (key.equalsIgnoreCase("maxTimestep")) {
 				this.maxTimestep = Integer.parseInt(value);
 			} else if (key.equalsIgnoreCase("agentConfigFile")) {
-				this.agentConfig = new AgentConfig();
 				this.agentConfig.readConfig(value);
 			} else if (key.equalsIgnoreCase("productConfigFile")) {
 				this.prodConfig = new ProductConfig();
 				this.prodConfig.readConfig(value);
-			} else
+			} else if (key.equalsIgnoreCase("agentConfigClass")) {
+				try {
+					/*Dynamically create a new object from the distribution class*/
+					Class<AgentConfig> agentConfigClass = (Class<AgentConfig>) classLoader.loadClass(value);
+					logger.debug("Initiating agent logic class "+agentConfigClass.getName());
+					this.agentConfig = agentConfigClass.newInstance();										
+				} catch (ClassNotFoundException e) {
+					logger.error("Class "+value+" cannot be found");
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					logger.error("Class "+value+" cannot be instantiated. Unable to read config entries/Does your class have a default constructor?");
+					e.printStackTrace();
+				} catch (Exception e) {
+					logger.error("Error loading class: "+value);
+					e.printStackTrace();
+				}
+			} else 
 				return false;
 			return true;
 		} catch (Exception e) {

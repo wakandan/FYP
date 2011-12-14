@@ -1,8 +1,11 @@
 package configbase;
 
+import generatorbase.Distribution;
+
 import java.io.IOException;
 import java.util.HashMap;
 
+import modelbase.AgentLogicModel;
 import modelbase.DishonestAutoBuyerLogicModel;
 import modelbase.DishonestAutoSellerLogicModel;
 import modelbase.Entity;
@@ -19,6 +22,7 @@ public class AgentConfig extends Config {
 	int		buyerNum;
 	int		sellerNum;
 	double	initialBalance;
+	AgentLogicModel logicModel;
 
 	public void setBuyerNum(int buyerNum) {
 		this.buyerNum = buyerNum;
@@ -52,32 +56,19 @@ public class AgentConfig extends Config {
 	@Override
 	public void configure(Entity e) {}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see configbase.Config#readConfig(java.lang.String)
-	 */
-	@Override
-	public void readConfig(String filename) throws IOException {
-		HashMap<String, String> configFile = Config.readConfigFile(filename);
-		String value;
-		for (String key : configFile.keySet()) {
-			value = configFile.get(key);
-			if (key.equalsIgnoreCase("buyerNum"))
-				this.buyerNum = Integer.parseInt(value);
-			else if (key.equalsIgnoreCase("sellerNum"))
-				this.sellerNum = Integer.parseInt(value);
-			else if (key.equalsIgnoreCase("initialBalance"))
-				this.initialBalance = Double.parseDouble(value);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see configbase.Config#processConfigKey(java.lang.String, java.lang.String)
 	 */
 	@Override
-	protected boolean processConfigKey(String key, String value) {
-		// TODO Auto-generated method stub
-		return false;
+	protected boolean processConfigKey(String key, String value) {		
+		if (key.equalsIgnoreCase("buyerNum"))
+			this.buyerNum = Integer.parseInt(value);
+		else if (key.equalsIgnoreCase("sellerNum"))
+			this.sellerNum = Integer.parseInt(value);
+		else if (key.equalsIgnoreCase("initialBalance"))
+			this.initialBalance = Double.parseDouble(value);
+		else
+			return false;
+		return true;
 	}
 }

@@ -43,9 +43,18 @@ public abstract class Config extends BaseObject {
 		HashMap<String, String> result = new HashMap<String, String>();
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
 		while ((line = br.readLine())!=null) {
+
+			/*
+			 * Ignore lines start with hash "#". This line will be considered as
+			 * comments
+			 */
 			if (line.startsWith("#"))
 				continue;
 			lineData = line.split("=");
+
+			/* Ignore invalid lines */
+			if (lineData.length<2)
+				continue;
 			if (!result.containsKey(lineData[0])) {
 				result.put(lineData[0].trim(), lineData[1].trim());
 			}

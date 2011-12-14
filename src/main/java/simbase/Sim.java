@@ -14,6 +14,7 @@ import modelbase.Entity;
 
 import org.joda.time.DateTime;
 
+import productbase.Inventory;
 import productbase.InventoryManager;
 import productbase.Product;
 import productbase.ProductManager;
@@ -190,6 +191,7 @@ public class Sim extends BaseObject {
 	public void assignProducts() throws Exception {
 		int numProd;
 		int prodNum;
+		Inventory inventory;
 		int quantityAssignThres = ((ProductConfig) prodManager.getConfig())
 				.getQuantityAssignmentThreadshold();
 		boolean prodPicked = false;
@@ -207,6 +209,7 @@ public class Sim extends BaseObject {
 			if (prodPicked)
 				break;
 			seller = (Seller) e;
+			System.out.println(seller.getLogicModel());
 
 			/* Pick products until a non-zero number of items is picked */
 			/* No more products to assign, terminate */
@@ -239,7 +242,8 @@ public class Sim extends BaseObject {
 			tmpProd.setPriceMin(prod.getPriceMin());
 			tmpProd.setPriceMax(prod.getPriceMin()+prodPriceRandom.nextDouble()
 					*(prod.getPriceMax()-prod.getPriceMin()));
-			inventoryManager.add(seller, tmpProd);
+			inventory = inventoryManager.add(seller, tmpProd);
+			inventory.setValue(seller.initValue(tmpProd));
 			prod.setQuantity(prod.getQuantity()-tmpProd.getQuantity());
 			if (prod.getQuantity()==0) {
 				prodManager.remove(prodNum);
@@ -300,7 +304,7 @@ public class Sim extends BaseObject {
 		ArrayList<String> productList = getProdManager().getEntitiesNames();
 		assignProducts();
 		int maxTimeStep = simConfig.getMaxTimestep();
-		while (timeStep<=maxTimeStep) {
+		while (timeStep<maxTimeStep) {
 			for (Entity e : getAgentManager().getBuyers().getAll()) {
 				buyer = (Buyer) e;
 				product = buyer.chooseProduct(productList);

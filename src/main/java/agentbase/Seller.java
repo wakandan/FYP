@@ -29,4 +29,12 @@ public class Seller extends Agent {
 		}
 		return executions;
 	}
+
+	/**
+	 * @param tmpProd
+	 * @return
+	 */
+	public double initValue(Product tmpProd) {
+		return this.logicModel.initValue(tmpProd);
+	}
 }

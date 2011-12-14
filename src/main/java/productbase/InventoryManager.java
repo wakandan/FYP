@@ -57,9 +57,11 @@ public class InventoryManager extends EntityManager {
 
 	}
 
-	public void add(Agent a, Product p) throws Exception {
+	public Inventory add(Agent a, Product p) throws Exception {
+		Inventory inventory = new Inventory(a, p); 
 		a.addProduct(p);
-		add(new Inventory(a, p));
+		add(inventory);
+		return inventory;
 	}
 
 	/**

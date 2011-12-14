@@ -3,6 +3,7 @@
  */ 
 package modelbase;
 
+import productbase.Product;
 import agentbase.Seller;
 import simbase.Execution;
 
@@ -29,5 +30,14 @@ public class HonestAutoSellerLogicModel extends AgentLogicModel {
 	public void processTransaction(Execution execution) {
 		Seller seller = (Seller) agent;
 		execution.setSuccess(true);
+	}
+
+	/* (non-Javadoc)
+	 * @see modelbase.LogicModel#initValue(productbase.Product)
+	 */
+	@Override
+	public double initValue(Product prod) {
+		// TODO Auto-generated method stub
+		return 1.2;
 	}
 }

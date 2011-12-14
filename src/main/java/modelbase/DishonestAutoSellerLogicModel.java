@@ -3,6 +3,7 @@
  */ 
 package modelbase;
 
+import productbase.Product;
 import simbase.Execution;
 
 /**
@@ -28,6 +29,15 @@ public class DishonestAutoSellerLogicModel extends AgentLogicModel {
 	@Override
 	public void processTransaction(Execution execution) {
 		execution.setSuccess(false);
+	}
+
+	/* (non-Javadoc)
+	 * @see modelbase.LogicModel#initValue(productbase.Product)
+	 */
+	@Override
+	public double initValue(Product prod) {
+		// TODO Auto-generated method stub
+		return 0.8;
 	}
 
 }
