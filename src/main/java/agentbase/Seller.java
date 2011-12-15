@@ -2,6 +2,8 @@ package agentbase;
 
 import java.util.ArrayList;
 
+import modelbase.SellerLogicModel;
+
 import productbase.Product;
 import simbase.Execution;
 import simbase.Transaction;
@@ -24,7 +26,7 @@ public class Seller extends Agent {
 		Execution execution;
 		for (Transaction transaction : transactions) {
 			execution = new Execution(transaction, false);
-			logicModel.processTransaction(execution);
+			((SellerLogicModel) this.logicModel).processTransaction(execution);
 			executions.add(execution);
 		}
 		return executions;
@@ -35,6 +37,6 @@ public class Seller extends Agent {
 	 * @return
 	 */
 	public double initValue(Product tmpProd) {
-		return this.logicModel.initValue(tmpProd);
+		return ((SellerLogicModel) this.logicModel).initValue(tmpProd);
 	}
 }

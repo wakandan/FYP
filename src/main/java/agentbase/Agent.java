@@ -8,6 +8,7 @@ import modelbase.Entity;
 import modelbase.LogicModel;
 import productbase.InventoryManager;
 import productbase.Product;
+import simbase.Sim;
 
 public abstract class Agent extends Entity {
 	double						balance;
@@ -18,6 +19,8 @@ public abstract class Agent extends Entity {
 													 * & product value
 													 */
 
+	
+	
 	public double getBalance() {
 		return balance;
 	}

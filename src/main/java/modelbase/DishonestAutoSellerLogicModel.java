@@ -12,7 +12,7 @@ import simbase.Rating;
  * @author akai
  *
  */
-public class DishonestAutoSellerLogicModel extends AgentLogicModel {
+public class DishonestAutoSellerLogicModel extends SellerLogicModel {
 
 	/* (non-Javadoc)
 	 * @see modelbase.AgentLogicModel#responseQuery()
@@ -41,14 +41,4 @@ public class DishonestAutoSellerLogicModel extends AgentLogicModel {
 		// TODO Auto-generated method stub
 		return 0.8;
 	}
-
-	/* (non-Javadoc)
-	 * @see modelbase.AgentLogicModel#calcRating(agentbase.Seller, productbase.Product)
-	 */
-	@Override
-	public Rating calcRating(Seller seller, Product prod) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

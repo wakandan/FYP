@@ -65,7 +65,6 @@ public class TestAgentModel extends TestWithDBParent {
 		 * data are also hardcoded. Probability of Honest buyers: 0.7
 		 * Probability of Honest sellers: 0.9
 		 */
-		assertTrue(((SimpleAgentManager) aManager).getHonestBuyerNum()*1.0/aManager.getBuyerNum()>=0.5);
 		assertTrue(((SimpleAgentManager) aManager).getHonestSellerNum()*1.0/aManager.getSellerNum()>=0.5);
 	}
 }

@@ -3,6 +3,7 @@
  */
 package modelbase;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import agentbase.Buyer;
@@ -15,40 +16,7 @@ import simbase.Rating;
  * @author akai
  * 
  */
-public class HonestAutoBuyerLogicModel extends AgentLogicModel {
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see modelbase.AgentLogicModel#responseQuery()
-	 */
-	@Override
-	public boolean responseQuery() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see modelbase.LogicModel#processTransaction(simbase.Execution)
-	 */
-	@Override
-	public void processTransaction(Execution execution) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see modelbase.LogicModel#initValue(productbase.Product)
-	 */
-	@Override
-	public double initValue(Product prod) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+public class HonestAutoBuyerLogicModel extends BuyerLogicModel {
 
 	/*
 	 * Example of an honest rating. He will leave rating reflects the product's
@@ -64,5 +32,27 @@ public class HonestAutoBuyerLogicModel extends AgentLogicModel {
 		if (rate>=5)
 			rate = 4+(int) Math.round(random.nextDouble());
 		return new Rating((Buyer) this.agent, seller, rate);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see modelbase.BuyerLogicModel#chooseSeller(java.util.ArrayList)
+	 */
+	@Override
+	public Seller chooseSeller(ArrayList<String> sellersNames) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see modelbase.BuyerLogicModel#chooseProduct(java.util.ArrayList)
+	 */
+	@Override
+	public Product chooseProduct(ArrayList<String> productsList) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

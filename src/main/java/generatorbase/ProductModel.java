@@ -40,7 +40,8 @@ public class ProductModel extends EntityModel {
 
 	/* Given the price range, return the total number of items in that range */
 	public int getNumProdInRange(double minPrice, double maxPrice) {
-		return (int) Math.round(prodcf.getNumProducts()*prodcf.getDistribution().cdf_range(minPrice, maxPrice));
+		return (int) Math.round(prodcf.getNumProducts()
+				*prodcf.getDistribution().cdf_range(minPrice, maxPrice));
 	}
 
 	/*
@@ -96,7 +97,7 @@ public class ProductModel extends EntityModel {
 			Product prod = new Product(i+"");
 			prod.setPriceMin(prcMin);
 			prod.setPriceMax(prcMax);
-			prod.setQuantity(prodQuantity);			
+			prod.setQuantity(prodQuantity);
 			prod.setCategory(rand.nextInt(prodcf.getNumCategories()));
 			((ProductManager) manager).add(prod);
 		}

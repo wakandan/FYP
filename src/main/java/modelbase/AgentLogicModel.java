@@ -3,6 +3,8 @@
  */
 package modelbase;
 
+import java.util.ArrayList;
+
 import productbase.Product;
 import simbase.Rating;
 import agentbase.Agent;
@@ -26,9 +28,4 @@ public abstract class AgentLogicModel extends LogicModel {
 	public void setAgent(Agent agent) {
 		this.agent = agent;
 	}
-	
-	public abstract boolean responseQuery();
-
-	/* Leave rating for a seller. Only applicable to Buyers */
-	public abstract Rating calcRating(Seller seller, Product prod);
 }
