@@ -39,10 +39,10 @@ public class InventoryManager extends EntityManager {
 	public void add(Entity e) throws Exception {
 		Inventory inventory = (Inventory) e;
 		super.add(e);
-		String sql = "INSERT INTO Inventories(agent_name, prod_name, quantity) VALUES(?, ?, ?)";
+		String sql = "INSERT INTO Inventories(agent_name, prod_name, quantity, price, value) VALUES(?, ?, ?, ?, ?)";
 		SQLiteStatement st = db.prepare(sql);
 		st.bind(1, inventory.getAgent().getName()).bind(2, inventory.getProd().getName())
-						.bind(3, inventory.getQuantity());
+				.bind(3, inventory.quantity).bind(4, inventory.price).bind(5, inventory.value);
 		st.step();
 
 		if (!owners.containsKey(inventory.getAgent().getName())) {
@@ -58,7 +58,7 @@ public class InventoryManager extends EntityManager {
 	}
 
 	public Inventory add(Agent a, Product p) throws Exception {
-		Inventory inventory = new Inventory(a, p); 
+		Inventory inventory = new Inventory(a, p);
 		a.addProduct(p);
 		add(inventory);
 		return inventory;

@@ -33,12 +33,6 @@ public class TestAgentModel extends TestWithDBParent {
 		super.setUp();
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {}
-
 	@Test
 	public void testAddAgents() throws Exception {
 		AgentConfig aConfig = new AgentConfig();

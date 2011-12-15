@@ -3,9 +3,11 @@
  */
 package core;
 
+import org.junit.After;
 import org.junit.Before;
 
 import com.almworks.sqlite4java.SQLiteConnection;
+import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 
 import configbase.DBConfig;
@@ -29,5 +31,10 @@ public class TestWithDBParent {
 		st.step();
 		st = db.prepare(DBConfig.readDDL("src/main/resources/sql/Inventories.ddl"));
 		st.step();
+	}
+
+	@After
+	public void tearDown() throws SQLiteException {
+		st.dispose();		
 	}
 }

@@ -76,7 +76,10 @@ public class Inventory extends Entity {
 		this.prod = prod;
 		this.quantity = prod.getQuantity();
 		this.price = prod.getPriceMax();
-		this.value = 0;
-		
+		this.value = 0;		
+	}
+	
+	public String toString() {
+		return this.agent.getName()+"->"+this.quantity+"x"+this.prod.getName();
 	}
 }

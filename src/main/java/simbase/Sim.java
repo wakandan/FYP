@@ -205,6 +205,7 @@ public class Sim extends BaseObject {
 		prodPicked = false;
 		logger.info("Start assigning products to sellers");
 		numSellerAssigned = 0;
+		inventoryManager.beginTransaction();
 		for (Entity e : sellers.getAll()) {
 			if (prodPicked)
 				break;
@@ -240,8 +241,10 @@ public class Sim extends BaseObject {
 			tmpProd.setPriceMin(prod.getPriceMin());
 			tmpProd.setPriceMax(prod.getPriceMin()+prodPriceRandom.nextDouble()
 					*(prod.getPriceMax()-prod.getPriceMin()));
-			inventory = inventoryManager.add(seller, tmpProd);
+			inventory = new Inventory(seller, tmpProd, tmpProd.getQuantity(),
+					tmpProd.getPriceMax(), 0);
 			inventory.setValue(seller.initValue(tmpProd));
+			inventoryManager.add(inventory);
 			prod.setQuantity(prod.getQuantity()-tmpProd.getQuantity());
 			if (prod.getQuantity()==0) {
 				prodManager.remove(prodNum);
@@ -252,6 +255,7 @@ public class Sim extends BaseObject {
 			numSellerAssigned++;
 
 		}
+		inventoryManager.commitTransaction();
 		logger.info("Finished assigning products to sellers");
 	}
 

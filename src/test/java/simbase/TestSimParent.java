@@ -31,7 +31,7 @@ public class TestSimParent extends TestWithDBParent {
 	ProductModel	prodModel;
 	ProductManager	prodManager;
 	Sim				sim;
-	SimConfig		simConfig;
+	SimConfig		simConfig;	
 
 	@Before
 	public void setUp() throws Exception {

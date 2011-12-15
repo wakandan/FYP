@@ -43,7 +43,6 @@ public class TransactionManager extends EntityManager {
 		int tmpQuantity = -1;
 		Seller seller;
 		Product product;
-		String buyerName = transaction.buyer.getName();
 		String sellerName = transaction.seller.getName();
 		String item = transaction.prod.getName();
 		int quantity = transaction.quantity;
@@ -56,13 +55,13 @@ public class TransactionManager extends EntityManager {
 			transactions.get(sellerName).add(transaction);
 
 			/* Check if item is in seller's posession */
-			if ((product = seller.getProduct(item))==null) {
+			if ((product = sim.inventoryManager.getInventory(transaction.seller, transaction.prod).getProd())==null) {
 				logger.error("This item "+item+" does not belong to seller "+sellerName);
 				return false;
 			}
 
 			/* Check if item quantity is valid */
-			tmpQuantity = ((Product) seller.getProduct(item)).getQuantity();
+			tmpQuantity = product.getQuantity();
 			if (tmpQuantity<0||tmpQuantity<quantity) {
 				logger.error("Invalid quantity for product "+item);
 				return false;

@@ -54,7 +54,7 @@ public class EntityManager extends BaseObject {
 	 * 
 	 */
 	public void commitTransaction() throws SQLiteException {
-		db.exec("COMMIT TRANSACTION");
+		db.exec("COMMIT TRANSACTION");		
 	}
 
 	/**

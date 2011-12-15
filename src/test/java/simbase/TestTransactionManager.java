@@ -34,11 +34,14 @@ public class TestTransactionManager extends TestSimParent {
 	public void testAddTransaction() {
 		Buyer buyer = (Buyer) sim.getAgentManager().getBuyers().get("B0");
 		Seller seller = (Seller) sim.getAgentManager().getSellers().get("S0");
-		Product prod = seller.getProduct((String) seller.getProductNames().toArray()[0]);
+		Product prod = sim.inventoryManager.getProductsBySellerName(seller.getName()).get(0)
+				.getProd();
 		/* Check for the valid case */
-		assertTrue(sim.getTransactionManager().addTransaction(buyer, seller, prod, prod.getQuantity(), 100));
+		assertTrue(sim.transactionManager.addTransaction(buyer, seller, prod, prod.getQuantity(),
+				100));
 		/* Check for invalid seller's name */
-		assertTrue(!sim.getTransactionManager().addTransaction(buyer, seller, prod, prod.getQuantity()+2, 100));
+		assertTrue(!sim.getTransactionManager().addTransaction(buyer, seller, prod,
+				prod.getQuantity()+2, 100));
 	}
 
 	@Test
@@ -47,10 +50,12 @@ public class TestTransactionManager extends TestSimParent {
 		assertTrue(sim.getBalance(buyer0.getName())==0);
 		Buyer buyer1 = (Buyer) sim.getAgentManager().getBuyers().get("B1");
 		Seller seller = (Seller) sim.getAgentManager().getSellers().get("S0");
-		Product prod = seller.getProduct((String) seller.getProductNames().toArray()[0]);
+		Product prod = sim.inventoryManager.getProductsBySellerName(seller.getName()).get(0).getProd();
 		if (prod.getQuantity()>=2) {
-			sim.getTransactionManager().addTransaction(buyer0, seller, prod, prod.getQuantity()/2, prod.getPriceMin());
-			sim.getTransactionManager().addTransaction(buyer1, seller, prod, prod.getQuantity()/2, prod.getPriceMin());
+			sim.getTransactionManager().addTransaction(buyer0, seller, prod, prod.getQuantity()/2,
+					prod.getPriceMin());
+			sim.getTransactionManager().addTransaction(buyer1, seller, prod, prod.getQuantity()/2,
+					prod.getPriceMin());
 			transactionManager.processTransactions();
 			if (seller.getLogicModel() instanceof HonestAutoSellerLogicModel) {
 				assertTrue(sim.getBalance(buyer0)>0);

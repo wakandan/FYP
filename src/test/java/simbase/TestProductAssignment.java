@@ -48,8 +48,9 @@ public class TestProductAssignment extends TestSimParent {
 		st.step();
 		assertEquals(sim.getQuantityAssigned(), st.columnInt(0));
 		Agent agent = (Agent) agentManager.getSellers().get("S0");
-		assertTrue(agent.getProductNames().size()>0);
-		Product product = agent.getProduct((String)agent.getProductNames().toArray()[0]);
+		System.out.println(agent.getProductNames());
+		assertTrue(sim.inventoryManager.getProductsBySellerName(agent.getName()).size()>0);
+		Product product = sim.inventoryManager.getProductsBySellerName(agent.getName()).get(0).getProd();
 
 		st = db.prepare("SELECT quantity FROM Inventories WHERE agent_name=? AND prod_name=?");
 		st.bind(1, agent.getName()).bind(2, product.getName());
