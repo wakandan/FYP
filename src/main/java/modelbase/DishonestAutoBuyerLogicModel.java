@@ -7,9 +7,11 @@ import java.util.ArrayList;
 
 import agentbase.Buyer;
 import agentbase.Seller;
+import productbase.Inventory;
 import productbase.Product;
 import simbase.Execution;
 import simbase.Rating;
+import simbase.Transaction;
 
 /**
  * @author akai
@@ -21,22 +23,14 @@ public class DishonestAutoBuyerLogicModel extends BuyerLogicModel {
 		return new Rating((Buyer) this.agent, seller, rate);
 	}
 
-	/* (non-Javadoc)
-	 * @see modelbase.BuyerLogicModel#chooseSeller(java.util.ArrayList)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see modelbase.BuyerLogicModel#chooseInventory()
 	 */
 	@Override
-	public Seller chooseSeller(ArrayList<String> sellersNames) {
+	public Transaction transact() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see modelbase.BuyerLogicModel#chooseProduct(java.util.ArrayList)
-	 */
-	@Override
-	public Product chooseProduct(ArrayList<String> productsList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

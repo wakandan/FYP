@@ -301,6 +301,7 @@ public class Sim extends BaseObject {
 		Buyer buyer;
 		Seller seller;
 		Product product;
+		Transaction transaction;
 		initialize();
 		ArrayList<String> sellersNames = getAgentManager().getSellers().getEntitiesNames();
 		ArrayList<String> productList = getProdManager().getEntitiesNames();
@@ -309,11 +310,9 @@ public class Sim extends BaseObject {
 		while (timeStep<maxTimeStep) {
 			for (Entity e : getAgentManager().getBuyers().getAll()) {
 				buyer = (Buyer) e;
-				product = buyer.chooseProduct(productList);
-				seller = buyer.chooseSeller(sellersNames);
-				if (product!=null&&seller!=null) {
-					transactionManager.addTransaction(buyer, seller, product,
-							inventoryManager.getPrice(seller, product));
+				transaction = buyer.makeTransaction();
+				if (transaction!=null) {
+					transactionManager.addTransaction(transaction);
 				}
 			}
 			advanceTime();

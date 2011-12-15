@@ -3,10 +3,9 @@
  */
 package modelbase;
 
-import java.util.ArrayList;
-
 import productbase.Product;
 import simbase.Rating;
+import simbase.Transaction;
 import agentbase.Seller;
 
 /**
@@ -18,9 +17,9 @@ public abstract class BuyerLogicModel extends AgentLogicModel {
 
 	/**
 	 * @param sellersNames
-	 * @return
+	 * @return A transaction to carry out at each time step. It involves
+	 *         choosing a seller & product
 	 */
-	public abstract Seller chooseSeller(ArrayList<String> sellersNames);
 
-	public abstract Product chooseProduct(ArrayList<String> productsList);
+	public abstract Transaction transact();
 }

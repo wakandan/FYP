@@ -1,11 +1,9 @@
 package agentbase;
 
-import java.util.ArrayList;
-
 import modelbase.BuyerLogicModel;
-
 import productbase.Product;
 import simbase.Rating;
+import simbase.Transaction;
 
 public class Buyer extends Agent {
 	/**
@@ -15,17 +13,11 @@ public class Buyer extends Agent {
 		super(name);
 	}
 
-	/* To be overridden by subclasses */
-	public Seller chooseSeller(ArrayList<String> sellersNames) {
-		return ((BuyerLogicModel)this.logicModel).chooseSeller(sellersNames);
-	}
-
-	/* To be overridden by subclasses */
-	public Product chooseProduct(ArrayList<String> productsList) {
-		return ((BuyerLogicModel)this.logicModel).chooseProduct(productsList);
+	public Transaction makeTransaction() {
+		return ((BuyerLogicModel) this.logicModel).transact();
 	}
 
 	public Rating leaveRating(Seller seller, Product prod) {
-		return ((BuyerLogicModel)this.logicModel).calcRating(seller, prod);
+		return ((BuyerLogicModel) this.logicModel).calcRating(seller, prod);
 	}
 }
