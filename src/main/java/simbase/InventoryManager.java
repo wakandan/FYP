@@ -1,10 +1,13 @@
 /**
  *
  */
-package productbase;
+package simbase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+
+import productbase.Product;
 
 import agentbase.Agent;
 import agentbase.Seller;
@@ -121,5 +124,13 @@ public class InventoryManager extends EntityManager {
 			logger.error("Unable to get value for product "+prod);
 			return 0;
 		}
+	}
+	
+	public Object[] getAllProductsNames(){
+		return this.stores.keySet().toArray();
+	}
+	
+	public int getAllProductsCount() {
+		return this.stores.size();
 	}
 }

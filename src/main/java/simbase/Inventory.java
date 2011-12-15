@@ -1,8 +1,9 @@
 /**
  *
  */
-package productbase;
+package simbase;
 
+import productbase.Product;
 import agentbase.Agent;
 import agentbase.Seller;
 import modelbase.Entity;
@@ -53,11 +54,11 @@ public class Inventory extends Entity {
 		this.price = price;
 	}
 
-	public double getValue() {
+	protected double getValue() {
 		return value;
 	}
 
-	public void setValue(double value) {
+	protected void setValue(double value) {
 		this.value = value;
 	}
 

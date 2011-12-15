@@ -6,8 +6,8 @@ import java.util.Set;
 import modelbase.AgentLogicModel;
 import modelbase.Entity;
 import modelbase.LogicModel;
-import productbase.InventoryManager;
 import productbase.Product;
+import simbase.InventoryManager;
 import simbase.Sim;
 
 public abstract class Agent extends Entity {
@@ -19,8 +19,6 @@ public abstract class Agent extends Entity {
 													 * & product value
 													 */
 
-	
-	
 	public double getBalance() {
 		return balance;
 	}
@@ -83,6 +81,14 @@ public abstract class Agent extends Entity {
 
 	public Set<String> getProductNames() {
 		return inventory.keySet();
+	}
+
+	public InventoryManager getInventoryManager() {
+		return inventoryManager;
+	}
+
+	public void setInventoryManager(InventoryManager inventoryManager) {
+		this.inventoryManager = inventoryManager;
 	}
 
 }

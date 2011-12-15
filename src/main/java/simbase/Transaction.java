@@ -11,8 +11,6 @@ public class Transaction extends BaseObject {
 	Product	prod;
 	int		quantity;
 	double	price;
-	
-	
 
 	public Transaction(Buyer buyer, Seller seller, Product prod, int quantity, double price) {
 		super();
@@ -61,6 +59,10 @@ public class Transaction extends BaseObject {
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	public String toString() {
+		return this.buyer+" <-"+this.prod+"-> "+this.seller;
 	}
 
 }

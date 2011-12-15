@@ -59,9 +59,4 @@ public class Product extends Entity {
 	public Product(String name) {
 		super(name);
 	}
-
-	public String toString() {
-		return String.format("%s(%d:%.3f-%.3f)", name, quantity, priceMin, priceMax);
-	}
-
 }

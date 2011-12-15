@@ -32,7 +32,4 @@ public abstract class Entity extends BaseObject {
 		return this.name;
 	}
 
-	/**
-	 * @return
-	 */
 }

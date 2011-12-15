@@ -10,9 +10,9 @@ import org.junit.Test;
 
 import core.TestWithDBParent;
 
-import productbase.Inventory;
-import productbase.InventoryManager;
 import productbase.Product;
+import simbase.Inventory;
+import simbase.InventoryManager;
 
 import agentbase.Agent;
 import agentbase.AgentManager;
@@ -45,9 +45,7 @@ public class TestInventoryManager extends TestWithDBParent {
 		prod2.setPriceMax(395);
 		prod.setPriceMax(200);
 		Inventory inventory1 = new Inventory(agent, prod);
-		inventory1.setValue(0.8);
 		Inventory inventory2 = new Inventory(agent, prod2);
-		inventory2.setValue(1);
 		
 		inventoryManager.add(inventory1);
 		inventoryManager.add(inventory2);
@@ -62,15 +60,10 @@ public class TestInventoryManager extends TestWithDBParent {
 		st = db.prepare("SELECT SUM(quantity) FROM Inventories");
 		st.step();
 		assertEquals(prod.getQuantity()+prod2.getQuantity(), st.columnInt(0));
-		st = db.prepare("SELECT MIN(value) FROM Inventories");
-		st.step();
-		assertEquals(0.8, st.columnDouble(0), 0.1);		
+//		st = db.prepare("SELECT MIN(value) FROM Inventories");
+//		st.step();
+//		assertEquals(0.8, st.columnDouble(0), 0.1);		
 		st = db.prepare("SELECT * FROM Inventories");
-//		while(st.step()) {
-//			for(int i=0; i<st.columnCount(); i++) 
-//				System.out.print(st.columnString(i)+" ");				
-//			System.out.println("");
-//		}		
 		assertEquals(2, inventoryManager.getProductsBySellerName(agent.getName()).size());
 		
 

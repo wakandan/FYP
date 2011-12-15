@@ -30,7 +30,7 @@ public class TestSimParent extends TestWithDBParent {
 	AgentManager	agentManager;
 	ProductModel	prodModel;
 	ProductManager	prodManager;
-	Sim				sim;
+	protected Sim				sim;
 	SimConfig		simConfig;	
 
 	@Before

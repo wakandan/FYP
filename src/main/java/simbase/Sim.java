@@ -14,8 +14,6 @@ import modelbase.Entity;
 
 import org.joda.time.DateTime;
 
-import productbase.Inventory;
-import productbase.InventoryManager;
 import productbase.Product;
 import productbase.ProductManager;
 import agentbase.Agent;
@@ -60,6 +58,10 @@ public class Sim extends BaseObject {
 
 	public int getNumSellerAssigned() {
 		return numSellerAssigned;
+	}
+
+	public InventoryManager getInventoryManager() {
+		return inventoryManager;
 	}
 
 	public AgentManager getAgentManager() {
@@ -141,6 +143,8 @@ public class Sim extends BaseObject {
 		agentModel = new AgentModel();
 		simConfig = new SimConfig();
 		scheduler = new Scheduler();
+		transactionManager = new TransactionManager();
+		transactionManager.sim = this;
 	}
 
 	public void initialize() throws Exception {
@@ -150,6 +154,9 @@ public class Sim extends BaseObject {
 		prodModel = new ProductModel(simConfig.getProdConfig());
 		prodModel.generate(prodManager);
 		agentModel.generate(agentManager);
+		for (Entity agent : agentManager.getBuyers().getAll()) {
+			((Agent) agent).setInventoryManager(this.inventoryManager);
+		}
 	}
 
 	public static void main(String[] args) {
@@ -303,14 +310,13 @@ public class Sim extends BaseObject {
 		Product product;
 		Transaction transaction;
 		initialize();
-		ArrayList<String> sellersNames = getAgentManager().getSellers().getEntitiesNames();
-		ArrayList<String> productList = getProdManager().getEntitiesNames();
 		assignProducts();
 		int maxTimeStep = simConfig.getMaxTimestep();
 		while (timeStep<maxTimeStep) {
 			for (Entity e : getAgentManager().getBuyers().getAll()) {
 				buyer = (Buyer) e;
 				transaction = buyer.makeTransaction();
+				logger.debug(transaction);
 				if (transaction!=null) {
 					transactionManager.addTransaction(transaction);
 				}

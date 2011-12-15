@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 import agentbase.Buyer;
 import agentbase.Seller;
-import productbase.Inventory;
 import productbase.Product;
 import simbase.Execution;
+import simbase.Inventory;
 import simbase.Rating;
 import simbase.Transaction;
 

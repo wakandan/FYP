@@ -60,8 +60,6 @@ public class TestProductAssignment extends TestSimParent {
 		st = db.prepare("SELECT COUNT(agent_name) FROM Inventories");
 		st.step();
 		assertEquals(sim.getNumSellerAssigned(), st.columnInt(0));
-		
-		
 	}
-
+	
 }
