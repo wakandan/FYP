@@ -98,18 +98,23 @@ public class TransactionManager extends EntityManager {
 	 */
 	private void processExecution(Execution execution) throws Exception {
 		if (execution.success) {
-			sim.bank.creditBalance(
-					execution.buyer,
-					execution.quantity
-							*((sim.inventoryManager.getValue(execution.seller, execution.prod)-1)*execution.price));
-			System.out.println("Product value: "+sim.inventoryManager.getValue(execution.seller, execution.prod));
+			double prodValue = sim.inventoryManager.getValue(execution.seller, execution.prod);
+			sim.bank.creditBalance(execution.buyer, execution.quantity
+					*((prodValue-1)*execution.price));
 			Product oldProd = (Product) sim.inventoryManager.getInventory(execution.seller,
 					execution.prod).getProd();
 			Product prod = new Product(oldProd);
 			prod.setQuantity(execution.quantity);
+
+			/*
+			 * The product's real value is now set by the trsanction manager.
+			 * This is the only place where this value is set validly. Later
+			 * when querying about the product's true value, only number in
+			 * inventory manager will be used
+			 */
+			prod.setValue(prodValue);
 			oldProd.setQuantity(oldProd.getQuantity()-execution.quantity);
 			sim.inventoryManager.add(execution.buyer, execution.prod);
-			// sim.agentManager.getAgentByName(execution.buyer).addProduct(prod);
 		}
 	}
 

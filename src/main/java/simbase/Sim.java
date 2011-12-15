@@ -209,8 +209,6 @@ public class Sim extends BaseObject {
 			if (prodPicked)
 				break;
 			seller = (Seller) e;
-			System.out.println(seller.getLogicModel());
-
 			/* Pick products until a non-zero number of items is picked */
 			/* No more products to assign, terminate */
 			if (prodManager.getSize()==0) {

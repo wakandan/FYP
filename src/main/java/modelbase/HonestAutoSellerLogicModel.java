@@ -6,6 +6,7 @@ package modelbase;
 import productbase.Product;
 import agentbase.Seller;
 import simbase.Execution;
+import simbase.Rating;
 
 /**
  * @author akai
@@ -39,5 +40,14 @@ public class HonestAutoSellerLogicModel extends AgentLogicModel {
 	public double initValue(Product prod) {
 		// TODO Auto-generated method stub
 		return 1.2;
+	}
+
+	/* (non-Javadoc)
+	 * @see modelbase.AgentLogicModel#calcRating(agentbase.Seller, productbase.Product)
+	 */
+	@Override
+	public Rating calcRating(Seller seller, Product prod) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

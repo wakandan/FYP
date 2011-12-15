@@ -3,14 +3,20 @@ package agentbase;
 import java.util.HashMap;
 import java.util.Set;
 
+import modelbase.AgentLogicModel;
 import modelbase.Entity;
 import modelbase.LogicModel;
+import productbase.InventoryManager;
 import productbase.Product;
 
 public abstract class Agent extends Entity {
 	double						balance;
 	HashMap<String, Product>	inventory;
-	LogicModel					logicModel;
+	AgentLogicModel				logicModel;
+	InventoryManager			inventoryManager;	/*
+													 * To query one's inventory
+													 * & product value
+													 */
 
 	public double getBalance() {
 		return balance;
@@ -32,10 +38,6 @@ public abstract class Agent extends Entity {
 
 	}
 
-	public float calcRating() {
-		return 0;
-	}
-
 	public void changeBehavior() {
 
 	}
@@ -52,8 +54,9 @@ public abstract class Agent extends Entity {
 		return logicModel;
 	}
 
-	public void setLogicModel(LogicModel logicModel) {
+	public void setLogicModel(AgentLogicModel logicModel) {
 		this.logicModel = logicModel;
+		this.logicModel.setAgent(this);
 	}
 
 	public void addProduct(Product prod) {
@@ -74,7 +77,7 @@ public abstract class Agent extends Entity {
 	public void removeProduct(String prodName) {
 		inventory.remove(prodName);
 	}
-	
+
 	public Set<String> getProductNames() {
 		return inventory.keySet();
 	}

@@ -3,20 +3,27 @@ package productbase;
 import modelbase.Entity;
 
 public class Product extends Entity {
-	int category;
+	int	category;
 	double	priceMin, priceMax;
-	int		quality;
-	int		shipmentDelay;
+	double	value;
 	int		quantity;
 
 	public Product(Product prod) {
 		super(prod.getName());
-		this.priceMax  = prod.getPriceMax();
-		this.priceMin  = prod.getPriceMin();
+		this.priceMax = prod.getPriceMax();
+		this.priceMin = prod.getPriceMin();
 		this.quantity = prod.getQuantity();
-		this.category = prod.getCategory();	
+		this.category = prod.getCategory();
 	}
-	
+
+	public double getValue() {
+		return value;
+	}
+
+	public void setValue(double value) {
+		this.value = value;
+	}
+
 	public int getCategory() {
 		return category;
 	}
