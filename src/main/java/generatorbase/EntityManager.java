@@ -6,6 +6,7 @@ package generatorbase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 import modelbase.Entity;
 
@@ -90,7 +91,7 @@ public class EntityManager extends BaseObject {
 	}
 
 	public int getSize() {
-		return entities.size();
+		return entities.keySet().size();
 	}
 
 	public Entity get(String entityName) {
@@ -107,5 +108,9 @@ public class EntityManager extends BaseObject {
 	
 	public Entity getEntityByName(String entityName) {
 		return entities.get(entityName);
+	}
+	
+	public Set<String> getAllNames() {
+		return entities.keySet();
 	}
 }

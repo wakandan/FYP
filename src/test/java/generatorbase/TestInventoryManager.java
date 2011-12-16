@@ -53,6 +53,7 @@ public class TestInventoryManager extends TestWithDBParent {
 		st = db.prepare("SELECT COUNT(*) FROM Inventories");
 		st.step();
 		assertEquals(2, st.columnInt(0));
+		
 		st = db.prepare("SELECT quantity FROM Inventories WHERE agent_name=? AND prod_name=?");
 		st.bind(1, agent.getName()).bind(2, prod.getName());
 		st.step();

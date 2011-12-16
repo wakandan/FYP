@@ -49,6 +49,10 @@ public class TestAgentModel extends TestWithDBParent {
 		st.bind(1, aManager.getSessionId()).bind(2, AgentManager.BUYER_AGENT_TYPE);
 		st.step();
 		assertEquals(aConfig.getBuyerNum(), st.columnInt(0));
+		st = db.prepare("SELECT COUNT(*) FROM Agents WHERE sessionId = ? AND aType = ?");
+		st.bind(1, aManager.getSessionId()).bind(2, AgentManager.SELLER_AGENT_TYPE);
+		st.step();
+		assertEquals(aConfig.getSellerNum(), st.columnInt(0));
 	}
 
 	@Test

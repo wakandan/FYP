@@ -71,9 +71,8 @@ public class ProductManager extends EntityManager {
 	 * 
 	 * @param i
 	 */
-	public void remove(int i) {
-
-		entities.remove(i);
+	public void remove(String key) {
+		entities.remove(key);
 	}
 
 	/*

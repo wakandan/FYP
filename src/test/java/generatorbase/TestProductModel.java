@@ -48,6 +48,9 @@ public class TestProductModel extends TestWithDBParent {
 		SQLiteStatement st = db.prepare("SELECT AVG(quantity) FROM products");
 		st.step();
 		assertTrue(st.columnDouble(0)>0);
+		st = db.prepare("SELECT MIN(quantity) FROM products");
+		st.step();
+		assertTrue(st.columnInt(0)>0);
 		st = db.prepare("SELECT COUNT(*) FROM products");
 		st.step();
 		assertTrue(st.columnDouble(0)>0);
