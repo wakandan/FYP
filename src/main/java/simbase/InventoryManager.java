@@ -12,6 +12,7 @@ import productbase.Product;
 import agentbase.Agent;
 import agentbase.Seller;
 
+import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 
 import modelbase.Entity;
@@ -41,22 +42,34 @@ public class InventoryManager extends EntityManager {
 
 	public void add(Entity e) throws Exception {
 		Inventory inventory = (Inventory) e;
+		SQLiteStatement st;
+		String sql;
 		super.add(e);
-		String sql = "INSERT INTO Inventories(agent_name, prod_name, quantity, price, value) VALUES(?, ?, ?, ?, ?)";
-		SQLiteStatement st = db.prepare(sql);
-		st.bind(1, inventory.getAgent().getName()).bind(2, inventory.getProd().getName())
-				.bind(3, inventory.quantity).bind(4, inventory.price).bind(5, inventory.value);
-		st.step();
+		try {
+			sql = "INSERT INTO Inventories(agent_name, prod_name, quantity, price, value) VALUES(?, ?, ?, ?, ?)";
+			st = db.prepare(sql);
+			st.bind(1, inventory.getAgent().getName()).bind(2, inventory.getProd().getName())
+					.bind(3, inventory.quantity).bind(4, inventory.price).bind(5, inventory.value);
+			st.step();
+		} catch (SQLiteException exception) {
+			sql = "UPDATE Inventories SET quantity=quantity+? WHERE agent_name=? AND prod_name=?";
+			st = db.prepare(sql);
+			st.bind(1, inventory.quantity).bind(2, inventory.agent.getName())
+					.bind(3, inventory.prod.getName());
+			st.step();
+		}
 
 		if (!owners.containsKey(inventory.getAgent().getName())) {
 			owners.put(inventory.getAgent().getName(), new ArrayList<Inventory>());
 		}
 		owners.get(inventory.getAgent().getName()).add(inventory);
 
-		if (!stores.containsKey(inventory.getProd().getName())) {
-			stores.put(inventory.getProd().getName(), new ArrayList<Inventory>());
+		if (inventory.agent instanceof Seller) {
+			if (!stores.containsKey(inventory.getProd().getName())) {
+				stores.put(inventory.getProd().getName(), new ArrayList<Inventory>());
+			}
+			stores.get(inventory.getProd().getName()).add(inventory);
 		}
-		stores.get(inventory.getProd().getName()).add(inventory);
 
 	}
 
@@ -125,11 +138,11 @@ public class InventoryManager extends EntityManager {
 			return 0;
 		}
 	}
-	
-	public Object[] getAllProductsNames(){
+
+	public Object[] getAllProductsNames() {
 		return this.stores.keySet().toArray();
 	}
-	
+
 	public int getAllProductsCount() {
 		return this.stores.size();
 	}
