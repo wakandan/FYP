@@ -35,8 +35,12 @@ public class ProductManager extends EntityManager {
 		super.add(entity);
 		Product prod = (Product) entity;
 
-		SQLiteStatement st = db.prepare("INSERT INTO products(sessionID, name, priceMin, priceMax, quantity, category)"+"VALUES (?, ?, ?, ?, ?, ?)");
-		st.bind(1, sessionId).bind(2, prod.getName()).bind(3, prod.getPriceMin()).bind(4, prod.getPriceMin()).bind(5, prod.getQuantity()).bind(6, prod.getCategory());
+		SQLiteStatement st = db
+				.prepare("INSERT INTO products(sessionID, name, priceMin, priceMax, quantity, category)"
+						+"VALUES (?, ?, ?, ?, ?, ?)");
+		st.bind(1, sessionId).bind(2, prod.getName()).bind(3, prod.getPriceMin())
+				.bind(4, prod.getPriceMin()).bind(5, prod.getQuantity())
+				.bind(6, prod.getCategory());
 		st.step();
 		totalQuantity += prod.quantity;
 		if (!categoryList.containsKey(prod.getCategory())) {
@@ -93,4 +97,5 @@ public class ProductManager extends EntityManager {
 			return -1;
 		}
 	}
+	
 }
