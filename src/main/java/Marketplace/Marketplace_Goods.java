@@ -10,13 +10,14 @@ class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 
 	private JTextField[] fields;
 	//Marketplace setup parameters for user to set
-	private String[] labels = { "Pool of items: ", 
-	                    "Price range of items: ", 
-	                    "Distribution of product: ", 
-	                    "Distribution of price: ", 
+	private String[] labels = { "No of products type: ", 
+						"No of products: ",
+	                    "Max price: ", 
+	                    "Min price: ", 
+	                    "No of categories ", 
 	                    "Duration: "};
 	//Textbox width
-	private int[] widths = { 4, 2, 2, 2, 2 };
+	private int[] widths = { 4, 4, 4, 4, 4, 2 };
 	
 	Marketplace_Goods() {
 		this.setLayout(new GridLayout(labels.length,1));
@@ -24,6 +25,7 @@ class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 		initLabelsandTextFields();
 	  }
 	
+
 	 public void initLabelsandTextFields()
 	 {
 		fields = new JTextField[labels.length];
@@ -39,6 +41,7 @@ class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 		 }
 	 }
 	 
+
 	 public void resetText()
 	 {
 		 for(int i = 0;i < this.getComponentCount();i++)
@@ -46,6 +49,7 @@ class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 				 setResetTextField(((JPanel)this.getComponent(i)));
 	 }
 	
+
 	public void setResetTextField(JPanel tempPanel)
 	{
 		 for(int c = 0;c < tempPanel.getComponentCount();c++)
@@ -53,6 +57,7 @@ class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 				 ((JTextField)tempPanel.getComponent(c)).setText("");
 	}
 	
+
 	public void setParameters(int i,String text)
 	{
 		if(i < 0 || i >= fields.length)

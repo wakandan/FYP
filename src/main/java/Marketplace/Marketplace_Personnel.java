@@ -9,14 +9,18 @@ class Marketplace_Personnel extends JPanel implements MarketEntityInterface{
 	
 	private JTextField[] fields;
 	//Marketplace setup parameters for user to set
-	private String[] labels = { "No. of buyers: ", 
-	                    "No. of sellers: ", 
+	private String[] labels = { "No of buyers: ", 
+	                    "No of sellers: ", 
+	                    "Initial balance: ",
+	                    "Distribution Model: ",
+	                    "Distribution Mean: ",
+	                    "Distribution Deviation: ",
 	                    "% of default honest buyers: ", 
 	                    "% of default honest sellers: ", 
 	                    "Distribution of auto-buyer's rating: ", 
 	                    "Dustrubution of buyer/seller entering marketplace: " };
 	//Textbox width
-	private int[] widths = { 4, 4, 2, 2, 2, 2 };
+	private int[] widths = { 4, 4, 4, 5, 2, 2, 2, 2, 2, 2 };
 	
 	Marketplace_Personnel() {
 		this.setLayout(new GridLayout(labels.length,1));
@@ -24,6 +28,7 @@ class Marketplace_Personnel extends JPanel implements MarketEntityInterface{
 		initLabelsandTextFields();
 	 }
 	
+
 	 public void initLabelsandTextFields()
 	 {
 		 fields = new JTextField[labels.length];
@@ -39,6 +44,7 @@ class Marketplace_Personnel extends JPanel implements MarketEntityInterface{
 		 }
 	 }
 	 
+
 	 public void resetText()
 	 {
 		 for(int i = 0;i < this.getComponentCount();i++)
@@ -46,6 +52,7 @@ class Marketplace_Personnel extends JPanel implements MarketEntityInterface{
 				 setResetTextField(((JPanel)this.getComponent(i)));
 	 }
 	
+
 	public void setResetTextField(JPanel tempPanel)
 	{
 		 for(int c = 0;c < tempPanel.getComponentCount();c++)
@@ -53,6 +60,7 @@ class Marketplace_Personnel extends JPanel implements MarketEntityInterface{
 				 ((JTextField)tempPanel.getComponent(c)).setText("");
 	}
 	
+
 	public void setParameters(int i,String text)
 	{
 		if(i < 0 || i >= fields.length)
