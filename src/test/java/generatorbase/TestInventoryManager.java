@@ -68,8 +68,8 @@ public class TestInventoryManager extends TestWithDBParent {
 		st = db.prepare("SELECT SUM(quantity) FROM Inventories");
 		st.step();
 		assertEquals(prod.getQuantity()+prod2.getQuantity(), st.columnInt(0));
-		st = db.prepare("SELECT * FROM Inventories");
-		assertEquals(2, inventoryManager.getProductsBySellerName(agent.getName()).size());
+		System.out.println(inventoryManager.getProductsBySellerName(agent.getName()));
+		assertEquals(2, inventoryManager.getProductsBySellerName(agent.getName()).keySet().size());
 
 	}
 
@@ -83,7 +83,8 @@ public class TestInventoryManager extends TestWithDBParent {
 		prod1.setQuantity(100);
 		inventoryManager.add(seller1, prod1);
 		boolean found = false;
-		for (Inventory inventory : inventoryManager.getProductsBySellerName(seller1.getName())) {
+		for (Inventory inventory : inventoryManager.getProductsBySellerName(seller1.getName())
+				.values()) {
 			if (inventory.getProd().getName().equalsIgnoreCase(prod1.getName()))
 				found = true;
 		}
@@ -115,7 +116,9 @@ public class TestInventoryManager extends TestWithDBParent {
 
 		ProductManager prodManager = new ProductManager();
 		prodManager.setDb(db);
-		inventoryManager.setProdManager(prodManager);
+		Sim sim = new Sim();
+		sim.setProdManager(prodManager);
+		inventoryManager.setSim(sim);
 
 		Product prod1 = new Product("p1");
 		prod1.setQuantity(1000);
@@ -184,7 +187,7 @@ public class TestInventoryManager extends TestWithDBParent {
 		prod1.setCategory(1);
 		prod1.setPriceMax(10);
 		prod1.setPriceMin(1);
-		String sql = "INSERT INTO Products(name, quantity) VALUES(?, ?)";		
+		String sql = "INSERT INTO Products(name, quantity) VALUES(?, ?)";
 		st = db.prepare(sql);
 		st.bind(1, prod1.getName()).bind(2, prod1.getQuantity());
 		inventoryManager.updateInventory(buyer, prod1);

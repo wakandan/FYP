@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import productbase.Product;
 import simbase.Rating;
+import simbase.Sim;
 import agentbase.Agent;
 import agentbase.Seller;
 
@@ -16,6 +17,15 @@ import agentbase.Seller;
  */
 public abstract class AgentLogicModel extends LogicModel {
 	Agent	agent;
+	Sim		sim;
+
+	public Sim getSim() {
+		return sim;
+	}
+
+	public void setSim(Sim sim) {
+		this.sim = sim;
+	}
 
 	/*
 	 * This function is used for testing the SimpleAgentConfig class. This is

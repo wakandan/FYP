@@ -46,17 +46,16 @@ public class HonestAutoBuyerLogicModel extends BuyerLogicModel {
 	 */
 	@Override
 	public Transaction transact() {
+		Buyer buyer = ((Buyer) agent);
 		String prodName;
 		ArrayList<Inventory> sellerList;
 		Inventory inventory;
 		Random random = new Random();
-		int wishListIndex = ((Buyer) agent).getWishListIndex();
+		int wishListIndex = buyer.getWishListIndex();
 
-		/* If the wish lish is null */
-		if (((Buyer) agent).getWishList()==null) {
-			((Buyer) agent).setWishList(new ArrayList<String>());
-			ArrayList<String> wishList = ((Buyer) agent).getWishList();
-			random = new Random();
+		/* If the wish list is null, then generate a new one */
+		if (buyer.getWishList()==null) {			
+			ArrayList<String> wishList = new ArrayList<String>();
 			int prodCount = agent.getInventoryManager().getAllProductsCount();
 			int totalNumProd = random.nextInt(prodCount);
 			if (totalNumProd<2)
@@ -64,20 +63,15 @@ public class HonestAutoBuyerLogicModel extends BuyerLogicModel {
 			for (int i = 0; i<totalNumProd; i++)
 				wishList.add((String) agent.getInventoryManager().getAllProductsNames()[random
 						.nextInt(prodCount)]);
+			buyer.setWishList(wishList);
 		}
 
-		if (wishListIndex<((Buyer) agent).getWishList().size()) {
-			prodName = ((Buyer) agent).getWishList().get(wishListIndex);
-			sellerList = agent.getInventoryManager().getSellersByProductName(prodName);
-			inventory = sellerList.get(random.nextInt(sellerList.size()));
-			((Buyer) agent).setWishListIndex(wishListIndex++);
-			if (wishListIndex>=((Buyer) agent).getWishList().size())
-				wishListIndex = 0;
-			return new Transaction((Buyer) this.agent, (Seller) inventory.getAgent(),
-					inventory.getProd(), 1, inventory.getPrice());
+		prodName = buyer.getWishList().get(wishListIndex);
+		sellerList = agent.getInventoryManager().getSellersByProductName(prodName);
+		inventory = sellerList.get(random.nextInt(sellerList.size()));
+		buyer.setWishListIndex(wishListIndex++%buyer.getWishList().size());
+		return new Transaction((Buyer) this.agent, (Seller) inventory.getAgent(),
+				inventory.getProd(), 1, inventory.getPrice());
 
-		}
-
-		return null;
 	}
 }

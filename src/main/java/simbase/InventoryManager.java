@@ -3,14 +3,15 @@
  */
 package simbase;
 
+import generatorbase.EntityManager;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.Set;
 
+import modelbase.Entity;
 import productbase.Product;
 import productbase.ProductManager;
-
 import agentbase.Agent;
 import agentbase.AgentManager;
 import agentbase.Seller;
@@ -18,27 +19,21 @@ import agentbase.Seller;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 
-import modelbase.Entity;
-import generatorbase.EntityManager;
-
 /**
  * It replies queries for prices & inventories
  * 
  * @author akai
  */
 public class InventoryManager extends EntityManager {
-	ProductManager							prodManager;
-
-	HashMap<String, ArrayList<Inventory>>	owners;		/*
-															 * Hashmap for
-															 * Seller's name ->
-															 * Inventories
-															 */
-	HashMap<String, ArrayList<Inventory>>	stores;		/*
-															 * Hashmap for
-															 * Inventory's name
-															 * -> Seller's names
-															 */
+	Sim										sim;
+	HashMap<String, ArrayList<Inventory>>	owners; /*
+													 * Hashmap for Seller's name
+													 * -> Inventories
+													 */
+	HashMap<String, ArrayList<Inventory>>	stores; /*
+													 * Hashmap for Inventory's
+													 * name -> Seller's names
+													 */
 
 	public InventoryManager() {
 		super();
@@ -46,8 +41,8 @@ public class InventoryManager extends EntityManager {
 		stores = new HashMap<String, ArrayList<Inventory>>();
 	}
 
-	public void setProdManager(ProductManager prodManager) {
-		this.prodManager = prodManager;
+	public void setSim(Sim sim) {
+		this.sim = sim;
 	}
 
 	public void add(Entity e) throws Exception {
@@ -106,8 +101,12 @@ public class InventoryManager extends EntityManager {
 		}
 	}
 
-	public ArrayList<Inventory> getProductsBySellerName(String sellerName) {
-		return owners.get(sellerName);
+	public HashMap<String, Inventory> getProductsBySellerName(String sellerName) {
+		HashMap<String, Inventory> result = new HashMap<String, Inventory>();
+		for (Inventory inventory : owners.get(sellerName)) {
+			result.put(inventory.getProd().getName(), inventory);
+		}
+		return result;
 	}
 
 	public ArrayList<Inventory> getSellersByProductName(String prodName) {
@@ -177,23 +176,25 @@ public class InventoryManager extends EntityManager {
 		int maxQuantity = st.columnInt(2);
 		/* Randomize this new quantity */
 		int quantity = 2+(new Random()).nextInt(maxQuantity-2);
-		Product prod = new Product((Product) prodManager.get(prodName));
+		Product prod = new Product((Product) sim.prodManager.get(prodName));
 		prod.setQuantity(quantity);
 		this.add(seller, prod);
+		logger.debug(String.format("Restocked %s with product %s(x%d)", seller.getName(),
+				prod.getName(), prod.getQuantity()));
 		return prod;
 	}
 
 	/* Update inventory of an agent */
 	public void updateInventory(Agent agent, Product prod) throws Exception {
 		Inventory inventory = getInventory(agent.getName(), prod.getName());
-		if (inventory==null) {			
+		if (inventory==null) {
 			if (prod.getQuantity()!=0)
 				add(agent, prod);
 		} else if (prod.getQuantity()>0) {
 			inventory.setQuantity(prod.getQuantity());
 			st = db.prepare("UPDATE Inventories SET quantity=? WHERE agent_name=? AND prod_name=?");
 			st.bind(1, prod.getQuantity()).bind(2, agent.getName()).bind(3, prod.getName());
-			st.step();			
+			st.step();
 		} else {
 			st = db.prepare("DELETE FROM Inventories WHERE agent_name=? AND prod_name=?");
 			st.bind(1, agent.getName()).bind(2, prod.getName());
@@ -204,7 +205,7 @@ public class InventoryManager extends EntityManager {
 					owners.get(agent.getName()).remove(i);
 					break;
 				}
-			}			
+			}
 		}
 	}
 }

@@ -4,6 +4,7 @@ import generatorbase.EntityManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import modelbase.Entity;
 
@@ -22,11 +23,16 @@ public class ProductManager extends EntityManager {
 	int							totalQuantity;
 	HashMap<Integer, ArrayList>	categoryList;
 	HashMap<String, Double>		value;
+	HashMap<String, String>		availableProducts;	/*
+													 * List of products with
+													 * non-zero quantity
+													 */
 
 	public ProductManager() {
 		super();
 		totalQuantity = 0;
 		categoryList = new HashMap<Integer, ArrayList>();
+		availableProducts = new HashMap<String, String>();
 	}
 
 	/* Add new products to the database */
@@ -47,6 +53,9 @@ public class ProductManager extends EntityManager {
 			categoryList.put(prod.getCategory(), new ArrayList<Product>());
 		}
 		categoryList.get(prod.getCategory()).add(prod);
+		if (availableProducts.get(entity.getName())==null) {
+			availableProducts.put(entity.getName(), " ");
+		}
 	}
 
 	public HashMap<Integer, ArrayList> getCategoryList() {
@@ -97,5 +106,30 @@ public class ProductManager extends EntityManager {
 			return -1;
 		}
 	}
-	
+
+	/* Get a list of product names with non-zero quantity */
+	public Set<String> getAvailableProducts() {
+		return availableProducts.keySet();
+	}
+
+	/* Update a product quantity */
+	public void update(Product prod) {
+		entities.put(prod.getName(), prod);
+		if (prod.quantity==0) {
+			availableProducts.remove(prod.getName());
+		}
+	}
+
+	/**
+	 * Generate a report of current product's quantities
+	 */
+	public void reportQuantity() {
+		logger.debug("*** Product quantity report ***");
+		for(String prodName: entities.keySet()) {
+			Product prod = (Product)entities.get(prodName);
+			logger.debug(String.format("Product: %-3s, quantity: %-5d", prod.getName(), prod.getQuantity()));			
+		}
+		logger.debug("*** *** ***");
+	}
+
 }
