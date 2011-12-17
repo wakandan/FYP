@@ -157,6 +157,7 @@ public class Sim extends BaseObject {
 		for (Entity agent : agentManager.getBuyers().getAll()) {
 			((Agent) agent).setInventoryManager(this.inventoryManager);
 		}
+		bank.setAgentManger(agentManager);
 	}
 
 	public static void main(String[] args) {
@@ -201,7 +202,6 @@ public class Sim extends BaseObject {
 		Inventory inventory;
 		int quantityAssignThres = ((ProductConfig) prodManager.getConfig())
 				.getQuantityAssignmentThreadshold();
-		boolean prodPicked = false;
 		Product prod, tmpProd = null;
 		quantityAssigned = 0;
 		Seller seller;
@@ -209,27 +209,27 @@ public class Sim extends BaseObject {
 		Random prodNumRandom = new Random();
 		Random prodPriceRandom = new Random();
 		EntityManager sellers = agentManager.getSellers();
-		prodPicked = false;
 		logger.info("Start assigning products to sellers");
 		numSellerAssigned = 0;
 		inventoryManager.beginTransaction();
 		for (Entity e : sellers.getAll()) {
-			if (prodPicked)
-				break;
 			seller = (Seller) e;
 			/* Pick products until a non-zero number of items is picked */
 			/* No more products to assign, terminate */
 			if (prodManager.getSize()==0) {
-				numSellerAssigned++;
 				logger.info("Products exhausted, no more products to be assigned");
 				logger.info("Total of "+(numSellerAssigned)+" sellers were assigned products");
-				prodPicked = true;
 				break;
 			}
 
 			/* Pick a random product */
 			prodNum = prodRandom.nextInt(prodManager.getSize());
-			prod = (Product) prodManager.get(prodNum+"");
+			prod = (Product) prodManager.get((String) prodManager.getAllNames().toArray()[prodNum]);
+			while (prod==null||prod.getQuantity()==0) {
+				prodNum = prodRandom.nextInt(prodManager.getSize());
+				prod = (Product) prodManager
+						.get((String) prodManager.getAllNames().toArray()[prodNum]);
+			}
 			tmpProd = new Product(prod);
 			if (prod.getQuantity()<=quantityAssignThres)
 				numProd = prod.getQuantity();
@@ -254,7 +254,7 @@ public class Sim extends BaseObject {
 			inventoryManager.add(inventory);
 			prod.setQuantity(prod.getQuantity()-tmpProd.getQuantity());
 			if (prod.getQuantity()==0) {
-				prodManager.remove(prodNum);
+				prodManager.remove(prod.getName());
 				logger.debug("Product "+prod.getName()+" is up!");
 			}
 			logger.debug("Assigned product "+prod.getName()+"("+tmpProd.getQuantity()
@@ -287,7 +287,6 @@ public class Sim extends BaseObject {
 	 * 
 	 */
 	public void advanceTime() throws SQLiteException {
-		scheduler.finalizeTimeStep();
 		scheduler.advanceTime();
 		bank.creditAllBuyers(simConfig.getCreditPerTurn());
 	}
@@ -312,7 +311,9 @@ public class Sim extends BaseObject {
 		initialize();
 		assignProducts();
 		int maxTimeStep = simConfig.getMaxTimestep();
+		logger.info("*** Simulation is running...");
 		while (timeStep<maxTimeStep) {
+			advanceTime();
 			for (Entity e : getAgentManager().getBuyers().getAll()) {
 				buyer = (Buyer) e;
 				transaction = buyer.makeTransaction();
@@ -321,8 +322,10 @@ public class Sim extends BaseObject {
 					transactionManager.addTransaction(transaction);
 				}
 			}
-			advanceTime();
+			transactionManager.processTransactions();
 			timeStep++;
+			scheduler.finalizeTimeStep();
 		}
+		logger.info("*** Simulation has finished!");
 	}
 }

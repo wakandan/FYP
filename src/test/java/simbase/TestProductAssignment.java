@@ -47,8 +47,14 @@ public class TestProductAssignment extends TestSimParent {
 		st = db.prepare("SELECT SUM(quantity) FROM Inventories");
 		st.step();
 		assertEquals(sim.getQuantityAssigned(), st.columnInt(0));
+		
+		/*All sellers must have >0 quantity on products they sell*/
+		st = db.prepare("SELECT COUNT(*) FROM Inventories, Agents WHERE Inventories.agent_name=Agents.name AND Agents.atype=? AND Inventories.quantity>0");
+		st.bind(1, AgentManager.SELLER_AGENT_TYPE);
+		st.step();
+		assertEquals(sim.getNumSellerAssigned(), st.columnInt(0));
+		
 		Agent agent = (Agent) agentManager.getSellers().get("S0");
-		System.out.println(agent.getProductNames());
 		assertTrue(sim.inventoryManager.getProductsBySellerName(agent.getName()).size()>0);
 		Product product = sim.inventoryManager.getProductsBySellerName(agent.getName()).get(0).getProd();
 

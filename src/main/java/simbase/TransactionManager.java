@@ -8,6 +8,7 @@ import java.util.HashMap;
 import productbase.Product;
 
 import modelbase.Entity;
+import agentbase.Agent;
 import agentbase.Buyer;
 import agentbase.Seller;
 
@@ -55,7 +56,8 @@ public class TransactionManager extends EntityManager {
 			transactions.get(sellerName).add(transaction);
 
 			/* Check if item is in seller's posession */
-			if ((product = sim.inventoryManager.getInventory(transaction.seller, transaction.prod).getProd())==null) {
+			if ((product = sim.inventoryManager.getInventory(transaction.seller, transaction.prod)
+					.getProd())==null) {
 				logger.error("This item "+item+" does not belong to seller "+sellerName);
 				return false;
 			}
@@ -106,13 +108,15 @@ public class TransactionManager extends EntityManager {
 			prod.setQuantity(execution.quantity);
 
 			/*
-			 * The product's real value is now set by the trsanction manager.
+			 * The product's real value is now set by the transaction manager.
 			 * This is the only place where this value is set validly. Later
 			 * when querying about the product's true value, only number in
 			 * inventory manager will be used
 			 */
 			prod.setValue(prodValue);
 			oldProd.setQuantity(oldProd.getQuantity()-execution.quantity);
+
+			/* Update buyer's inventory */
 			sim.inventoryManager.add(execution.buyer, execution.prod);
 		}
 	}
@@ -122,4 +126,6 @@ public class TransactionManager extends EntityManager {
 			transactions.put(entity.getName(), new ArrayList<Transaction>());
 		}
 	}
+
+
 }
