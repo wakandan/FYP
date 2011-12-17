@@ -1,6 +1,11 @@
 package Marketplace;
 import java.io.*;
 import javax.swing.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 
 import Interfaces.MarketEntityInterface;
 
@@ -8,12 +13,16 @@ public class Marketplace_Reader
 {
 	
 	Marketplace_Main market;
-	MarketEntityInterface tempPanel;
+	JPanel tempPanel;
 	
-	public Marketplace_Reader(Marketplace_Main market,String fileName)
+	public Marketplace_Reader(Marketplace_Main market,char mode)
 	{
 		this.market = market;
-		readFile(initFileChooser());
+		if(mode=='R')
+			readFile(initFileChooser());
+		else if(mode=='W')
+			writeFile(saveFileDialog());
+			
 	}
 	//To read in the file
     public void readFile(String fileName)
@@ -27,22 +36,10 @@ public class Marketplace_Reader
 
             while ((inputLine=brStream.readLine()) != null)
             {
-            	if(inputLine.equalsIgnoreCase("Buyer/Seller"))
-            	{
-            		tempPanel = market.buySell;
-            		i = 0;
-            		continue;
-            	}
-            	else if(inputLine.equalsIgnoreCase("Product/Price"))
-            	{
-            		tempPanel = market.prodPrice;
-            		i = 0;
-            		continue;
-            	}            
             	
-                String values[] = inputLine.split(" : ");
+                String values[] = inputLine.split("=");
                 if(values.length == 2)
-                	tempPanel.setParameters(i++,values[1].trim());                
+                	setFieldForMain(values);             
             }
 
             brStream.close();
@@ -50,6 +47,25 @@ public class Marketplace_Reader
         catch (IOException ex) {
             System.out.println("Error in readFile method! " + ex);
         }
+    }
+    
+    public void writeFile(String fileName)
+    {
+    	if(fileName == null)
+    		return;
+    	else if(fileName.isEmpty())
+    		return;
+    	try
+    	{
+	    	PrintWriter outFile = new PrintWriter(fileName);
+	    	outFile.write(getFieldPanel());
+	    	outFile.flush();
+	    	outFile.close();
+        }
+        catch (Exception ex) {
+            System.out.println("Error in writeFile method! " + ex.getMessage());
+        }
+    	
     }
     
     public String initFileChooser()
@@ -62,4 +78,81 @@ public class Marketplace_Reader
 	    
 		return fileName;
     }
+    
+    public String saveFileDialog()
+    {
+    	String fileName = "";
+    	try
+    	{
+	    	Display display = new Display();
+	        final Shell shell = new Shell(display);
+	
+	        FileDialog dlg = new FileDialog(shell, SWT.SAVE);
+	
+	        fileName = dlg.open();
+	        if (fileName != null) {
+	          System.out.println(fileName);
+	        }
+	
+	        display.dispose();
+    	}
+    	catch(Exception e)
+    	{
+    		
+    	}
+        return fileName;
+    }
+    //"buyerNum","2"
+    public void setFieldForMain(String[] values)
+    {
+    	for(int i = 0;i < market.getComponentCount(); i++)
+    		if(market.getComponent(i) instanceof JPanel)
+    		{
+    			tempPanel = (JPanel)market.getComponent(i);
+    			for(int j = 0; j < tempPanel.getComponentCount(); j++)
+    				if(tempPanel.getComponent(j) instanceof JPanel)
+    					setTextFieldForPanel((JPanel) tempPanel.getComponent(j),values);
+
+    		}
+    }
+    
+    public void setTextFieldForPanel(JPanel temp, String[] values)
+    {
+    	for(int i = 0;i < temp.getComponentCount(); i++)
+    		if(temp.getComponent(i) instanceof JTextField)
+    			if(((JTextField)temp.getComponent(i)).getName().equalsIgnoreCase(values[0]))
+    				((JTextField)temp.getComponent(i)).setText(values[1]);
+    }
+    
+    public String getFieldPanel()
+    {
+    	String output = "";
+    	String newL = System.getProperty("line.separator");
+    	
+    	for(int i = 0;i < market.getComponentCount(); i++)
+    		if(market.getComponent(i) instanceof JPanel)
+    		{
+    			tempPanel = (JPanel)market.getComponent(i);
+    			for(int j = 0; j < tempPanel.getComponentCount(); j++)
+    				if(tempPanel.getComponent(j) instanceof JPanel)
+    					output += getTextForEachField((JPanel) tempPanel.getComponent(j)) + newL;
+
+    		}
+    	
+    	return output;
+    }
+    
+    public String getTextForEachField(JPanel temp)
+    {
+    	String output = "";
+    	String newL = System.getProperty("line.separator");
+    	for(int i = 0;i < temp.getComponentCount(); i++)
+    		if(temp.getComponent(i) instanceof JTextField)
+    			if(!((JTextField)temp.getComponent(i)).getText().isEmpty())
+    				output += ((JTextField)temp.getComponent(i)).getName()+"="+
+    				((JTextField)temp.getComponent(i)).getText() + newL;
+    	
+    	return output;
+    }
+       
 }

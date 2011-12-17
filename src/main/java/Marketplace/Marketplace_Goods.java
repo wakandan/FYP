@@ -15,9 +15,17 @@ class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 	                    "Max price: ", 
 	                    "Min price: ", 
 	                    "No of categories ", 
-	                    "Duration: "};
+	                    //"Duration: "
+	                    };
+	
+	private String[] fieldName = { "numTypes",
+            					   "numProducts",
+            					   "priceMax",
+            					   "priceMin",
+            					   "numCategories" };
+	
 	//Textbox width
-	private int[] widths = { 4, 4, 4, 4, 4, 2 };
+	private int[] widths = { 4, 4, 4, 4, 4 };
 	
 	Marketplace_Goods() {
 		this.setLayout(new GridLayout(labels.length,1));
@@ -34,6 +42,7 @@ class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 			 JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			 JLabel label = new JLabel(labels[i],JLabel.LEFT);
 			 fields[i] = new JTextField(widths[i]);
+			 fields[i].setName(fieldName[i]);
 			 label.setLabelFor(fields[i]);
 			 tempPanel.add(label);
 			 tempPanel.add(fields[i]);
@@ -41,22 +50,19 @@ class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 		 }
 	 }
 	 
-
 	 public void resetText()
 	 {
 		 for(int i = 0;i < this.getComponentCount();i++)
 			 if(this.getComponent(i) instanceof JPanel)
 				 setResetTextField(((JPanel)this.getComponent(i)));
 	 }
-	
 
 	public void setResetTextField(JPanel tempPanel)
 	{
 		 for(int c = 0;c < tempPanel.getComponentCount();c++)
 			 if(tempPanel.getComponent(c) instanceof JTextField)
 				 ((JTextField)tempPanel.getComponent(c)).setText("");
-	}
-	
+	}	
 
 	public void setParameters(int i,String text)
 	{
@@ -65,5 +71,4 @@ class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 		
 		fields[i].setText(text);
 	}
-	
 }
