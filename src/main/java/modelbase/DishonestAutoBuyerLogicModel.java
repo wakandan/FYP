@@ -21,6 +21,8 @@ import simbase.Transaction;
 public class DishonestAutoBuyerLogicModel extends BuyerLogicModel {
 	public Rating calcRating(Seller seller, Product prod) {
 		int rate = ((int) Math.round(1+prod.getValue()*4))%3;
+		if (rate<1)
+			rate = 1;
 		return new Rating((Buyer) this.agent, seller, rate);
 	}
 

@@ -7,9 +7,9 @@ import agentbase.Seller;
 public class Rating extends Entity {
 	Buyer	buyer;
 	Seller	seller;
-	int		rating;
+	double	rating;
 
-	public Rating(Buyer buyer, Seller seller, int rating) {
+	public Rating(Buyer buyer, Seller seller, double rating) {
 		super();
 		this.buyer = buyer;
 		this.seller = seller;
@@ -17,7 +17,8 @@ public class Rating extends Entity {
 	}
 
 	public String toString() {
-		return this.buyer.getName()+"->"+this.seller.getName()+"="+this.rating;
+		return String.format("%5s => %5s: %5.2f", this.buyer.getName(), this.seller.getName(),
+				this.rating);
 	}
 
 }

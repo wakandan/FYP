@@ -146,8 +146,9 @@ public class TransactionManager extends EntityManager {
 			sim.inventoryManager.updateInventory(execution.seller, oldProd);
 
 			/* Leave rating to seller */
-			sim.ratingManager.addRating(execution.buyer.leaveRating(execution.seller,
-					execution.prod));
+			Rating rating = execution.buyer.leaveRating(execution.seller, prod);
+			sim.ratingManager.addRating(rating);
+//			logger.debug(rating);
 		}
 	}
 

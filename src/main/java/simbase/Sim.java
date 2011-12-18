@@ -327,6 +327,7 @@ public class Sim extends BaseObject {
 				}
 			}
 			transactionManager.processTransactions();
+			ratingManager.reportRating();
 			// prodManager.reportQuantity();
 			timeStep++;
 			scheduler.finalizeTimeStep();
