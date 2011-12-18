@@ -48,7 +48,7 @@ public class Seller extends Agent {
 			 * available quantity
 			 */
 			if (execution.isSuccess()) {
-				inventory.setQuantity(inventory.getQuantity()-execution.getQuantity());
+				inventory.setQuantity(inventory.getQuantity()-execution.getQuantity());				
 			}
 			executions.add(execution);
 		}

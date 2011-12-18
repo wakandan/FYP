@@ -106,6 +106,8 @@ public class InventoryManager extends EntityManager {
 		for (Inventory inventory : owners.get(sellerName)) {
 			result.put(inventory.getProd().getName(), inventory);
 		}
+		if (result.size()==0)
+			return null;
 		return result;
 	}
 
@@ -175,7 +177,11 @@ public class InventoryManager extends EntityManager {
 		String prodName = st.columnString(1);
 		int maxQuantity = st.columnInt(2);
 		/* Randomize this new quantity */
-		int quantity = 2+(new Random()).nextInt(maxQuantity-2);
+		int quantity;
+		if (maxQuantity<2)
+			quantity = maxQuantity;
+		else
+			quantity = 2+(new Random()).nextInt(maxQuantity-2);
 		Product prod = new Product((Product) sim.prodManager.get(prodName));
 		prod.setQuantity(quantity);
 		this.add(seller, prod);
@@ -203,6 +209,13 @@ public class InventoryManager extends EntityManager {
 				if (owners.get(agent.getName()).get(i).getProd().getName()
 						.equalsIgnoreCase(prod.getName())) {
 					owners.get(agent.getName()).remove(i);
+					break;
+				}
+			}
+			for (int i = 0; i<stores.get(prod.getName()).size(); i++) {
+				if (stores.get(prod.getName()).get(i).getAgent().getName()
+						.equalsIgnoreCase(agent.getName())) {
+					stores.get(prod.getName()).remove(i);
 					break;
 				}
 			}

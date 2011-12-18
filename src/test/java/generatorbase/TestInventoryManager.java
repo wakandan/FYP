@@ -6,6 +6,7 @@ package generatorbase;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +69,6 @@ public class TestInventoryManager extends TestWithDBParent {
 		st = db.prepare("SELECT SUM(quantity) FROM Inventories");
 		st.step();
 		assertEquals(prod.getQuantity()+prod2.getQuantity(), st.columnInt(0));
-		System.out.println(inventoryManager.getProductsBySellerName(agent.getName()));
 		assertEquals(2, inventoryManager.getProductsBySellerName(agent.getName()).keySet().size());
 
 	}
@@ -183,6 +183,7 @@ public class TestInventoryManager extends TestWithDBParent {
 	public void testUpdateInventory() throws Exception {
 		Buyer buyer = new Buyer("buyer1");
 		Product prod1 = new Product("p1");
+		Seller seller = new Seller("seller1");
 		prod1.setQuantity(1000);
 		prod1.setCategory(1);
 		prod1.setPriceMax(10);
@@ -195,12 +196,19 @@ public class TestInventoryManager extends TestWithDBParent {
 		prod1.setQuantity(500);
 		inventoryManager.updateInventory(buyer, prod1);
 		assertEquals(500, inventoryManager.getInventory(buyer, prod1).getQuantity());
+
+		prod1.setQuantity(500);
+		inventoryManager.updateInventory(seller, prod1);
 		prod1.setQuantity(0);
-		inventoryManager.updateInventory(buyer, prod1);
-		assertTrue(inventoryManager.getInventory(buyer, prod1)==null);
+		inventoryManager.updateInventory(seller, prod1);
+		assertTrue(inventoryManager.getInventory(seller, prod1)==null);
 		st = db.prepare("SELECT * FROM Inventories WHERE agent_name=? AND prod_name=?");
-		st.bind(1, buyer.getName()).bind(2, prod1.getName());
+		st.bind(1, seller.getName()).bind(2, prod1.getName());
 		st.step();
 		assertTrue(!st.hasRow());
+		ArrayList<Inventory> sellerList = inventoryManager.getSellersByProductName(prod1.getName());
+		for (Inventory inventory : sellerList) {
+			assertTrue(inventory.getAgent().getName()!=seller.getName());
+		}
 	}
 }

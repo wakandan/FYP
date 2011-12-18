@@ -47,13 +47,16 @@ public class TransactionManager extends EntityManager {
 	 */
 	public Execution addTransaction(Transaction transaction) {
 		Seller seller;
-		Product product;
+		Product product = null;
 		String sellerName = transaction.seller.getName();
 		String item = transaction.prod.getName();
 		int quantity = transaction.quantity;
 		Execution execution = new Execution(transaction, false);
 		/* Check if the seller name is valid */
-		product = sim.inventoryManager.getInventory(transaction.seller, transaction.prod).getProd();
+		try {
+			product = sim.inventoryManager.getInventory(transaction.seller, transaction.prod)
+					.getProd();
+		} catch (NullPointerException e) {}
 		seller = (Seller) sim.getAgentManager().getAgentByName(sellerName);
 		if (seller!=null) {
 			if (!transactions.containsKey(sellerName)) {
@@ -119,8 +122,10 @@ public class TransactionManager extends EntityManager {
 	private void processExecution(Execution execution) throws Exception {
 		if (execution.success) {
 			double prodValue = sim.inventoryManager.getValue(execution.seller, execution.prod);
+			/* Credit buyer's balance */
 			sim.bank.creditBalance(execution.buyer, execution.quantity
 					*((prodValue-1)*execution.price));
+
 			Product oldProd = (Product) sim.inventoryManager.getInventory(execution.seller,
 					execution.prod).getProd();
 			Product prod = new Product(oldProd);
@@ -137,7 +142,12 @@ public class TransactionManager extends EntityManager {
 			sim.prodManager.update(oldProd);
 
 			/* Update buyer's inventory */
-			sim.inventoryManager.add(execution.buyer, execution.prod);
+			sim.inventoryManager.updateInventory(execution.buyer, execution.prod);
+			sim.inventoryManager.updateInventory(execution.seller, oldProd);
+
+			/* Leave rating to seller */
+			sim.ratingManager.addRating(execution.buyer.leaveRating(execution.seller,
+					execution.prod));
 		}
 	}
 

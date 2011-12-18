@@ -46,6 +46,7 @@ public class Sim extends BaseObject {
 	InventoryManager	inventoryManager;
 	Bank				bank;
 	TransactionManager	transactionManager;
+	RatingManager		ratingManager;
 
 	public TransactionManager getTransactionManager() {
 		return transactionManager;
@@ -137,6 +138,7 @@ public class Sim extends BaseObject {
 	}
 
 	public void initObjects() {
+		ratingManager = new RatingManager();
 		prodManager = new ProductManager();
 		agentManager = new AgentManager();
 		inventoryManager = new InventoryManager();
@@ -312,7 +314,7 @@ public class Sim extends BaseObject {
 		initialize();
 		assignProducts();
 		int maxTimeStep = simConfig.getMaxTimestep();
-		Execution execution; 
+		Execution execution;
 		logger.info("*** Simulation is running...");
 		while (timeStep<maxTimeStep) {
 			advanceTime();
@@ -320,12 +322,12 @@ public class Sim extends BaseObject {
 				buyer = (Buyer) e;
 				transaction = buyer.makeTransaction();
 				execution = transactionManager.addTransaction(transaction);
-				if(execution!=null) {
+				if (execution!=null) {
 					logger.debug(execution);
 				}
 			}
 			transactionManager.processTransactions();
-//			prodManager.reportQuantity();
+			// prodManager.reportQuantity();
 			timeStep++;
 			scheduler.finalizeTimeStep();
 		}

@@ -81,6 +81,6 @@ public class Inventory extends Entity {
 	}
 	
 	public String toString() {
-		return this.agent.getName()+"->"+this.quantity+"x"+this.prod.getName();
+		return String.format("%s->%sx%d", this.agent.getName(), this.prod.getName(), this.quantity);
 	}
 }
