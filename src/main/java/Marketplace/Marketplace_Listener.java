@@ -18,11 +18,11 @@ public class Marketplace_Listener implements ActionListener {
 
 		if(e.getActionCommand().equalsIgnoreCase("Import Configuration"))
 		{
-			new Marketplace_Reader(marketControls.market,"Files/marketplace_parameter.txt");
+			new Marketplace_Reader(marketControls.market,'R');
 		}
 		else if(e.getActionCommand().equalsIgnoreCase("Save Configuration"))
 		{
-			//do something
+			new Marketplace_Reader(marketControls.market,'W');
 		}
 		else if(e.getActionCommand().equalsIgnoreCase("Reset"))
 		{

@@ -93,7 +93,7 @@ public class ProductModel extends EntityModel {
 			prodQuantity = getNumProdInRange(i);
 			if (prodQuantity<1)
 				continue;
-			logger.debug("Generating "+prodQuantity+" products in range "+prcMin+" to "+prcMax);
+			logger.debug(String.format("Generating product %-3d(x%5d) [%.2f-%.2f]", i, prodQuantity, prcMin, prcMax));
 			Product prod = new Product(i+"");
 			prod.setPriceMin(prcMin);
 			prod.setPriceMax(prcMax);

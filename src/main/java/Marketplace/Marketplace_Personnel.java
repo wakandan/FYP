@@ -12,15 +12,17 @@ class Marketplace_Personnel extends JPanel implements MarketEntityInterface{
 	private String[] labels = { "No of buyers: ", 
 	                    "No of sellers: ", 
 	                    "Initial balance: ",
-	                    "Distribution Model: ",
-	                    "Distribution Mean: ",
-	                    "Distribution Deviation: ",
-	                    "% of default honest buyers: ", 
-	                    "% of default honest sellers: ", 
-	                    "Distribution of auto-buyer's rating: ", 
-	                    "Dustrubution of buyer/seller entering marketplace: " };
+	                   // "% of default honest buyers: ", 
+	                    //"% of default honest sellers: ", 
+	                    //"Distribution of auto-buyer's rating: ", 
+	                    //"Distribution of buyer/seller entering marketplace: " 
+	                    };
+	private String[] fieldName = {"buyerNum",
+			                      "sellerNum",
+			                      "initialBalance"
+	                  };
 	//Textbox width
-	private int[] widths = { 4, 4, 4, 5, 2, 2, 2, 2, 2, 2 };
+	private int[] widths = { 4, 4, 4 };
 	
 	Marketplace_Personnel() {
 		this.setLayout(new GridLayout(labels.length,1));
@@ -37,6 +39,7 @@ class Marketplace_Personnel extends JPanel implements MarketEntityInterface{
 			 JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			 JLabel label = new JLabel(labels[i],JLabel.LEFT);
 			 fields[i] = new JTextField(widths[i]);
+			 fields[i].setName(fieldName[i]);
 			 label.setLabelFor(fields[i]);
 			 tempPanel.add(label);
 			 tempPanel.add(fields[i]);

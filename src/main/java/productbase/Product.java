@@ -59,4 +59,8 @@ public class Product extends Entity {
 	public Product(String name) {
 		super(name);
 	}
+
+	public String toString() {
+		return String.format("%3s (x%5d)", this.name, this.quantity);
+	}
 }

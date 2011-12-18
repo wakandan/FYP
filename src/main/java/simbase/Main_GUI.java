@@ -16,7 +16,7 @@ public class Main_GUI extends JFrame{
 		createTabs();
 		this.add(mainPanel);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setResizable(true);
+		this.setResizable(false);
 		this.setVisible(true);
 		this.pack();
 	}
