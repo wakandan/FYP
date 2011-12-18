@@ -30,7 +30,7 @@ public class HonestAutoBuyerLogicModel extends BuyerLogicModel {
 	@Override
 	public Rating calcRating(Seller seller, Product prod) {
 		Random random = new Random();
-		int rate = (int) Math.round(1+prod.getValue()*4);
+		int rate = (int) Math.round(1+prod.getValue()*4);		
 		if (rate>=5)
 			rate = 4+(int) Math.round(random.nextDouble());
 		return new Rating((Buyer) this.agent, seller, rate);
