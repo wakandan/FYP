@@ -46,6 +46,8 @@ public class DBConfig {
 		}
 		return db;
 	}
+	
+	
 
 	/*
 	 * A function to read ddl files and execute, create suitable tables for
@@ -59,6 +61,16 @@ public class DBConfig {
 		while ((line = br.readLine())!=null)
 			result += line;
 		return result;
+	}
+	
+	protected boolean processConfigKey(String key, String value) {
+		if (key.equalsIgnoreCase(filename)) {
+			this.filename = value;
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 }

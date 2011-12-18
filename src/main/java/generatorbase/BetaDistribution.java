@@ -2,7 +2,7 @@ package generatorbase;
 
 import configbase.ProductConfig;
 
-public class BetaDistribution {//extends Distribution{
+public class BetaDistribution extends Distribution{
 	private double a;
 	private double b;
 	private ProductConfig config;
