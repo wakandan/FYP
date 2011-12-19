@@ -17,12 +17,13 @@ public class AgentMaster extends EntityManager {
 		return masterName;
 	}
 
-	public AgentMaster(AgentMasterConfig masterConfig) {
+	public AgentMaster(AgentMasterConfig masterConfig) {		
 		super();
+		Buyer buyer;
 		this.masterConfig = masterConfig;
 		this.masterName = masterConfig.getMasterName();
 		for (int i = 0; i<masterConfig.agentNum; i++) {
-			Buyer buyer = new Buyer(masterConfig.masterName+"_"+i);
+			buyer = new Buyer(masterConfig.masterName+"_"+i);
 			masterConfig.configure(buyer);
 			buyer.setWishList(masterConfig.wishlist);
 			entities.put(buyer.getName(), buyer);

@@ -24,14 +24,10 @@ import configbase.DistributionConfig;
  */
 public class AgentMasterConfig extends Config {
 
-	AgentLogicModel		logicModel;
-	ArrayList<String>	wishlist;
-	int					agentNum;
-	String				masterName;
-
-	public AgentLogicModel getLogicModel() {
-		return logicModel;
-	}
+	Class<AgentLogicModel>	logicModel;
+	ArrayList<String>		wishlist;
+	int						agentNum;
+	String					masterName;
 
 	public ArrayList<String> getWishlist() {
 		return wishlist;
@@ -52,7 +48,12 @@ public class AgentMasterConfig extends Config {
 	 */
 	@Override
 	public void configure(Entity e) {
-		((Buyer) e).setLogicModel(logicModel);
+		try {
+			((Buyer) e).setLogicModel(logicModel.newInstance());
+		} catch (Exception ex) {
+			logger.error("Can't create logic model "+logicModel.getName());
+		}
+		((Buyer) e).setWishList(wishlist);
 	}
 
 	/*
@@ -66,8 +67,7 @@ public class AgentMasterConfig extends Config {
 		ClassLoader classLoader = AgentLogicModel.class.getClassLoader();
 		if (key.equalsIgnoreCase("agentLogicModelClass")) {
 			try {
-				this.logicModel = ((Class<AgentLogicModel>) classLoader.loadClass(value))
-						.newInstance();
+				this.logicModel = ((Class<AgentLogicModel>) classLoader.loadClass(value));
 			} catch (Exception e) {
 				logger.error("Error loading class: "+value);
 				e.printStackTrace();

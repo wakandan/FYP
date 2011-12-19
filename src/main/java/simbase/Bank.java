@@ -50,7 +50,7 @@ public class Bank extends EntityManager {
 	/**
 	 * @param aManager
 	 */
-	public void setAgentManger(AgentManager aManager) {
+	public void setAgentManager(AgentManager aManager) {
 		Agent agent;
 		for (Entity e : aManager.getAll()) {
 			agent = (Agent) e;

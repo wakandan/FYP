@@ -18,6 +18,7 @@ import productbase.Product;
 import productbase.ProductManager;
 import agentbase.Agent;
 import agentbase.AgentManager;
+import agentbase.AgentMaster;
 import agentbase.Buyer;
 import agentbase.Seller;
 
@@ -80,7 +81,7 @@ public class Sim extends BaseObject {
 	public void setAgentManager(AgentManager agentManager) {
 		this.agentManager = agentManager;
 		this.agentManager.setSessionId(this.sessionId);
-		bank.setAgentManger(agentManager);
+		bank.setAgentManager(agentManager);
 	}
 
 	public SimConfig getSimConfig() {
@@ -157,10 +158,19 @@ public class Sim extends BaseObject {
 		prodModel = new ProductModel(simConfig.getProdConfig());
 		prodModel.generate(prodManager);
 		agentModel.generate(agentManager);
+
+		/* Add agents from agent masters into the list of all buyers */
+		for (AgentMaster agentMaster : simConfig.getAgentMasters().values()) {
+			for (Entity agent : agentMaster.getAll()) {
+				this.agentManager.add(agent);
+			}
+
+		}
+
 		for (Entity agent : agentManager.getBuyers().getAll()) {
 			((Agent) agent).setInventoryManager(this.inventoryManager);
 		}
-		bank.setAgentManger(agentManager);
+		bank.setAgentManager(agentManager);
 	}
 
 	public static void main(String[] args) {
@@ -183,14 +193,6 @@ public class Sim extends BaseObject {
 			sim.logger.error("Exiting...");
 			System.exit(1);
 		}
-	}
-
-	/**
-	 * At each time step, all balance will be credit a fixed amount of money
-	 */
-	private void topUpBalance() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -306,6 +308,20 @@ public class Sim extends BaseObject {
 		return bank.getBalance(agent.getName());
 	}
 
+	public void addAgentMasters() {
+		/* Add agents from agent masters */
+		for (AgentMaster agentMaster : simConfig.getAgentMasters().values()) {
+			try {
+				for (Entity agent : agentMaster.getAll()) {
+					this.agentManager.add(agent);
+				}
+			} catch (Exception e) {
+				logger.error("Error adding agent from agent master "+agentMaster.getMasterName());
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public void run() throws Exception {
 		Buyer buyer;
 		Seller seller;
@@ -318,8 +334,8 @@ public class Sim extends BaseObject {
 		logger.info("*** Simulation is running...");
 		while (timeStep<maxTimeStep) {
 			advanceTime();
-			for (Entity e : getAgentManager().getBuyers().getAll()) {
-				buyer = (Buyer) e;
+			for (Object e : getAgentManager().getAllBuyers()) {
+				buyer = (Buyer) e;				
 				transaction = buyer.makeTransaction();
 				if (transaction!=null) {
 					execution = transactionManager.addTransaction(transaction);

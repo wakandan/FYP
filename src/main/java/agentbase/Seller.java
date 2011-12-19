@@ -27,7 +27,7 @@ public class Seller extends Agent {
 			HashMap<String, Inventory> myInventory) {
 		ArrayList executions = new ArrayList();
 		Execution execution;
-		Inventory inventory;
+		Inventory inventory;		
 		for (Transaction transaction : transactions) {
 			execution = new Execution(transaction, false);
 			inventory = myInventory.get(execution.getProd().getName());

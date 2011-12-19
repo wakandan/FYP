@@ -69,7 +69,8 @@ public class TransactionManager extends EntityManager {
 						item));
 			} else if (product.getPriceMax()>sim.bank.getBalance(transaction.buyer.getName())) {
 				/* Check for buyer's balance */
-				execution.setReason(String.format("Seller %5s: insufficient balance", sellerName));
+				execution.setReason(String.format("Buyer %5s: low balance",
+						transaction.buyer.getName()));
 			} else if (product.getQuantity()<=0) {
 				/* Check if there are available quantity */
 				execution.setReason(String.format("Product %5s not available", item));
@@ -77,10 +78,10 @@ public class TransactionManager extends EntityManager {
 				execution.setReason(String.format("Invalid quantity prod. %5s: Req %d v/s Avai %d",
 						item, quantity, product.getQuantity()));
 			} else {
+				/*Transaction recorded, do nothing*/
 				transactions.get(sellerName).add(transaction);
 				return null;
 			}
-
 		} else {
 			execution.setReason("No such seller name: ["+sellerName+"]");
 		}

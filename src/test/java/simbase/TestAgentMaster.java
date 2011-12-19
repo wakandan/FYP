@@ -25,7 +25,6 @@ public class TestAgentMaster {
 		String masterConfigFile = "src/test/resources/configbase/testAgentMasterConfig.ini";
 		AgentMasterConfig config = new AgentMasterConfig();
 		config.readConfig(masterConfigFile);
-		assertTrue(config.getLogicModel() instanceof HonestAutoBuyerLogicModel);
 		int[] productNames = { 0, 4, 5, 7, 9 };
 		assertEquals(10, config.getAgentNum());
 		for (int name : productNames) {

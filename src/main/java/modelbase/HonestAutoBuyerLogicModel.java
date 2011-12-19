@@ -52,7 +52,6 @@ public class HonestAutoBuyerLogicModel extends BuyerLogicModel {
 		Inventory inventory;
 		Random random = new Random();
 		int wishListIndex = buyer.getWishListIndex();
-
 		/* If the wish list is null, then generate a new one */
 		if (buyer.getWishList()==null) {
 			ArrayList<String> wishList = new ArrayList<String>();

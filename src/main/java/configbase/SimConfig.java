@@ -133,6 +133,7 @@ public class SimConfig extends Config {
 			return true;
 		} catch (Exception e) {
 			logger.error(e);
+			e.printStackTrace();
 		}
 		return false;
 	}
