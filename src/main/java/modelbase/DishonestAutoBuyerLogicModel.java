@@ -41,8 +41,14 @@ public class DishonestAutoBuyerLogicModel extends BuyerLogicModel {
 				.nextInt(prodCount)];
 		ArrayList<Inventory> sellerList = agent.getInventoryManager().getSellersByProductName(
 				prodName);
-		Inventory inventory = sellerList.get(random.nextInt(sellerList.size()));
-		return new Transaction(buyer, (Seller) inventory.getAgent(), inventory.getProd(), 1,
-				inventory.getPrice());
+		if (sellerList.size()>0) {
+			Inventory inventory = sellerList.get(random.nextInt(sellerList.size()));
+			return new Transaction(buyer, (Seller) inventory.getAgent(), inventory.getProd(), 1,
+					inventory.getPrice());
+		} else {
+			logger.debug(String.format("No seller's selling product %5s", prodName));
+			return null;
+		}
+
 	}
 }
