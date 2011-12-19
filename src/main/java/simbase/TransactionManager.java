@@ -67,6 +67,9 @@ public class TransactionManager extends EntityManager {
 				/* Check if item is in seller's possession */
 				execution.setReason(String.format("Seller %5s doesn't have prod. %5s", sellerName,
 						item));
+			} else if (product.getPriceMax()>sim.bank.getBalance(transaction.buyer.getName())) {
+				/* Check for buyer's balance */
+				execution.setReason(String.format("Seller %5s: insufficient balance", sellerName));
 			} else if (product.getQuantity()<=0) {
 				/* Check if there are available quantity */
 				execution.setReason(String.format("Product %5s not available", item));
@@ -148,7 +151,7 @@ public class TransactionManager extends EntityManager {
 			/* Leave rating to seller */
 			Rating rating = execution.buyer.leaveRating(execution.seller, prod);
 			sim.ratingManager.addRating(rating);
-//			logger.debug(rating);
+			// logger.debug(rating);
 		}
 	}
 

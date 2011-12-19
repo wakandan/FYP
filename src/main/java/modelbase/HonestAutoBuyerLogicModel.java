@@ -30,7 +30,7 @@ public class HonestAutoBuyerLogicModel extends BuyerLogicModel {
 	@Override
 	public Rating calcRating(Seller seller, Product prod) {
 		Random random = new Random();
-		int rate = (int) Math.round(1+prod.getValue()*4);		
+		int rate = (int) Math.round(1+prod.getValue()*4);
 		if (rate>=5)
 			rate = 4+(int) Math.round(random.nextDouble());
 		return new Rating((Buyer) this.agent, seller, rate);
@@ -54,7 +54,7 @@ public class HonestAutoBuyerLogicModel extends BuyerLogicModel {
 		int wishListIndex = buyer.getWishListIndex();
 
 		/* If the wish list is null, then generate a new one */
-		if (buyer.getWishList()==null) {			
+		if (buyer.getWishList()==null) {
 			ArrayList<String> wishList = new ArrayList<String>();
 			int prodCount = agent.getInventoryManager().getAllProductsCount();
 			int totalNumProd = random.nextInt(prodCount);
@@ -68,10 +68,18 @@ public class HonestAutoBuyerLogicModel extends BuyerLogicModel {
 
 		prodName = buyer.getWishList().get(wishListIndex);
 		sellerList = agent.getInventoryManager().getSellersByProductName(prodName);
-		inventory = sellerList.get(random.nextInt(sellerList.size()));
-		buyer.setWishListIndex(wishListIndex++%buyer.getWishList().size());
-		return new Transaction((Buyer) this.agent, (Seller) inventory.getAgent(),
-				inventory.getProd(), 1, inventory.getPrice());
+
+		/* If currently there's no seller having this product, skip */
+		if (sellerList.size()>0) {
+
+			inventory = sellerList.get(random.nextInt(sellerList.size()));
+			buyer.setWishListIndex(wishListIndex++%buyer.getWishList().size());
+			return new Transaction((Buyer) this.agent, (Seller) inventory.getAgent(),
+					inventory.getProd(), 1, inventory.getPrice());
+		} else {
+			logger.debug(String.format("No seller's selling product %5s", prodName));
+			return null;
+		}
 
 	}
 }

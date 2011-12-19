@@ -38,9 +38,12 @@ public class TestTransactionManager extends TestSimParent {
 				.getProductsBySellerName(seller.getName())
 				.get(sim.inventoryManager.getProductsBySellerName(seller.getName()).keySet()
 						.toArray()[0]).getProd();
+		sim.bank.setBalance(buyer.getName(), 10000);
+		Execution execution = sim.transactionManager.addTransaction(buyer, seller, prod,
+				prod.getQuantity(), 100);
+		assertTrue(execution==null);
 		/* Check for the valid case */
-		assertTrue(sim.transactionManager.addTransaction(buyer, seller, prod, prod.getQuantity(),
-				100)==null);
+		// assertTrue();
 		/* Check for invalid seller's name */
 		assertTrue(sim.getTransactionManager().addTransaction(buyer, seller, prod,
 				prod.getQuantity()+2, 100)!=null);
@@ -57,6 +60,8 @@ public class TestTransactionManager extends TestSimParent {
 				.getProductsBySellerName(seller.getName())
 				.get(sim.inventoryManager.getProductsBySellerName(seller.getName()).keySet()
 						.toArray()[0]).getProd();
+		sim.bank.setBalance(buyer0.getName(), 10000);
+		sim.bank.setBalance(buyer1.getName(), 10000);
 		if (prod.getQuantity()>=2) {
 			sim.getTransactionManager().addTransaction(buyer0, seller, prod, prod.getQuantity()/2,
 					prod.getPriceMin());
@@ -68,9 +73,13 @@ public class TestTransactionManager extends TestSimParent {
 				assertTrue(buyer0.getProduct(prod.getName())!=null);
 				assertTrue(sim.getBalance(buyer1)>0);
 			} else {
-				assertTrue(sim.getBalance(buyer0)==0);
+				/*
+				 * Incase of an auto dishonest seller, he will refuse to sell,
+				 * so the balance remains the same
+				 */
+				assertEquals(10000, sim.getBalance(buyer0), 0.1);
 				assertTrue(buyer0.getProduct(prod.getName())==null);
-				assertTrue(sim.getBalance(buyer1)==0);
+				assertEquals(10000, sim.getBalance(buyer1), 0.1);
 			}
 		}
 	}

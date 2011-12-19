@@ -321,17 +321,22 @@ public class Sim extends BaseObject {
 			for (Entity e : getAgentManager().getBuyers().getAll()) {
 				buyer = (Buyer) e;
 				transaction = buyer.makeTransaction();
-				execution = transactionManager.addTransaction(transaction);
-				if (execution!=null) {
-					logger.debug(execution);
+				if (transaction!=null) {
+					execution = transactionManager.addTransaction(transaction);
+					if (execution!=null) {
+						logger.debug(execution);
+					}
 				}
 			}
 			transactionManager.processTransactions();
-			ratingManager.reportRating();
 			// prodManager.reportQuantity();
 			timeStep++;
 			scheduler.finalizeTimeStep();
 		}
+		logger.info("*** Rating Report ***");
+		ratingManager.reportRating();
+		logger.info("*** Balance Report ***");
+		bank.reportBalance(this.agentManager.getBuyers().getEntitiesNames());
 		logger.info("*** Simulation has finished!");
 	}
 }
