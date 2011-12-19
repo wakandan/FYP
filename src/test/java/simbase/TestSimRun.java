@@ -20,13 +20,14 @@ import simbase.Sim;
  * 
  */
 public class TestSimRun {
-	DBConfig dbConfig;
+	DBConfig	dbConfig;
+
 	@Before
 	public void setUp() {
 		dbConfig = new DBConfig(null);
 		dbConfig.addDdlFile("src/main/resources/sql/Products.ddl");
 		dbConfig.addDdlFile("src/main/resources/sql/Agents.ddl");
-		dbConfig.addDdlFile("src/main/resources/sql/Inventories.ddl");		
+		dbConfig.addDdlFile("src/main/resources/sql/Inventories.ddl");
 	}
 
 	@Test
@@ -38,5 +39,13 @@ public class TestSimRun {
 		sim.setDb(dbConfig.setUpDb());
 		sim.run();
 	}
-	
+
+	@Test
+	public void testSimConfig() throws IOException {
+		SimConfig simConfig = new SimConfig();
+		simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
+		assertEquals(5, simConfig.getWarmUpPeriod());
+		assertEquals(2, simConfig.getAgentMasters().keySet().size());
+	}
+
 }

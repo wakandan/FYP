@@ -25,13 +25,12 @@ public class TestAgentMaster {
 		String masterConfigFile = "src/test/resources/configbase/testAgentMasterConfig.ini";
 		AgentMasterConfig config = new AgentMasterConfig();
 		config.readConfig(masterConfigFile);
-		System.out.println(config.getLogicModel());
 		assertTrue(config.getLogicModel() instanceof HonestAutoBuyerLogicModel);
 		int[] productNames = { 0, 4, 5, 7, 9 };
 		assertEquals(10, config.getAgentNum());
 		for (int name : productNames) {
 			assertTrue(config.getWishlist().indexOf(name+"")>-1);
 		}
-
+		assertTrue(config.getMasterName().equalsIgnoreCase("AM01"));
 	}
 }
