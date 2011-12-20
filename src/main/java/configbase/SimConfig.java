@@ -17,19 +17,18 @@ import modelbase.Entity;
  * 
  */
 public class SimConfig extends Config {
-	int								maxTimestep;
 	AgentConfig						agentConfig;
 	ProductConfig					prodConfig;
+	SchedulerConfig					schedulerConfig;
 	public double					creditPerTurn;
 	HashMap<String, AgentMaster>	agentMasters;
-	int								warmUpPeriod;
 
 	public HashMap<String, AgentMaster> getAgentMasters() {
 		return agentMasters;
 	}
 
-	public int getWarmUpPeriod() {
-		return warmUpPeriod;
+	public SchedulerConfig getSchedulerConfig() {
+		return schedulerConfig;
 	}
 
 	public double getCreditPerTurn() {
@@ -67,14 +66,6 @@ public class SimConfig extends Config {
 
 	}
 
-	public int getMaxTimestep() {
-		return maxTimestep;
-	}
-
-	public void setMaxTimestep(int maxTimestep) {
-		this.maxTimestep = maxTimestep;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -87,8 +78,6 @@ public class SimConfig extends Config {
 		try {
 			if (key.equalsIgnoreCase("creditPerTurn")) {
 				this.creditPerTurn = Double.parseDouble(value);
-			} else if (key.equalsIgnoreCase("maxTimestep")) {
-				this.maxTimestep = Integer.parseInt(value);
 			} else if (key.equalsIgnoreCase("agentConfigFile")) {
 				this.agentConfig.readConfig(value);
 			} else if (key.equalsIgnoreCase("productConfigFile")) {
@@ -126,8 +115,9 @@ public class SimConfig extends Config {
 					AgentMaster agentMaster = new AgentMaster(agentMasterConfig);
 					agentMasters.put(agentMaster.getMasterName(), agentMaster);
 				}
-			} else if (key.equalsIgnoreCase("warmUpPeriod")) {
-				this.warmUpPeriod = Integer.parseInt(value);
+			} else if (key.equalsIgnoreCase("schedulerConfigFile")) {
+				this.schedulerConfig = new SchedulerConfig();
+				this.schedulerConfig.readConfig(value);
 			} else
 				return false;
 			return true;

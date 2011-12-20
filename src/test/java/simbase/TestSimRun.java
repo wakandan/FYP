@@ -44,7 +44,6 @@ public class TestSimRun {
 	public void testSimConfig() throws IOException {
 		SimConfig simConfig = new SimConfig();
 		simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
-		assertEquals(5, simConfig.getWarmUpPeriod());
 		assertEquals(2, simConfig.getAgentMasters().keySet().size());
 	}
 
