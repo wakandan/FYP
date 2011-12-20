@@ -1,5 +1,8 @@
 package agentbase;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 import generatorbase.EntityManager;
 import modelbase.Entity;
 
@@ -9,10 +12,22 @@ import com.almworks.sqlite4java.SQLiteStatement;
 import configbase.AgentConfig;
 
 public class AgentManager extends EntityManager {
-	EntityManager			buyers;
-	EntityManager			sellers;
-	public final static int	BUYER_AGENT_TYPE	= 1;
-	public final static int	SELLER_AGENT_TYPE	= 2;
+	EntityManager					buyers;
+	EntityManager					sellers;
+	HashMap<String, AgentMaster>	agentMasters;
+	public final static int			BUYER_AGENT_TYPE	= 1;
+	public final static int			SELLER_AGENT_TYPE	= 2;
+
+	public Collection getAllBuyers() {
+		Collection result = buyers.getAll();
+		for (AgentMaster agentMaster : agentMasters.values()) {
+			if (result==null)
+				result = agentMaster.getAll();
+			else
+				result.add(agentMaster.getAll());
+		}
+		return result;
+	}
 
 	public EntityManager getBuyers() {
 		return buyers;
@@ -26,6 +41,7 @@ public class AgentManager extends EntityManager {
 		super();
 		buyers = new EntityManager();
 		sellers = new EntityManager();
+		agentMasters = new HashMap<String, AgentMaster>();
 	}
 
 	@Override
@@ -41,7 +57,8 @@ public class AgentManager extends EntityManager {
 			aType = SELLER_AGENT_TYPE;
 		}
 		st = db.prepare("INSERT INTO Agents(sessionId, name, balance, atype) VALUES(?, ?, ?, ?)");
-		st.bind(1, this.getSessionId()).bind(2, e.getName()).bind(3, ((AgentConfig) this.config).getInitialBalance()).bind(4, aType);
+		st.bind(1, this.getSessionId()).bind(2, e.getName())
+				.bind(3, ((AgentConfig) this.config).getInitialBalance()).bind(4, aType);
 		st.step();
 	}
 
@@ -71,5 +88,9 @@ public class AgentManager extends EntityManager {
 			e = sellers.get(agentName);
 		}
 		return (Agent) e;
+	}
+
+	public void addAgentMaster(AgentMaster agentMaster) {
+		agentMasters.put(agentMaster.masterName, agentMaster);
 	}
 }

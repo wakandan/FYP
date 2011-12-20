@@ -17,7 +17,8 @@ public class Rating extends Entity {
 	}
 
 	public String toString() {
-		return this.buyer.getName()+"->"+this.seller.getName()+"="+this.rating;
+		return String.format("%5s => %5s: %5.2d", this.buyer.getName(), this.seller.getName(),
+				this.rating);
 	}
 
 }

@@ -5,6 +5,7 @@ package simbase;
 
 import generatorbase.EntityManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import modelbase.Entity;
@@ -49,7 +50,7 @@ public class Bank extends EntityManager {
 	/**
 	 * @param aManager
 	 */
-	public void setAgentManger(AgentManager aManager) {
+	public void setAgentManager(AgentManager aManager) {
 		Agent agent;
 		for (Entity e : aManager.getAll()) {
 			agent = (Agent) e;
@@ -80,9 +81,17 @@ public class Bank extends EntityManager {
 
 	public void creditBalance(Buyer buyer, double value) {
 		if (accounts.containsKey(buyer.getName())) {
-			accounts.get(buyer.getName()).setBalance(value+accounts.get(buyer.getName()).getBalance());
+			accounts.get(buyer.getName()).setBalance(
+					value+accounts.get(buyer.getName()).getBalance());
 		} else {
 			accountNotExistError(buyer.getName());
+		}
+	}
+
+	public void reportBalance(ArrayList<String> accountNames) {
+		for (String accountName : accountNames) {
+			logger.debug(String.format("Balance %5s: %10.2f", accountName, accounts.get(accountName)
+					.getBalance()));
 		}
 	}
 

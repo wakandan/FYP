@@ -6,6 +6,9 @@ package configbase;
 import java.io.IOException;
 import java.util.HashMap;
 
+import agentbase.AgentMaster;
+import agentbase.AgentMasterConfig;
+
 import modelbase.AgentLogicModel;
 import modelbase.Entity;
 
@@ -14,10 +17,20 @@ import modelbase.Entity;
  * 
  */
 public class SimConfig extends Config {
-	int				maxTimestep;
-	AgentConfig		agentConfig;
-	ProductConfig	prodConfig;
-	public double	creditPerTurn;
+	int								maxTimestep;
+	AgentConfig						agentConfig;
+	ProductConfig					prodConfig;
+	public double					creditPerTurn;
+	HashMap<String, AgentMaster>	agentMasters;
+	int								warmUpPeriod;
+
+	public HashMap<String, AgentMaster> getAgentMasters() {
+		return agentMasters;
+	}
+
+	public int getWarmUpPeriod() {
+		return warmUpPeriod;
+	}
 
 	public double getCreditPerTurn() {
 		return creditPerTurn;
@@ -83,27 +96,45 @@ public class SimConfig extends Config {
 				this.prodConfig.readConfig(value);
 			} else if (key.equalsIgnoreCase("agentConfigClass")) {
 				try {
-					/*Dynamically create a new object from the distribution class*/
-					Class<AgentConfig> agentConfigClass = (Class<AgentConfig>) classLoader.loadClass(value);
+					/*
+					 * Dynamically create a new object from the distribution
+					 * class
+					 */
+					Class<AgentConfig> agentConfigClass = (Class<AgentConfig>) classLoader
+							.loadClass(value);
 					logger.debug("Initiating agent logic class "+agentConfigClass.getName());
-					this.agentConfig = agentConfigClass.newInstance();										
+					this.agentConfig = agentConfigClass.newInstance();
 				} catch (ClassNotFoundException e) {
 					logger.error("Class "+value+" cannot be found");
 					e.printStackTrace();
 				} catch (InstantiationException e) {
-					logger.error("Class "+value+" cannot be instantiated. Unable to read config entries/Does your class have a default constructor?");
+					logger.error("Class "
+							+value
+							+" cannot be instantiated. Unable to read config entries/Does your class have a default constructor?");
 					e.printStackTrace();
 				} catch (Exception e) {
 					logger.error("Error loading class: "+value);
 					e.printStackTrace();
 				}
-			} else 
+			} else if (key.equalsIgnoreCase("agentMasterConfigFile")) {
+				String[] dataList = value.split(";");
+				if (agentMasters==null)
+					agentMasters = new HashMap<String, AgentMaster>();
+				for (int i = 0; i<dataList.length; i++) {
+					AgentMasterConfig agentMasterConfig = new AgentMasterConfig();
+					agentMasterConfig.readConfig(dataList[i]);
+					AgentMaster agentMaster = new AgentMaster(agentMasterConfig);
+					agentMasters.put(agentMaster.getMasterName(), agentMaster);
+				}
+			} else if (key.equalsIgnoreCase("warmUpPeriod")) {
+				this.warmUpPeriod = Integer.parseInt(value);
+			} else
 				return false;
 			return true;
 		} catch (Exception e) {
 			logger.error(e);
+			e.printStackTrace();
 		}
 		return false;
 	}
-
 }

@@ -5,6 +5,8 @@ import generatorbase.EntityManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.almworks.sqlite4java.SQLiteConnection;
+
 import agentbase.Agent;
 import agentbase.Buyer;
 import agentbase.Seller;
@@ -40,14 +42,34 @@ public class RatingManager extends EntityManager {
 
 	public ArrayList<Rating> getRatingsByAgent(Agent agent) {
 		try {
-			if(agent instanceof Buyer)
+			if (agent instanceof Buyer)
 				return buyerRatings.get(agent.getName());
-			else if(agent instanceof Seller)
+			else if (agent instanceof Seller)
 				return sellerRatings.get(agent.getName());
 			else
 				return null;
 		} catch (NullPointerException e) {
 			return null;
 		}
-	}	
+	}
+
+	public double calcRating(ArrayList<Rating> ratings) {
+		double sum = 0;
+		if (ratings==null)
+			return 0;
+		for (Rating rating : ratings)
+			sum += rating.rating;
+		if (ratings.size()>0)
+			return sum/ratings.size();
+		else
+			return 0;
+	}
+
+	public void reportRating() {
+		for (String sellerName : sellerRatings.keySet()) {
+			logger.debug(String
+					.format("Rating for %5s: %5.2f (x%5d)", sellerName, calcRating(sellerRatings
+							.get(sellerName)), sellerRatings.get(sellerName).size()));
+		}
+	}
 }

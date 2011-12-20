@@ -1,5 +1,6 @@
 package generatorbase;
 
+import modelbase.AgentLogicModel;
 import agentbase.Agent;
 import agentbase.AgentManager;
 import agentbase.Buyer;

@@ -30,8 +30,8 @@ public class TestSimParent extends TestWithDBParent {
 	AgentManager	agentManager;
 	ProductModel	prodModel;
 	ProductManager	prodManager;
-	protected Sim				sim;
-	SimConfig		simConfig;	
+	protected Sim	sim;
+	SimConfig		simConfig;
 
 	@Before
 	public void setUp() throws Exception {
@@ -50,7 +50,8 @@ public class TestSimParent extends TestWithDBParent {
 		int prcMean = 500;
 		int prcDeviation = 300*300;
 		prodConfig = new ProductConfig();
-		prodConfig.setDistribution(new NormalDistribution(new DistributionConfig(prcMean, prcDeviation)));
+		prodConfig.setDistribution(new NormalDistribution(new DistributionConfig(prcMean,
+				prcDeviation)));
 		prodConfig.readConfig("src/test/resources/generatorbase/TestProductConfig.ini");
 
 		prodModel = new ProductModel(prodConfig);
@@ -67,7 +68,7 @@ public class TestSimParent extends TestWithDBParent {
 		sim.setSimConfig(simConfig);
 		sim.setAgentManager(agentManager);
 		sim.setProdManager(prodManager);
-		
+
 		sim.assignProducts();
 	}
 }

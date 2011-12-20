@@ -5,6 +5,7 @@ package configbase;
 
 import java.util.Random;
 
+import modelbase.AgentLogicModel;
 import modelbase.DishonestAutoBuyerLogicModel;
 import modelbase.DishonestAutoSellerLogicModel;
 import modelbase.Entity;
@@ -12,6 +13,7 @@ import modelbase.HonestAutoBuyerLogicModel;
 import modelbase.HonestAutoSellerLogicModel;
 import agentbase.Buyer;
 import agentbase.Seller;
+import agentbase.Agent;
 
 /**
  * @author akai

@@ -18,6 +18,7 @@ import productbase.Product;
 import productbase.ProductManager;
 import agentbase.Agent;
 import agentbase.AgentManager;
+import agentbase.AgentMaster;
 import agentbase.Buyer;
 import agentbase.Seller;
 
@@ -46,6 +47,7 @@ public class Sim extends BaseObject {
 	InventoryManager	inventoryManager;
 	Bank				bank;
 	TransactionManager	transactionManager;
+	RatingManager		ratingManager;
 
 	public TransactionManager getTransactionManager() {
 		return transactionManager;
@@ -79,7 +81,7 @@ public class Sim extends BaseObject {
 	public void setAgentManager(AgentManager agentManager) {
 		this.agentManager = agentManager;
 		this.agentManager.setSessionId(this.sessionId);
-		bank.setAgentManger(agentManager);
+		bank.setAgentManager(agentManager);
 	}
 
 	public SimConfig getSimConfig() {
@@ -137,6 +139,7 @@ public class Sim extends BaseObject {
 	}
 
 	public void initObjects() {
+		ratingManager = new RatingManager();
 		prodManager = new ProductManager();
 		agentManager = new AgentManager();
 		inventoryManager = new InventoryManager();
@@ -145,6 +148,7 @@ public class Sim extends BaseObject {
 		scheduler = new Scheduler();
 		transactionManager = new TransactionManager();
 		transactionManager.sim = this;
+		inventoryManager.sim = this;
 	}
 
 	public void initialize() throws Exception {
@@ -154,10 +158,19 @@ public class Sim extends BaseObject {
 		prodModel = new ProductModel(simConfig.getProdConfig());
 		prodModel.generate(prodManager);
 		agentModel.generate(agentManager);
+
+		/* Add agents from agent masters into the list of all buyers */
+		for (AgentMaster agentMaster : simConfig.getAgentMasters().values()) {
+			for (Entity agent : agentMaster.getAll()) {
+				this.agentManager.add(agent);
+			}
+
+		}
+
 		for (Entity agent : agentManager.getBuyers().getAll()) {
 			((Agent) agent).setInventoryManager(this.inventoryManager);
 		}
-		bank.setAgentManger(agentManager);
+		bank.setAgentManager(agentManager);
 	}
 
 	public static void main(String[] args) {
@@ -180,14 +193,6 @@ public class Sim extends BaseObject {
 			sim.logger.error("Exiting...");
 			System.exit(1);
 		}
-	}
-
-	/**
-	 * At each time step, all balance will be credit a fixed amount of money
-	 */
-	private void topUpBalance() {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -224,11 +229,12 @@ public class Sim extends BaseObject {
 
 			/* Pick a random product */
 			prodNum = prodRandom.nextInt(prodManager.getSize());
-			prod = (Product) prodManager.get((String) prodManager.getAllNames().toArray()[prodNum]);
+			prod = (Product) prodManager
+					.get((String) prodManager.getAvailableProducts().toArray()[prodNum]);
 			while (prod==null||prod.getQuantity()==0) {
 				prodNum = prodRandom.nextInt(prodManager.getSize());
-				prod = (Product) prodManager
-						.get((String) prodManager.getAllNames().toArray()[prodNum]);
+				prod = (Product) prodManager.get((String) prodManager.getAvailableProducts()
+						.toArray()[prodNum]);
 			}
 			tmpProd = new Product(prod);
 			if (prod.getQuantity()<=quantityAssignThres)
@@ -252,13 +258,12 @@ public class Sim extends BaseObject {
 					tmpProd.getPriceMax(), 0);
 			inventory.setValue(seller.initValue(tmpProd));
 			inventoryManager.add(inventory);
-			prod.setQuantity(prod.getQuantity()-tmpProd.getQuantity());
+			prodManager.update(prod);
 			if (prod.getQuantity()==0) {
-				prodManager.remove(prod.getName());
 				logger.debug("Product "+prod.getName()+" is up!");
 			}
-			logger.debug("Assigned product "+prod.getName()+"("+tmpProd.getQuantity()
-					+") to seller "+seller.getName());
+			logger.debug(String.format("Assigned product %-3s(x%5d) to seller %s", prod.getName(),
+					tmpProd.getQuantity(), seller.getName()));
 			numSellerAssigned++;
 
 		}
@@ -303,6 +308,20 @@ public class Sim extends BaseObject {
 		return bank.getBalance(agent.getName());
 	}
 
+	public void addAgentMasters() {
+		/* Add agents from agent masters */
+		for (AgentMaster agentMaster : simConfig.getAgentMasters().values()) {
+			try {
+				for (Entity agent : agentMaster.getAll()) {
+					this.agentManager.add(agent);
+				}
+			} catch (Exception e) {
+				logger.error("Error adding agent from agent master "+agentMaster.getMasterName());
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public void run() throws Exception {
 		Buyer buyer;
 		Seller seller;
@@ -311,21 +330,29 @@ public class Sim extends BaseObject {
 		initialize();
 		assignProducts();
 		int maxTimeStep = simConfig.getMaxTimestep();
+		Execution execution;
 		logger.info("*** Simulation is running...");
 		while (timeStep<maxTimeStep) {
 			advanceTime();
-			for (Entity e : getAgentManager().getBuyers().getAll()) {
-				buyer = (Buyer) e;
+			for (Object e : getAgentManager().getAllBuyers()) {
+				buyer = (Buyer) e;				
 				transaction = buyer.makeTransaction();
-				logger.debug(transaction);
 				if (transaction!=null) {
-					transactionManager.addTransaction(transaction);
+					execution = transactionManager.addTransaction(transaction);
+					if (execution!=null) {
+						logger.debug(execution);
+					}
 				}
 			}
 			transactionManager.processTransactions();
+			// prodManager.reportQuantity();
 			timeStep++;
 			scheduler.finalizeTimeStep();
 		}
+		logger.info("*** Rating Report ***");
+		ratingManager.reportRating();
+		logger.info("*** Balance Report ***");
+		bank.reportBalance(this.agentManager.getBuyers().getEntitiesNames());
 		logger.info("*** Simulation has finished!");
 	}
 }
