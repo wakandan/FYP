@@ -8,29 +8,31 @@ import Interfaces.MarketEntityInterface;
 class Marketplace_Personnel extends JPanel implements MarketEntityInterface{
 	
 	private JTextField[] fields;
-	//Marketplace setup parameters for user to set
+	//Parameters for user to set
 	private String[] labels = { "No of buyers: ", 
-	                    "No of sellers: ", 
-	                    "Initial balance: ",
-	                   // "% of default honest buyers: ", 
-	                    //"% of default honest sellers: ", 
-	                    //"Distribution of auto-buyer's rating: ", 
-	                    //"Distribution of buyer/seller entering marketplace: " 
-	                    };
-	private String[] fieldName = {"buyerNum",
-			                      "sellerNum",
-			                      "initialBalance"
-	                  };
-	//Textbox width
-	private int[] widths = { 4, 4, 4 };
+			                    "No of sellers: ", 
+			                    "Initial balance: ",
+			                    //"% of default honest buyers: ", 
+			                    //"% of default honest sellers: ", 
+			                    //"Distribution of auto-buyer's rating: ", 
+			                    //"Distribution of buyer/seller entering marketplace: " 
+			                    };
 	
+	//Textbox width
+	private int[] widths = { 4, 4, 8 };
+	
+	//For .ini file comparison
+	private String[] fieldName = { "buyerNum",
+			                       "sellerNum",
+			                       "initialBalance"};
+
+	//Constructor
 	Marketplace_Personnel() {
 		this.setLayout(new GridLayout(labels.length,1));
 		this.setBorder(BorderFactory.createTitledBorder("Buyer/Seller"));
 		initLabelsandTextFields();
 	 }
 	
-
 	 public void initLabelsandTextFields()
 	 {
 		 fields = new JTextField[labels.length];

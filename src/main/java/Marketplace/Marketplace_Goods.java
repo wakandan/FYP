@@ -6,36 +6,40 @@ import javax.swing.*;
 import Interfaces.MarketEntityInterface;
 
 @SuppressWarnings("serial")
+//Class to handle the products configuration
 class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 
 	private JTextField[] fields;
-	//Marketplace setup parameters for user to set
+	//Parameters for user to set
 	private String[] labels = { "No of products type: ", 
-						"No of products: ",
-	                    "Max price: ", 
-	                    "Min price: ", 
-	                    "No of categories ", 
-	                    //"Duration: "
-	                    };
-	
-	private String[] fieldName = { "numTypes",
-            					   "numProducts",
-            					   "priceMax",
-            					   "priceMin",
-            					   "numCategories" };
+								"No of products: ",
+			                    "Max price: ", 
+			                    "Min price: ", 
+			                    "No of categories ", 
+			                    //"Duration: "
+	                    	  };
 	
 	//Textbox width
 	private int[] widths = { 4, 4, 4, 4, 4 };
 	
+	//For .ini file comparison
+	private String[] fieldName = { "numTypes",
+            					   "numProducts",
+            					   "priceMax",
+            					   "priceMin",
+            					   "numCategories"};
+	
+	//Constructor
 	Marketplace_Goods() {
 		this.setLayout(new GridLayout(labels.length,1));
 		this.setBorder(BorderFactory.createTitledBorder("Product/Price"));
 		initLabelsandTextFields();
 	  }
 	
-
+	//Overwrite the interface class method
 	 public void initLabelsandTextFields()
 	 {
+		//To create textfield based on label
 		fields = new JTextField[labels.length];
 		 for(int i = 0;i < labels.length;i++)
 		 {
