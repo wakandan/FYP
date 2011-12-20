@@ -9,9 +9,9 @@ import org.eclipse.swt.widgets.Shell;
 
 import Interfaces.MarketEntityInterface;
 
+//Class to read to import and export file
 public class Marketplace_Reader 
 {
-	
 	Marketplace_Main market;
 	JPanel tempPanel;
 	
@@ -21,10 +21,10 @@ public class Marketplace_Reader
 		if(mode=='R')
 			readFile(initFileChooser());
 		else if(mode=='W')
-			writeFile(saveFileDialog());
-			
+			writeFile(saveFileDialog());		
 	}
-	//To read in the file
+	
+	//To read in the ini file format
     public void readFile(String fileName)
     {
 
@@ -49,6 +49,7 @@ public class Marketplace_Reader
         }
     }
     
+    //To write the ini file format
     public void writeFile(String fileName)
     {
     	if(fileName == null)
@@ -68,7 +69,7 @@ public class Marketplace_Reader
     	
     }
     
-    public String initFileChooser()
+  /*  public String initFileChooser()
     {
     	String fileName = "";
 	    JFileChooser fd = new JFileChooser(".");
@@ -77,8 +78,33 @@ public class Marketplace_Reader
 	    	fileName = fd.getSelectedFile().getPath();
 	    
 		return fileName;
+    }*/
+    
+    //Open dialogue box
+    public String initFileChooser() {
+    	
+    	String fileName = "";
+    	try
+    	{
+        	Display display = new Display();
+    	    final Shell shell = new Shell(display);
+        	FileDialog dlg = new FileDialog(shell, SWT.OPEN);
+        	fileName = dlg.open();
+    	    
+    	    if (fileName != null) {
+    	      System.out.println(fileName);	    
+    	    }
+    	    display.dispose();
+    	}
+    	catch (Exception e)
+    	{
+    		
+    	}
+    	
+    	return fileName;
     }
     
+    //To save dialogue box
     public String saveFileDialog()
     {
     	String fileName = "";
@@ -102,7 +128,7 @@ public class Marketplace_Reader
     	}
         return fileName;
     }
-    //"buyerNum","2"
+    
     public void setFieldForMain(String[] values)
     {
     	for(int i = 0;i < market.getComponentCount(); i++)
@@ -136,7 +162,6 @@ public class Marketplace_Reader
     			for(int j = 0; j < tempPanel.getComponentCount(); j++)
     				if(tempPanel.getComponent(j) instanceof JPanel)
     					output += getTextForEachField((JPanel) tempPanel.getComponent(j)) + newL;
-
     		}
     	
     	return output;

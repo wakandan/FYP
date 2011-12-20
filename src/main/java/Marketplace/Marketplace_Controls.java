@@ -3,11 +3,13 @@ package Marketplace;
 import javax.swing.*;
 import java.awt.*;
 
+//Class containing all the buttons for GUI
 public class Marketplace_Controls extends JPanel 
 {
-	JButton marketBtns[] = new JButton[3];
 	Marketplace_Main market;
-	String title[] = {"Import Configuration","Save Configuration","Reset","Next Tab"};
+	//Button configurations
+	JButton marketBtns[] = new JButton[4];
+	String title[] = {"Import Configuration","Save Configuration","Reset","Run"};
 	
 	public Marketplace_Controls(Marketplace_Main market)
 	{
@@ -16,6 +18,7 @@ public class Marketplace_Controls extends JPanel
 		initButtons();
 	}
 	
+	//Initalise buttons
 	public void initButtons()
 	{
 		for(int i = 0;i < marketBtns.length;i++)
@@ -26,6 +29,7 @@ public class Marketplace_Controls extends JPanel
 		}
 	}
 	
+	//Method to return the number of buttons
 	public int getButtonLength()
 	{
 		return this.marketBtns.length;
