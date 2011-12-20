@@ -92,6 +92,7 @@ public class Sim extends BaseObject {
 		this.simConfig = simConfig;
 		this.prodManager.setConfig(simConfig.getProdConfig());
 		this.agentManager.setConfig(simConfig.getAgentConfig());
+		this.scheduler.setConfig(simConfig.getSchedulerConfig());
 	}
 
 	public Scheduler getScheduler() {
@@ -163,6 +164,7 @@ public class Sim extends BaseObject {
 		for (AgentMaster agentMaster : simConfig.getAgentMasters().values()) {
 			for (Entity agent : agentMaster.getAll()) {
 				this.agentManager.add(agent);
+				this.agentManager.markAsCustomAgent((Agent) agent);
 			}
 
 		}
@@ -178,13 +180,7 @@ public class Sim extends BaseObject {
 		int maxTimeStep;
 		Sim sim = new Sim();
 		try {
-			sim.initialize();
-			sim.assignProducts();
-			maxTimeStep = sim.simConfig.getMaxTimestep();
-			while (timeStep<maxTimeStep) {
-				sim.advanceTime();
-				/* Market movement will be here */
-			}
+			sim.run();
 		} catch (SQLiteException e) {
 			sim.logger.error("Error with the database. Please review the log file");
 		} catch (Exception e) {
@@ -308,20 +304,6 @@ public class Sim extends BaseObject {
 		return bank.getBalance(agent.getName());
 	}
 
-	public void addAgentMasters() {
-		/* Add agents from agent masters */
-		for (AgentMaster agentMaster : simConfig.getAgentMasters().values()) {
-			try {
-				for (Entity agent : agentMaster.getAll()) {
-					this.agentManager.add(agent);
-				}
-			} catch (Exception e) {
-				logger.error("Error adding agent from agent master "+agentMaster.getMasterName());
-				e.printStackTrace();
-			}
-		}
-	}
-
 	public void run() throws Exception {
 		Buyer buyer;
 		Seller seller;
@@ -329,13 +311,14 @@ public class Sim extends BaseObject {
 		Transaction transaction;
 		initialize();
 		assignProducts();
-		int maxTimeStep = simConfig.getMaxTimestep();
 		Execution execution;
 		logger.info("*** Simulation is running...");
-		while (timeStep<maxTimeStep) {
+		while (scheduler.isRunning()) {
 			advanceTime();
 			for (Object e : getAgentManager().getAllBuyers()) {
-				buyer = (Buyer) e;				
+				buyer = (Buyer) e;
+				if (agentManager.isCustomAgent((Agent) e)&&scheduler.isWarmingup())
+					continue;
 				transaction = buyer.makeTransaction();
 				if (transaction!=null) {
 					execution = transactionManager.addTransaction(transaction);
@@ -346,8 +329,6 @@ public class Sim extends BaseObject {
 			}
 			transactionManager.processTransactions();
 			// prodManager.reportQuantity();
-			timeStep++;
-			scheduler.finalizeTimeStep();
 		}
 		logger.info("*** Rating Report ***");
 		ratingManager.reportRating();

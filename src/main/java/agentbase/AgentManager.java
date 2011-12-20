@@ -12,20 +12,14 @@ import com.almworks.sqlite4java.SQLiteStatement;
 import configbase.AgentConfig;
 
 public class AgentManager extends EntityManager {
-	EntityManager					buyers;
-	EntityManager					sellers;
-	HashMap<String, AgentMaster>	agentMasters;
-	public final static int			BUYER_AGENT_TYPE	= 1;
-	public final static int			SELLER_AGENT_TYPE	= 2;
+	EntityManager			buyers;
+	EntityManager			sellers;
+	HashMap<String, Agent>	customAgents;
+	public final static int	BUYER_AGENT_TYPE	= 1;
+	public final static int	SELLER_AGENT_TYPE	= 2;
 
 	public Collection getAllBuyers() {
 		Collection result = buyers.getAll();
-		for (AgentMaster agentMaster : agentMasters.values()) {
-			if (result==null)
-				result = agentMaster.getAll();
-			else
-				result.add(agentMaster.getAll());
-		}
 		return result;
 	}
 
@@ -41,7 +35,7 @@ public class AgentManager extends EntityManager {
 		super();
 		buyers = new EntityManager();
 		sellers = new EntityManager();
-		agentMasters = new HashMap<String, AgentMaster>();
+		customAgents = new HashMap<String, Agent>();
 	}
 
 	@Override
@@ -90,7 +84,11 @@ public class AgentManager extends EntityManager {
 		return (Agent) e;
 	}
 
-	public void addAgentMaster(AgentMaster agentMaster) {
-		agentMasters.put(agentMaster.masterName, agentMaster);
+	public void markAsCustomAgent(Agent agent) {
+		this.customAgents.put(agent.getName(), agent);
+	}
+
+	public boolean isCustomAgent(Agent agent) {
+		return (this.customAgents.get(agent.getName())!=null);
 	}
 }
