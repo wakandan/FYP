@@ -2,6 +2,7 @@ package Interfaces;
 
 import javax.swing.JPanel;
 
+//GUI Interface Class
 public abstract interface MarketEntityInterface {
 	
 	public void initLabelsandTextFields();
