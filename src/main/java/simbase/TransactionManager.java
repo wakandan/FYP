@@ -5,6 +5,8 @@ import generatorbase.EntityManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.almworks.sqlite4java.SQLiteException;
+
 import productbase.Product;
 
 import modelbase.Entity;
@@ -78,7 +80,7 @@ public class TransactionManager extends EntityManager {
 				execution.setReason(String.format("Invalid quantity prod. %5s: Req %d v/s Avai %d",
 						item, quantity, product.getQuantity()));
 			} else {
-				/*Transaction recorded, do nothing*/
+				/* Transaction recorded, do nothing */
 				transactions.get(sellerName).add(transaction);
 				return null;
 			}
@@ -152,8 +154,10 @@ public class TransactionManager extends EntityManager {
 			/* Leave rating to seller */
 			Rating rating = execution.buyer.leaveRating(execution.seller, prod);
 			sim.ratingManager.addRating(rating);
+			this.updateExecution(execution, rating);
 			// logger.debug(rating);
-		}
+		} else
+			this.updateExecution(execution, null);
 	}
 
 	public void setAgents(EntityManager entityManager) {
@@ -162,4 +166,18 @@ public class TransactionManager extends EntityManager {
 		}
 	}
 
+	public void updateExecution(Execution execution, Rating rating) throws SQLiteException {
+		int rate = 0;
+		if (rating==null) {
+			rate = 0;
+		} else
+			rate = rating.rating;
+		st = db.prepare("INSERT INTO Executions(buyer_name, seller_name, prod_name, status, rating, Stime) "
+				+"VALUES(?, ?, ?, ?, ?, ?)");
+		st.bind(1, execution.buyer.getName()).bind(2, execution.seller.getName())
+				.bind(3, execution.prod.getName())
+				.bind(4, (execution.success) ? Execution.STATUS_SUCCESS : Execution.STATUS_FAILED)
+				.bind(5, rate).bind(6, sim.scheduler.currentTimestep);
+		st.step();
+	}
 }

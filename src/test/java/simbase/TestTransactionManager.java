@@ -56,6 +56,7 @@ public class TestTransactionManager extends TestSimParent {
 		Buyer buyer1 = (Buyer) sim.getAgentManager().getBuyers().get("B1");
 		Seller seller = (Seller) sim.getAgentManager().getSellers().get("S0");
 		transactionManager.setSim(sim);
+		transactionManager.setDb(sim.db);
 		Product prod = sim.inventoryManager
 				.getProductsBySellerName(seller.getName())
 				.get(sim.inventoryManager.getProductsBySellerName(seller.getName()).keySet()
@@ -81,6 +82,11 @@ public class TestTransactionManager extends TestSimParent {
 				assertTrue(buyer0.getProduct(prod.getName())==null);
 				assertEquals(10000, sim.getBalance(buyer1), 0.1);
 			}
+			st = sim.db
+					.prepare("SELECT COUNT(*) FROM Executions WHERE buyer_name=? AND seller_name=?");
+			st.bind(1, buyer0.getName()).bind(2, seller.getName());
+			st.step();
+			assertTrue(st.columnInt(0)>0);
 		}
 	}
 }

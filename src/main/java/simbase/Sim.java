@@ -276,6 +276,7 @@ public class Sim extends BaseObject {
 		agentManager.setDb(db);
 		prodManager.setDb(db);
 		inventoryManager.setDb(db);
+		transactionManager.setDb(db);
 		bank.setDb(db);
 
 	}

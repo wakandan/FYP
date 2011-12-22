@@ -28,6 +28,7 @@ public class TestSimRun {
 		dbConfig.addDdlFile("src/main/resources/sql/Products.ddl");
 		dbConfig.addDdlFile("src/main/resources/sql/Agents.ddl");
 		dbConfig.addDdlFile("src/main/resources/sql/Inventories.ddl");
+		dbConfig.addDdlFile("src/main/resources/sql/Executions.ddl");
 	}
 
 	@Test

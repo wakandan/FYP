@@ -7,6 +7,8 @@ package simbase;
  * @author akai Class to manage result of transactions.
  */
 public class Execution extends Transaction {
+	public static final int STATUS_SUCCESS = 1;
+	public static final int STATUS_FAILED = 0;
 	boolean	success;
 	String	reason;
 
