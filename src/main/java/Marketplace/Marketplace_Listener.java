@@ -55,7 +55,9 @@ public class Marketplace_Listener implements ActionListener {
 				Sim sim = new Sim();
 				sim.setSimConfig(simConfig);
 				sim.setDb(dbConfig.setUpDb());
+				//sim.setOutputReader(marketControls.outputReader);
 				sim.run();
+				JOptionPane.showMessageDialog(marketControls.market,"Simulation Successfully Completed. Check Simulation Analyzer page to see data");
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}

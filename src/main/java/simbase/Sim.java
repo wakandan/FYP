@@ -29,6 +29,7 @@ import configbase.ProductConfig;
 import configbase.SimConfig;
 import core.BaseObject;
 
+
 /**
  * @author akai Main file of the project.
  */
@@ -48,7 +49,7 @@ public class Sim extends BaseObject {
 	Bank				bank;
 	TransactionManager	transactionManager;
 	RatingManager		ratingManager;
-
+	
 	public TransactionManager getTransactionManager() {
 		return transactionManager;
 	}
