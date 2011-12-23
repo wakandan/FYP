@@ -1,16 +1,16 @@
 package agentbase;
 
-import java.util.ArrayList;
-
-import modelbase.BuyerLogicModel;
 import productbase.Product;
+import modelbase.PurchaseLogic;
+import modelbase.RatingLogic;
+import simbase.Execution;
 import simbase.Rating;
 import simbase.Transaction;
 
 public class Buyer extends Agent {
 
-	ArrayList<String>	wishList;
-	int					wishListIndex;
+	RatingLogic		ratingLogic;
+	PurchaseLogic	purchaseLogic;
 
 	/**
 	 * @param string
@@ -19,27 +19,33 @@ public class Buyer extends Agent {
 		super(name);
 	}
 
-	public ArrayList<String> getWishList() {
-		return wishList;
+	public RatingLogic getRatingLogic() {
+		return ratingLogic;
 	}
 
-	public void setWishList(ArrayList<String> wishList) {
-		this.wishList = wishList;
+	public void setRatingLogic(RatingLogic ratingLogic) {
+		this.ratingLogic = ratingLogic;
+		this.ratingLogic.setBuyer(this);
 	}
 
-	public int getWishListIndex() {
-		return wishListIndex;
+	public PurchaseLogic getPurchaseLogic() {
+		return purchaseLogic;
 	}
 
-	public void setWishListIndex(int wishListIndex) {
-		this.wishListIndex = wishListIndex;
+	public void setPurchaseLogic(PurchaseLogic purchaseLogic) {
+		this.purchaseLogic = purchaseLogic;
+		this.purchaseLogic.setBuyer(this);
 	}
 
 	public Transaction makeTransaction() {
-		return ((BuyerLogicModel) this.logicModel).transact();
+		return this.purchaseLogic.transact();
 	}
 
-	public Rating leaveRating(Seller seller, Product prod) {
-		return ((BuyerLogicModel) this.logicModel).calcRating(seller, prod);
+	/**
+	 * @param execution
+	 * @return
+	 */
+	public Rating leaveRating(Execution execution, Product product) {
+		return this.ratingLogic.calcRating(execution, product);
 	}
 }

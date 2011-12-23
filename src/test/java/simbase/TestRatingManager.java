@@ -3,18 +3,16 @@
  */
 package simbase;
 
-import static org.junit.Assert.*;
-
-import modelbase.AgentLogicModel;
-import modelbase.DishonestAutoBuyerLogicModel;
-import modelbase.HonestAutoBuyerLogicModel;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import modelbase.PurchaseLogicRandom;
+import modelbase.PurchaseLogicWishlist;
+import modelbase.RatingLogicAlwaysNegative;
+import modelbase.RatingLogicTruthful;
 
 import org.junit.Test;
 
-import configbase.SimpleAgentConfig;
-
 import productbase.Product;
-
 import agentbase.Buyer;
 import agentbase.Seller;
 
@@ -48,10 +46,13 @@ public class TestRatingManager {
 		Seller seller = new Seller("seller1");
 		Product prod = new Product("prod1");
 		prod.setValue(1.1);
-		buyer.setLogicModel(new HonestAutoBuyerLogicModel());
-		buyer2.setLogicModel(new DishonestAutoBuyerLogicModel());
-		assertTrue(buyer.leaveRating(seller, prod).rating>=4);
-		assertTrue(buyer2.leaveRating(seller, prod).rating<4);
+		buyer.setPurchaseLogic(new PurchaseLogicWishlist());
+		buyer.setRatingLogic(new RatingLogicTruthful());
+		buyer2.setPurchaseLogic(new PurchaseLogicRandom());
+		buyer2.setRatingLogic(new RatingLogicAlwaysNegative());
+		assertTrue(buyer.leaveRating(new Execution(new Transaction(buyer, seller, prod, 1, 10),
+				true), prod).rating>=4);
+		assertTrue(buyer2.leaveRating(new Execution(new Transaction(buyer2, seller, prod, 1, 10),
+				true), prod).rating<4);
 	}
-
 }

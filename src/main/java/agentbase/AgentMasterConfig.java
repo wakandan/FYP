@@ -10,8 +10,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import modelbase.AgentLogicModel;
-import modelbase.BuyerLogicModel;
 import modelbase.Entity;
+import modelbase.PurchaseLogic;
+import modelbase.PurchaseLogicWishlist;
+import modelbase.RatingLogic;
 import configbase.AgentConfig;
 import configbase.Config;
 import configbase.DistributionConfig;
@@ -24,7 +26,8 @@ import configbase.DistributionConfig;
  */
 public class AgentMasterConfig extends Config {
 
-	Class<AgentLogicModel>	logicModel;
+	Class<PurchaseLogic>	purchaseLogic;
+	Class<RatingLogic>		ratingLogic;
 	ArrayList<String>		wishlist;
 	int						agentNum;
 	String					masterName;
@@ -48,12 +51,20 @@ public class AgentMasterConfig extends Config {
 	 */
 	@Override
 	public void configure(Entity e) {
+		Buyer buyer = (Buyer) e;
 		try {
-			((Buyer) e).setLogicModel(logicModel.newInstance());
+			if (purchaseLogic.newInstance() instanceof PurchaseLogicWishlist) {
+				PurchaseLogicWishlist purchaseLogicObj = (PurchaseLogicWishlist) purchaseLogic
+						.newInstance();
+				purchaseLogicObj.setWishList(wishlist);
+				buyer.setPurchaseLogic(purchaseLogicObj);
+			} else {
+				buyer.setPurchaseLogic(purchaseLogic.newInstance());
+			}
+			buyer.setRatingLogic(ratingLogic.newInstance());
 		} catch (Exception ex) {
-			logger.error("Can't create logic model "+logicModel.getName());
+			ex.printStackTrace();
 		}
-		((Buyer) e).setWishList(wishlist);
 	}
 
 	/*
@@ -65,9 +76,16 @@ public class AgentMasterConfig extends Config {
 	@Override
 	protected boolean processConfigKey(String key, String value) {
 		ClassLoader classLoader = AgentLogicModel.class.getClassLoader();
-		if (key.equalsIgnoreCase("agentLogicModelClass")) {
+		if (key.equalsIgnoreCase("agentPurchaseLogicClass")) {
 			try {
-				this.logicModel = ((Class<AgentLogicModel>) classLoader.loadClass(value));
+				this.purchaseLogic = ((Class<PurchaseLogic>) classLoader.loadClass(value));
+			} catch (Exception e) {
+				logger.error("Error loading class: "+value);
+				e.printStackTrace();
+			}
+		} else if (key.equalsIgnoreCase("agentRatingLogicClass")) {
+			try {
+				this.ratingLogic = ((Class<RatingLogic>) classLoader.loadClass(value));
 			} catch (Exception e) {
 				logger.error("Error loading class: "+value);
 				e.printStackTrace();

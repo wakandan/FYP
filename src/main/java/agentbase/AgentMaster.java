@@ -25,7 +25,6 @@ public class AgentMaster extends EntityManager {
 		for (int i = 0; i<masterConfig.agentNum; i++) {
 			buyer = new Buyer(masterConfig.masterName+"_"+i);
 			masterConfig.configure(buyer);
-			buyer.setWishList(masterConfig.wishlist);
 			entities.put(buyer.getName(), buyer);
 		}
 	}

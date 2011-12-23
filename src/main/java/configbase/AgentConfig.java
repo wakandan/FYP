@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import modelbase.AgentLogicModel;
-import modelbase.DishonestAutoBuyerLogicModel;
 import modelbase.DishonestAutoSellerLogicModel;
 import modelbase.Entity;
-import modelbase.HonestAutoBuyerLogicModel;
 import modelbase.HonestAutoSellerLogicModel;
 import agentbase.Agent;
 import agentbase.Buyer;
@@ -19,10 +17,10 @@ public class AgentConfig extends Config {
 	/**
 	 * @param config
 	 */
-	int		buyerNum;
-	int		sellerNum;
-	double	initialBalance;
-	AgentLogicModel logicModel;
+	int				buyerNum;
+	int				sellerNum;
+	double			initialBalance;
+	AgentLogicModel	logicModel;
 
 	public void setBuyerNum(int buyerNum) {
 		this.buyerNum = buyerNum;
@@ -56,11 +54,14 @@ public class AgentConfig extends Config {
 	@Override
 	public void configure(Entity e) {}
 
-	/* (non-Javadoc)
-	 * @see configbase.Config#processConfigKey(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see configbase.Config#processConfigKey(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
-	protected boolean processConfigKey(String key, String value) {		
+	protected boolean processConfigKey(String key, String value) {
 		if (key.equalsIgnoreCase("buyerNum"))
 			this.buyerNum = Integer.parseInt(value);
 		else if (key.equalsIgnoreCase("sellerNum"))

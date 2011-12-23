@@ -4,7 +4,6 @@
 package agentbase;
 
 import modelbase.AgentLogicModel;
-import modelbase.BuyerLogicModel;
 import modelbase.Entity;
 import modelbase.SellerLogicModel;
 

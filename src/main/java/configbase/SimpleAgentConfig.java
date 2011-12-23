@@ -5,15 +5,15 @@ package configbase;
 
 import java.util.Random;
 
-import modelbase.AgentLogicModel;
-import modelbase.DishonestAutoBuyerLogicModel;
 import modelbase.DishonestAutoSellerLogicModel;
 import modelbase.Entity;
-import modelbase.HonestAutoBuyerLogicModel;
 import modelbase.HonestAutoSellerLogicModel;
+import modelbase.PurchaseLogicRandom;
+import modelbase.PurchaseLogicWishlist;
+import modelbase.RatingLogicAlwaysNegative;
+import modelbase.RatingLogicTruthful;
 import agentbase.Buyer;
 import agentbase.Seller;
-import agentbase.Agent;
 
 /**
  * @author akai
@@ -45,16 +45,20 @@ public class SimpleAgentConfig extends AgentConfig {
 	 */
 	public void configure(Entity entity) {
 		if (entity instanceof Buyer) {
-			if (decideHonestBuyer(entity)) {
-				((Buyer) entity).setLogicModel(new HonestAutoBuyerLogicModel());
+			Buyer buyer = (Buyer) entity;
+			if (decideHonestBuyer(buyer)) {
+				buyer.setPurchaseLogic(new PurchaseLogicWishlist());
+				buyer.setRatingLogic(new RatingLogicTruthful());
 			} else {
-				((Buyer) entity).setLogicModel(new DishonestAutoBuyerLogicModel());
+				buyer.setPurchaseLogic(new PurchaseLogicRandom());
+				buyer.setRatingLogic(new RatingLogicAlwaysNegative());
 			}
 		} else if (entity instanceof Seller) {
-			if (decideHonestSeller(entity)) {
-				((Seller) entity).setLogicModel(new HonestAutoSellerLogicModel());
+			Seller seller = (Seller) entity;
+			if (decideHonestSeller(seller)) {
+				seller.setLogicModel(new HonestAutoSellerLogicModel());
 			} else {
-				((Seller) entity).setLogicModel(new DishonestAutoSellerLogicModel());
+				seller.setLogicModel(new DishonestAutoSellerLogicModel());
 			}
 		}
 	}
