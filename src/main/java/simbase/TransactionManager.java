@@ -153,6 +153,7 @@ public class TransactionManager extends EntityManager {
 
 			/* Leave rating to seller */
 			Rating rating = execution.buyer.leaveRating(execution, prod);
+			rating.setStime(sim.scheduler.currentTimestep);
 			sim.ratingManager.addRating(rating);
 			this.updateExecution(execution, rating);
 			// logger.debug(rating);

@@ -59,7 +59,7 @@ public class PurchaseLogicWishlist extends PurchaseLogic {
 		sellerList = buyer.getInventoryManager().getSellersByProductName(prodName);
 
 		/* If currently there's no seller having this product, skip */
-		if (sellerList.size()>0) {
+		if (sellerList!=null&&sellerList.size()>0) {
 			inventory = sellerList.get(random.nextInt(sellerList.size()));
 			wishListIndex = wishListIndex++%wishList.size();
 			return new Transaction(buyer, (Seller) inventory.getAgent(), inventory.getProd(), 1,

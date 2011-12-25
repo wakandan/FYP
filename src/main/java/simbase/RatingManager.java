@@ -27,17 +27,17 @@ public class RatingManager extends EntityManager {
 	}
 
 	private void addSellerRating(Rating r) {
-		if (!sellerRatings.containsKey(r.seller.getName())) {
-			sellerRatings.put(r.seller.getName(), new ArrayList<Rating>());
+		if (!sellerRatings.containsKey(r.seller_name)) {
+			sellerRatings.put(r.seller_name, new ArrayList<Rating>());
 		}
-		sellerRatings.get(r.seller.getName()).add(r);
+		sellerRatings.get(r.seller_name).add(r);
 	}
 
 	private void addBuyerRating(Rating r) {
-		if (!buyerRatings.containsKey(r.buyer.getName())) {
-			buyerRatings.put(r.buyer.getName(), new ArrayList<Rating>());
+		if (!buyerRatings.containsKey(r.buyer_name)) {
+			buyerRatings.put(r.buyer_name, new ArrayList<Rating>());
 		}
-		buyerRatings.get(r.buyer.getName()).add(r);
+		buyerRatings.get(r.buyer_name).add(r);
 	}
 
 	public ArrayList<Rating> getRatingsByAgent(Agent agent) {
@@ -51,6 +51,14 @@ public class RatingManager extends EntityManager {
 		} catch (NullPointerException e) {
 			return null;
 		}
+	}
+
+	public ArrayList<Rating> getRatingsByBuyerName(String buyer_name) {
+		return buyerRatings.get(buyer_name);
+	}
+
+	public ArrayList<Rating> getRatingsBySellerName(String seller_name) {
+		return buyerRatings.get(seller_name);
 	}
 
 	public double calcRating(ArrayList<Rating> ratings) {
@@ -71,5 +79,22 @@ public class RatingManager extends EntityManager {
 					.format("Rating for %5s: %5.2f (x%5d)", sellerName, calcRating(sellerRatings
 							.get(sellerName)), sellerRatings.get(sellerName).size()));
 		}
+	}
+
+	public ArrayList<Rating> getRating(String buyer_name, String seller_name) {
+		ArrayList<Rating> result = null;
+		try {
+			st = db.prepare("SELECT rating, stime FROM Executions WHERE buyer_name=? AND seller_name=? ORDER BY stime");
+			st.bind(1, buyer_name).bind(2, seller_name);
+			while (st.step()) {
+				if (result==null) {
+					result = new ArrayList<Rating>();
+				}
+				Rating rating = new Rating(buyer_name, seller_name, st.columnInt(0));
+				rating.setStime(st.columnInt(1));
+				result.add(rating);
+			}
+		} catch (Exception e) {}
+		return result;
 	}
 }

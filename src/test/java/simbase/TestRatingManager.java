@@ -5,12 +5,19 @@ package simbase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+
 import modelbase.PurchaseLogicRandom;
 import modelbase.PurchaseLogicWishlist;
 import modelbase.RatingLogicAlwaysNegative;
 import modelbase.RatingLogicTruthful;
 
 import org.junit.Test;
+
+import com.almworks.sqlite4java.SQLiteException;
+
+import core.TestWithDBParent;
 
 import productbase.Product;
 import agentbase.Buyer;
@@ -20,7 +27,7 @@ import agentbase.Seller;
  * @author akai
  * 
  */
-public class TestRatingManager {
+public class TestRatingManager extends TestWithDBParent {
 
 	@Test
 	public void testAddRating() throws Exception {
@@ -54,5 +61,17 @@ public class TestRatingManager {
 				true), prod).rating>=4);
 		assertTrue(buyer2.leaveRating(new Execution(new Transaction(buyer2, seller, prod, 1, 10),
 				true), prod).rating<4);
+	}
+
+	@Test
+	public void testGetRating() throws SQLiteException {
+		st = db.prepare(
+				"INSERT INTO Executions(buyer_name, seller_name, prod_name, status, rating, stime) VALUES (?, ?, 1, ?, 5, 5)")
+				.bind(1, "B1").bind(2, "S1").bind(3, Execution.STATUS_SUCCESS);
+		st.step();
+		RatingManager ratingManager = new RatingManager();
+		ratingManager.setDb(db);
+		ArrayList<Rating> result = ratingManager.getRating("B1", "S1");
+		assertEquals(1, result.size());
 	}
 }

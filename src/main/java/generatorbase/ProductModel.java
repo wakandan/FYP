@@ -2,6 +2,8 @@ package generatorbase;
 
 import java.util.Random;
 
+import org.apache.log4j.Level;
+
 import productbase.Product;
 import productbase.ProductManager;
 import configbase.Config;
@@ -93,7 +95,8 @@ public class ProductModel extends EntityModel {
 			prodQuantity = getNumProdInRange(i);
 			if (prodQuantity<1)
 				continue;
-			logger.debug(String.format("Generating product %-3d(x%5d) [%.2f-%.2f]", i, prodQuantity, prcMin, prcMax));
+			logger.debug(String.format("Generating product %-3d(x%5d) [%.2f-%.2f]", i,
+					prodQuantity, prcMin, prcMax));
 			Product prod = new Product(i+"");
 			prod.setPriceMin(prcMin);
 			prod.setPriceMax(prcMax);

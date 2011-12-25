@@ -31,7 +31,7 @@ public class RatingLogicTruthful extends RatingLogic {
 		int rate = (int) Math.round(1+prod.getValue()*4);
 		if (rate>=5)
 			rate = 4+(int) Math.round(random.nextDouble());
-		return new Rating(this.buyer, execution.getSeller(), rate);
+		return new Rating(this.buyer.getName(), execution.getSeller().getName(), rate);
 	}
 
 }
