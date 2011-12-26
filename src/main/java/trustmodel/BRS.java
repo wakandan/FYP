@@ -1,4 +1,4 @@
-package modelbase;
+package trustmodel;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -46,7 +46,7 @@ public class BRS {
 	 * This method returns a list of all dishonest buyers for one particular
 	 * seller with id number sid
 	 */
-	public ArrayList brs(String seller_name, ArrayList<String> allBuyers) {
+	public double brs(String seller_name, ArrayList<String> allBuyers) {
 
 		ArrayList<String> dishonest = new ArrayList<String>();
 		ArrayList<String> honest = new ArrayList<String>();
@@ -67,10 +67,10 @@ public class BRS {
 			 */
 			int negative = 0;
 			for (String buyer_name : allBuyers) {
-				// go through each buyer's rating list and find all ratings for
-				// the seller
 				if (honest.contains(buyer_name)) {
-					ArrayList<Rating> ratings = ratingManager.getRatingsByBuyerName(buyer_name);
+					// go through each buyer's rating list and find all ratings
+					// for the seller
+					ArrayList<Rating> ratings = ratingManager.getRating(buyer_name, seller_name);
 					if (ratings!=null) {
 						for (Rating rating : ratings) {
 							if (rating.getRating()>=3) {
@@ -91,17 +91,17 @@ public class BRS {
 			// reputation of the seller
 			reputation = rep_distribution.mean();
 
-			System.out.println(positive);
-			System.out.println(negative);
+			// System.out.println(positive);
+			// System.out.println(negative);
 
 			for (String buyer_name : allBuyers) {
 				if (honest.contains(buyer_name)) {
 					ArrayList<Rating> ratings = ratingManager.getRating(buyer_name, seller_name);
 					if (ratings!=null) {
-						int p = 0; // num of positive ratings provided by each
-									// buyer for the seller
-						int n = 0; // num of negative ratings provided by each
-									// buyer for the seller
+						int p = 0; // #positive ratings provided by each buyer
+									// for the seller
+						int n = 0; // #negative ratings provided by each buyer
+									// for the seller
 
 						for (Rating rating : ratings) {
 							if (rating.getRating()>=3)
@@ -135,9 +135,30 @@ public class BRS {
 
 		// add the reputation of the seller at the end of the list
 		ArrayList lists = new ArrayList();
-		System.out.println(seller_name+" "+honest.size()+" "+dishonest.size());
-		lists.add(dishonest);
-		lists.add(reputation+"");
-		return lists;
+//		System.out.print(seller_name+" "+honest.size()+" "+dishonest.size());
+//		for (String buyer_name : dishonest) {
+//			System.out.print(" "+buyer_name);
+//		}
+//		System.out.println("");
+		int positive = 0;
+		int negative = 0;
+		for (String buyer_name : honest) {
+			ArrayList<Rating> ratings = ratingManager.getRating(buyer_name, seller_name);
+			if (ratings!=null) {
+				for (Rating rating : ratings) {
+					if (rating.getRating()>=3) {
+						positive++;
+					} else {
+						negative++;
+					}
+				}
+			}
+		}
+		BetaDistributionNew rep_distribution_buyer = new BetaDistributionNew((double) (positive+1),
+				(double) (negative+1));
+		return rep_distribution_buyer.mean();
+		// lists.add(dishonest);
+		// lists.add(reputation+"");
+		// return lists;
 	}
 }

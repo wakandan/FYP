@@ -94,7 +94,11 @@ public class RatingManager extends EntityManager {
 				rating.setStime(st.columnInt(1));
 				result.add(rating);
 			}
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			logger.error(String.format("Error getting rating for %5s & %5s", buyer_name,
+					seller_name));
+			System.out.println(e);
+		}
 		return result;
 	}
 }

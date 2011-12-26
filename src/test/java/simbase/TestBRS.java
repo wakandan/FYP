@@ -7,9 +7,10 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
-import modelbase.BRS;
 
 import org.junit.Test;
+
+import trustmodel.BRS;
 
 import com.almworks.sqlite4java.SQLiteException;
 
@@ -30,10 +31,11 @@ public class TestBRS extends TestSimRun {
 		sim.setDb(dbConfig.setUpDb());
 		sim.run();
 		BRS brs = new BRS();
-		brs.setQuantile(0.01);
+		brs.setQuantile(0.05);
 		brs.setRatingManager(sim.ratingManager);
 		for (String agentName : sim.agentManager.getSellers().getAllNames()) {
-			brs.brs(agentName, sim.agentManager.getBuyers().getEntitiesNames());
+			System.out.println("Seller "+agentName+"->"
+					+brs.brs(agentName, sim.agentManager.getBuyers().getEntitiesNames()));
 		}
 	}
 
