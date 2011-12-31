@@ -25,15 +25,30 @@ import agentbase.Buyer;
  */
 public class TRAVOS {
 	int				numBins;
-
 	RatingManager	ratingManager;
 
 	double			errorThreshold;
 	double			minAccuracyValue;
 
-	// sid is the seller that the advisor provides ratings for
-	// bid is the id of the buyer that estimates the trustworthiness of the
-	// advisor aid is the id of the advisor
+	public double getErrorThreshold() {
+		return errorThreshold;
+	}
+
+	public void setErrorThreshold(double errorThreshold) {
+		this.errorThreshold = errorThreshold;
+	}
+
+	public double getMinAccuracyValue() {
+		return minAccuracyValue;
+	}
+
+	public void setMinAccuracyValue(double minAccuracyValue) {
+		this.minAccuracyValue = minAccuracyValue;
+	}
+
+	public RatingManager getRatingManager() {
+		return ratingManager;
+	}
 
 	public void setRatingManager(RatingManager ratingManager) {
 		this.ratingManager = ratingManager;
@@ -136,8 +151,6 @@ public class TRAVOS {
 		double m = trueExpectedMean;
 		double d = trueStandardDeviation;
 		double m1 = 1 - m;
-
-		/**/
 		double adjustedSuccessOutcome = (m * m - m * m * m) / (d * d) - m - 1;
 		double adjustedFailureOutcome = (m1 * m1 - m1 * m1 * m1) / (d * d) - m1 - 1;
 		return new Pair<Double, Double>(adjustedSuccessOutcome, adjustedFailureOutcome);
@@ -169,7 +182,6 @@ public class TRAVOS {
 	 */
 	public double travos(String buyerName, String sellerName) {
 		ArrayList<Rating> ratings = ratingManager.getRating(buyerName, sellerName);
-		double trustValue = 0;
 		int pos = 0;
 		int neg = 0;
 		if (ratings != null) {
@@ -191,27 +203,13 @@ public class TRAVOS {
 		double adjustedBeta = neg;
 		for (String advisorName : advisorNames) {
 			Pair<Double, Double> values = getAdvises(buyerName, sellerName, advisorName);
+			// System.out.println(values.val1 + " " + values.val2);
 			adjustedAlpha += values.val1;
 			adjustedBeta += values.val2;
 		}
 
-		BetaDistributionNew dis = new BetaDistributionNew(adjustedAlpha, adjustedBeta);
+		BetaDistributionNew dis = new BetaDistributionNew(adjustedAlpha + 1, adjustedBeta + 1);
 		return dis.mean();
 
-	}
-
-	private Pair<Double, Double> calcTrustNAccuracy(ArrayList<Rating> ratings) {
-		int pos = 0;
-		int neg = 0;
-		for (Rating rating : ratings) {
-			if (rating.getRating() >= 3)
-				pos++;
-			else
-				neg++;
-		}
-		BetaDistributionNew dis = new BetaDistributionNew(pos + 1, neg + 1);
-		double trust = dis.mean();
-		double accuracy = dis.CDF(trust + errorThreshold) - dis.CDF(trust - errorThreshold);
-		return new Pair<Double, Double>(trust, accuracy);
 	}
 }

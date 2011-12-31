@@ -7,6 +7,9 @@ import java.util.HashMap;
 
 import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
+import com.almworks.sqlite4java.SQLiteStatement;
+
+import core.Pair;
 
 import agentbase.Agent;
 import agentbase.Buyer;
@@ -14,11 +17,37 @@ import agentbase.Seller;
 
 public class RatingManager extends EntityManager {
 	HashMap<String, ArrayList<Rating>>	sellerRatings, buyerRatings;
+	public static final int				ST_STATE_getRatingsBefore	= 0;
+	public static final int				ST_STATE_getRating			= 1;
+	public static final int				ST_STATE_findAdvisorNames	= 2;
+	public static final int				ST_STATE_findCommonRatees	= 3;
+	SQLiteStatement[]					statements;
 
 	public RatingManager() {
 		super();
 		this.sellerRatings = new HashMap<String, ArrayList<Rating>>();
 		this.buyerRatings = new HashMap<String, ArrayList<Rating>>();
+	}
+
+	@Override
+	public void setDb(SQLiteConnection db) {
+		super.setDb(db);
+		statements = new SQLiteStatement[10];
+		if (db != null) {
+			try {
+				statements[ST_STATE_getRatingsBefore] = this.db
+						.prepare("SELECT rating, stime FROM Executions WHERE buyer_name=? AND seller_name=? AND stime<? ORDER BY stime");
+				statements[ST_STATE_findAdvisorNames] = this.db
+						.prepare("SELECT buyer_name FROM Executions WHERE buyer_name!=? AND seller_name=?");
+				statements[ST_STATE_getRating] = this.db
+						.prepare("SELECT rating, stime FROM Executions WHERE buyer_name=? AND seller_name=? ORDER BY stime");
+				statements[ST_STATE_findCommonRatees] = this.db
+						.prepare("SELECT seller_name FROM Executions WHERE buyer_name=? AND seller_name IN (SELECT seller_name FROM Executions where buyer_name=?)");
+			} catch (SQLiteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void addRating(Rating r) throws Exception {
@@ -85,7 +114,7 @@ public class RatingManager extends EntityManager {
 	public ArrayList<Rating> getRating(String buyer_name, String seller_name) {
 		ArrayList<Rating> result = null;
 		try {
-			st = db.prepare("SELECT rating, stime FROM Executions WHERE buyer_name=? AND seller_name=? ORDER BY stime");
+			st = statements[ST_STATE_getRating];
 			st.bind(1, buyer_name).bind(2, seller_name);
 			while (st.step()) {
 				if (result == null) {
@@ -95,7 +124,9 @@ public class RatingManager extends EntityManager {
 				rating.setStime(st.columnInt(1));
 				result.add(rating);
 			}
+			st.reset();
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(String.format("Error getting rating for %5s & %5s", buyer_name,
 					seller_name));
 			System.out.println(e);
@@ -106,7 +137,7 @@ public class RatingManager extends EntityManager {
 	public ArrayList<Rating> getRatingsBefore(String buyerName, String sellerName, int stime) {
 		ArrayList<Rating> result = null;
 		try {
-			st = db.prepare("SELECT rating, stime FROM Executions WHERE buyer_name=? AND seller_name=? AND stime<? ORDER BY stime");
+			st = statements[ST_STATE_getRatingsBefore];
 			st.bind(1, buyerName).bind(2, sellerName).bind(3, stime);
 			while (st.step()) {
 				if (result == null) {
@@ -116,6 +147,7 @@ public class RatingManager extends EntityManager {
 				rating.setStime(st.columnInt(1));
 				result.add(rating);
 			}
+			st.reset();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -130,12 +162,13 @@ public class RatingManager extends EntityManager {
 		ArrayList<String> result = null;
 		try {
 			result = new ArrayList<String>();
-			st = db.prepare("SELECT buyer_name FROM Executions WHERE buyer_name!=? AND seller_name=?");
+			st = statements[ST_STATE_findAdvisorNames];
 			st.bind(1, buyerName).bind(2, sellerName);
 			while (st.step()) {
 				String advisorName = st.columnString(0);
 				result.add(advisorName);
 			}
+			st.reset();
 		} catch (SQLiteException e) {
 			e.printStackTrace();
 		}
@@ -149,15 +182,29 @@ public class RatingManager extends EntityManager {
 		ArrayList<String> result = null;
 		try {
 			result = new ArrayList<String>();
-			st = db.prepare("SELECT seller_name FROM Executions WHERE buyer_name=? AND seller_name IN (SELECT seller_name FROM Executions where buyer_name=?)");
+			st = statements[ST_STATE_findCommonRatees];
 			st.bind(1, buyerName).bind(2, advisorName);
 			while (st.step()) {
 				String sellerName = st.columnString(0);
 				result.add(sellerName);
 			}
+			st.reset();
 		} catch (SQLiteException e) {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	/* Aggregate ratings with categorization using a binary pivot */
+	public Pair<Integer, Integer> aggregateBinaryRating(ArrayList<Rating> ratings, int pivot) {
+		int positive = 0;
+		int negative = 0;
+		for (Rating rating : ratings) {
+			if (rating.getRating() >= pivot)
+				positive++;
+			else
+				negative++;
+		}
+		return new Pair<Integer, Integer>(positive, negative);
 	}
 }
