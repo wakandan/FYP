@@ -1,5 +1,6 @@
 package agentbase;
 
+import java.util.ArrayList;
 import productbase.Product;
 import modelbase.PurchaseLogic;
 import modelbase.RatingLogic;
@@ -11,12 +12,14 @@ public class Buyer extends Agent {
 
 	RatingLogic		ratingLogic;
 	PurchaseLogic	purchaseLogic;
+	ArrayList<Seller> targetSeller;
 
 	/**
 	 * @param string
 	 */
 	public Buyer(String name) {
 		super(name);
+		targetSeller = new ArrayList<Seller>();
 	}
 
 	public RatingLogic getRatingLogic() {
@@ -47,5 +50,15 @@ public class Buyer extends Agent {
 	 */
 	public Rating leaveRating(Execution execution, Product product) {
 		return this.ratingLogic.calcRating(execution, product);
+	}
+	 
+	public ArrayList<Seller> getTargetSeller()
+	{
+		return targetSeller;
+	}
+	
+	public void addTarget(Seller seller)
+	{
+		targetSeller.add(seller);
 	}
 }
