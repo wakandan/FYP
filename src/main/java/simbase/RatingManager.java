@@ -129,7 +129,6 @@ public class RatingManager extends EntityManager {
 			e.printStackTrace();
 			logger.error(String.format("Error getting rating for %5s & %5s", buyer_name,
 					seller_name));
-			System.out.println(e);
 		}
 		return result;
 	}

@@ -4,8 +4,10 @@
 package modelbase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
+import agentbase.AgentMasterConfig;
 import agentbase.Seller;
 
 import simbase.Inventory;
@@ -18,6 +20,10 @@ import simbase.Transaction;
 public class PurchaseLogicWishlist extends PurchaseLogic {
 	ArrayList<String>	wishList;
 	int					wishListIndex;
+
+	public PurchaseLogicWishlist() {
+		super();
+	}
 
 	public ArrayList<String> getWishList() {
 		return wishList;
@@ -43,13 +49,13 @@ public class PurchaseLogicWishlist extends PurchaseLogic {
 		Inventory inventory;
 		Random random = new Random();
 		/* If the wish list is null, then generate a new one */
-		if (wishList==null) {
+		if (wishList == null) {
 			ArrayList<String> wishList = new ArrayList<String>();
 			int prodCount = buyer.getInventoryManager().getAllProductsCount();
 			int totalNumProd = random.nextInt(prodCount);
-			if (totalNumProd<2)
+			if (totalNumProd < 2)
 				totalNumProd = 2;
-			for (int i = 0; i<totalNumProd; i++)
+			for (int i = 0; i < totalNumProd; i++)
 				wishList.add((String) buyer.getInventoryManager().getAllProductsNames()[random
 						.nextInt(prodCount)]);
 			this.wishList = wishList;
@@ -59,9 +65,9 @@ public class PurchaseLogicWishlist extends PurchaseLogic {
 		sellerList = buyer.getInventoryManager().getSellersByProductName(prodName);
 
 		/* If currently there's no seller having this product, skip */
-		if (sellerList!=null&&sellerList.size()>0) {
+		if (sellerList != null && sellerList.size() > 0) {
 			inventory = sellerList.get(random.nextInt(sellerList.size()));
-			wishListIndex = wishListIndex++%wishList.size();
+			wishListIndex = wishListIndex++ % wishList.size();
 			return new Transaction(buyer, (Seller) inventory.getAgent(), inventory.getProd(), 1,
 					inventory.getPrice());
 		} else {
@@ -70,4 +76,14 @@ public class PurchaseLogicWishlist extends PurchaseLogic {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see modelbase.ActionLogic#config()
+	 */
+	@Override
+	public void config() {
+		wishList = new ArrayList<String>(
+				Arrays.asList(config.getConfigEntry("wishlist").split(",")));
+	}
 }

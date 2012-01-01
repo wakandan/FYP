@@ -9,36 +9,40 @@ import agentbase.Buyer;
 import agentbase.Seller;
 import core.BaseObject;
 
-public class AlwaysUnfairPositive extends RatingLogic 
-{
-	public Rating calcRating(Execution execution, Product prod)
-	{
+public class AlwaysUnfairPositive extends RatingLogic {
+	public Rating calcRating(Execution execution, Product prod) {
 		boolean found = false;
 		int rate;
-		Random random = new Random(); 
-		
-		for( int i = 0; i < this.buyer.getTargetSeller().size(); i++) 
-		{
+		Random random = new Random();
+
+		for (int i = 0; i < this.buyer.getTargetSeller().size(); i++) {
 			String seller_name = execution.getSeller().getName();
 			String target = this.buyer.getTargetSeller().get(i).getName();
-			if (seller_name.equals(target))
-			{
+			if (seller_name.equals(target)) {
 				found = true;
 			}
 		}
-		
-		if (found)
-		{
+
+		if (found) {
 			rate = 5;
+		} else {
+			rate = (int) Math.round(1 + prod.getValue() * 4);
+			if (rate >= 5)
+				rate = 4 + (int) Math.round(random.nextDouble());
 		}
-		else
-		{
-			rate = (int) Math.round(1+prod.getValue()*4);
-			if (rate>=5)
-				rate = 4+(int) Math.round(random.nextDouble());
-		}
-		
+
 		return new Rating(this.buyer.getName(), execution.getSeller().getName(), rate);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see modelbase.ActionLogic#config()
+	 */
+	@Override
+	public void config() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

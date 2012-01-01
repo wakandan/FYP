@@ -30,22 +30,19 @@ import agentbase.Seller;
  */
 public class TestRatingLogic extends TestWithDBParent {
 
-	//@Test
-	/*public void testAddRating() throws Exception {
-		Buyer buyer = new Buyer("buyer1");
-		Buyer buyer2 = new Buyer("buyer2");
-		Seller seller = new Seller("seller1");
-		Product prod = new Product("prod1");
-		RatingManager ratingManager = new RatingManager();
-		Rating rating1 = new Rating(buyer, seller, 4);
-		Rating rating2 = new Rating(buyer2, seller, 2);
-		ratingManager.addRating(rating1);
-		ratingManager.addRating(rating2);
-		assertEquals(1, ratingManager.getRatingsByAgent(buyer).size());
-		assertEquals(2, ratingManager.getRatingsByAgent(seller).size());
-		assertEquals(4, ratingManager.getRatingsByAgent(buyer).get(0).rating);
-		assertEquals(2, ratingManager.getRatingsByAgent(buyer2).get(0).rating);
-	}*/
+	// @Test
+	/*
+	 * public void testAddRating() throws Exception { Buyer buyer = new
+	 * Buyer("buyer1"); Buyer buyer2 = new Buyer("buyer2"); Seller seller = new
+	 * Seller("seller1"); Product prod = new Product("prod1"); RatingManager
+	 * ratingManager = new RatingManager(); Rating rating1 = new Rating(buyer,
+	 * seller, 4); Rating rating2 = new Rating(buyer2, seller, 2);
+	 * ratingManager.addRating(rating1); ratingManager.addRating(rating2);
+	 * assertEquals(1, ratingManager.getRatingsByAgent(buyer).size());
+	 * assertEquals(2, ratingManager.getRatingsByAgent(seller).size());
+	 * assertEquals(4, ratingManager.getRatingsByAgent(buyer).get(0).rating);
+	 * assertEquals(2, ratingManager.getRatingsByAgent(buyer2).get(0).rating); }
+	 */
 
 	@Test
 	public void testLeaveRating() {
@@ -79,16 +76,18 @@ public class TestRatingLogic extends TestWithDBParent {
 		Rating rate32 = buyer3.leaveRating(execution32, prod);
 		Rating rate4 = buyer4.leaveRating(execution4, prod);
 		Rating rate42 = buyer4.leaveRating(execution42, prod);
-		System.out.println("rating for seller of buyer1 is:" + rate.getRating()); 
+		System.out.println("rating for seller of buyer1 is:" + rate.getRating());
 		System.out.println("rating for seller of buyer2 is:" + rate2.getRating());
 		System.out.println("rating for seller of buyer3 is:" + rate3.getRating());
 		System.out.println("rating for seller2 of buyer3 is:" + rate32.getRating());
 		System.out.println("rating for seller of buyer4 is:" + rate4.getRating());
 		System.out.println("rating for seller2 of buyer4 is:" + rate42.getRating());
-		
-		//assertTrue(buyer.leaveRating(new Execution(new Transaction(buyer, seller, prod, 1, 10),
-			//	true), prod).rating>=4);
-		//assertTrue(buyer2.leaveRating(new Execution(new Transaction(buyer2, seller, prod, 1, 10),
-			//	true), prod).rating<4);
+
+		// assertTrue(buyer.leaveRating(new Execution(new Transaction(buyer,
+		// seller, prod, 1, 10),
+		// true), prod).rating>=4);
+		// assertTrue(buyer2.leaveRating(new Execution(new Transaction(buyer2,
+		// seller, prod, 1, 10),
+		// true), prod).rating<4);
 	}
 }

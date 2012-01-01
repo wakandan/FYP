@@ -23,6 +23,15 @@ public class AlwaysPositive extends RatingLogic{
 		}
 		return new Rating(this.buyer.getName(), execution.getSeller().getName(), rate);
 	}
+
+	/* (non-Javadoc)
+	 * @see modelbase.ActionLogic#config()
+	 */
+	@Override
+	public void config() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 }

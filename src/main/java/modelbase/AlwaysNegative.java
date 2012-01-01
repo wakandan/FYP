@@ -8,20 +8,27 @@ import agentbase.Seller;
 import core.BaseObject;
 
 public class AlwaysNegative extends RatingLogic {
-	
-	public Rating calcRating(Execution execution, Product product)
-	{
-		int random = (int) (Math.random()* 10) % 2;
+
+	public Rating calcRating(Execution execution, Product product) {
+		int random = (int) (Math.random() * 10) % 2;
 		int rate;
-		if (random == 0)
-		{
+		if (random == 0) {
 			rate = 0;
-		}
-		else
-		{
+		} else {
 			rate = 1;
 		}
-		
+
 		return new Rating(this.buyer.getName(), execution.getSeller().getName(), rate);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see modelbase.ActionLogic#config()
+	 */
+	@Override
+	public void config() {
+		// TODO Auto-generated method stub
+
 	}
 }

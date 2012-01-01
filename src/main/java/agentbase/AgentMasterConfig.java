@@ -28,13 +28,9 @@ public class AgentMasterConfig extends Config {
 
 	Class<PurchaseLogic>	purchaseLogic;
 	Class<RatingLogic>		ratingLogic;
-	ArrayList<String>		wishlist;
 	int						agentNum;
 	String					masterName;
-
-	public ArrayList<String> getWishlist() {
-		return wishlist;
-	}
+	AgentMaster				master;
 
 	public int getAgentNum() {
 		return agentNum;
@@ -53,15 +49,12 @@ public class AgentMasterConfig extends Config {
 	public void configure(Entity e) {
 		Buyer buyer = (Buyer) e;
 		try {
-			if (purchaseLogic.newInstance() instanceof PurchaseLogicWishlist) {
-				PurchaseLogicWishlist purchaseLogicObj = (PurchaseLogicWishlist) purchaseLogic
-						.newInstance();
-				purchaseLogicObj.setWishList(wishlist);
-				buyer.setPurchaseLogic(purchaseLogicObj);
-			} else {
-				buyer.setPurchaseLogic(purchaseLogic.newInstance());
-			}
+			buyer.setPurchaseLogic(purchaseLogic.newInstance());
+			buyer.getPurchaseLogic().setConfig(this);
+			buyer.getPurchaseLogic().config();
 			buyer.setRatingLogic(ratingLogic.newInstance());
+			buyer.getRatingLogic().setConfig(this);
+			buyer.getRatingLogic().config();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -80,26 +73,39 @@ public class AgentMasterConfig extends Config {
 			try {
 				this.purchaseLogic = ((Class<PurchaseLogic>) classLoader.loadClass(value));
 			} catch (Exception e) {
-				logger.error("Error loading class: "+value);
+				logger.error("Error loading class: " + value);
 				e.printStackTrace();
 			}
 		} else if (key.equalsIgnoreCase("agentRatingLogicClass")) {
 			try {
 				this.ratingLogic = ((Class<RatingLogic>) classLoader.loadClass(value));
 			} catch (Exception e) {
-				logger.error("Error loading class: "+value);
+				logger.error("Error loading class: " + value);
 				e.printStackTrace();
 			}
 		} else if (key.equalsIgnoreCase("agentNum")) {
 			this.agentNum = Integer.parseInt(value);
-		} else if (key.equalsIgnoreCase("wishlist")) {
-			/* Handle a fixed wishlist for now; */
-			wishlist = new ArrayList<String>(Arrays.asList(value.split(",")));
 		} else if (key.equalsIgnoreCase("masterName")) {
 			this.masterName = value;
 		} else
 			return false;
 		return true;
+	}
+
+	public Class<PurchaseLogic> getPurchaseLogic() {
+		return purchaseLogic;
+	}
+
+	public void setPurchaseLogic(Class<PurchaseLogic> purchaseLogic) {
+		this.purchaseLogic = purchaseLogic;
+	}
+
+	public Class<RatingLogic> getRatingLogic() {
+		return ratingLogic;
+	}
+
+	public void setRatingLogic(Class<RatingLogic> ratingLogic) {
+		this.ratingLogic = ratingLogic;
 	}
 
 }

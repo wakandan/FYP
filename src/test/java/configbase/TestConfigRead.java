@@ -75,7 +75,7 @@ public class TestConfigRead {
 	public void testSimConfig() throws IOException {
 		SimConfig simConfig = new SimConfig();
 		simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
-		assertEquals(2, simConfig.getAgentMasters().keySet().size());
+		assertEquals(3, simConfig.getAgentMasters().keySet().size());
 	}
 
 }
