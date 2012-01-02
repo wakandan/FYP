@@ -5,6 +5,7 @@ import java.util.Set;
 
 import modelbase.AgentLogicModel;
 import modelbase.Entity;
+import modelbase.IdentityLogic;
 import modelbase.LogicModel;
 import productbase.Product;
 import simbase.InventoryManager;
@@ -14,10 +15,36 @@ public abstract class Agent extends Entity {
 	double						balance;
 	HashMap<String, Product>	inventory;
 	AgentLogicModel				logicModel;
-	InventoryManager			inventoryManager;	/*
-													 * To query one's inventory
-													 * & product value
-													 */
+	InventoryManager			inventoryManager;		/*
+														 * To query one's
+														 * inventory & product
+														 * value
+														 */
+	boolean						isIdentityChangable;
+	IdentityLogic				identityLogic;
+
+	public boolean requestNewIdentity() {
+		if (isIdentityChangable) {
+			return identityLogic.requestNewIdentity();
+		}
+		return false;
+	}
+
+	public IdentityLogic getIdentityLogic() {
+		return identityLogic;
+	}
+
+	public void setIdentityLogic(IdentityLogic identityLogic) {
+		this.identityLogic = identityLogic;
+	}
+
+	public boolean isIdentityChangable() {
+		return isIdentityChangable;
+	}
+
+	public void setIdentityChangable(boolean isIdentityChangable) {
+		this.isIdentityChangable = isIdentityChangable;
+	}
 
 	public double getBalance() {
 		return balance;
@@ -33,21 +60,10 @@ public abstract class Agent extends Entity {
 	public Agent(String name) {
 		super(name);
 		inventory = new HashMap<String, Product>();
+		isIdentityChangable = false;
 	}
 
 	public void registerTransaction(Action action) {
-
-	}
-
-	public void changeBehavior() {
-
-	}
-
-	public void leave() {
-
-	}
-
-	public void join() {
 
 	}
 

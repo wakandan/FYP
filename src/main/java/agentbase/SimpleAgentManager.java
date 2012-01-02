@@ -3,6 +3,7 @@
  */
 package agentbase;
 
+import simbase.AgentManager;
 import modelbase.AgentLogicModel;
 import modelbase.Entity;
 import modelbase.SellerLogicModel;

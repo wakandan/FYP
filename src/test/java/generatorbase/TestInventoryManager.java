@@ -17,12 +17,12 @@ import core.TestWithDBParent;
 
 import productbase.Product;
 import productbase.ProductManager;
+import simbase.AgentManager;
 import simbase.Inventory;
 import simbase.InventoryManager;
 import simbase.Sim;
 
 import agentbase.Agent;
-import agentbase.AgentManager;
 import agentbase.Buyer;
 import agentbase.Seller;
 

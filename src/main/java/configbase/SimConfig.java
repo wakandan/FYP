@@ -107,8 +107,7 @@ public class SimConfig extends Config {
 				}
 			} else if (key.equalsIgnoreCase("agentMasterConfigFile")) {
 				String[] dataList = value.split(";");
-				if (agentMasters == null)
-					agentMasters = new HashMap<String, AgentMaster>();
+				agentMasters = new HashMap<String, AgentMaster>();
 				for (int i = 0; i < dataList.length; i++) {
 					logger.debug("Processing config file: " + dataList[i]);
 					AgentMasterConfig agentMasterConfig = new AgentMasterConfig();

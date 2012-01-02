@@ -55,7 +55,7 @@ public class EntityManager extends BaseObject {
 	 * 
 	 */
 	public void commitTransaction() throws SQLiteException {
-		db.exec("COMMIT TRANSACTION");		
+		db.exec("COMMIT TRANSACTION");
 	}
 
 	/**
@@ -105,12 +105,24 @@ public class EntityManager extends BaseObject {
 	public Collection<Entity> getAll() {
 		return entities.values();
 	}
-	
+
 	public Entity getEntityByName(String entityName) {
 		return entities.get(entityName);
 	}
-	
+
 	public Set<String> getAllNames() {
 		return entities.keySet();
 	}
+
+	public void remove(String name) {
+		entities.remove(name);
+	}
+
+	public void replace(String oldName, String newName) {
+		if (entities.containsKey(oldName)) {
+			entities.put(newName, entities.get(oldName));
+			entities.remove(oldName);
+		}
+	}
+
 }

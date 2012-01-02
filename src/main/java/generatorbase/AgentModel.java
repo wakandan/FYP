@@ -1,8 +1,8 @@
 package generatorbase;
 
+import simbase.AgentManager;
 import modelbase.AgentLogicModel;
 import agentbase.Agent;
-import agentbase.AgentManager;
 import agentbase.Buyer;
 import agentbase.Seller;
 import configbase.AgentConfig;

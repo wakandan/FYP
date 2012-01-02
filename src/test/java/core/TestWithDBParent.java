@@ -33,10 +33,12 @@ public class TestWithDBParent {
 		st.step();
 		st = db.prepare(DBConfig.readDDL("src/main/resources/sql/Executions.ddl"));
 		st.step();
+		st = db.prepare(DBConfig.readDDL("src/main/resources/sql/Identities.ddl"));
+		st.step();
 	}
 
 	@After
 	public void tearDown() throws SQLiteException {
-		st.dispose();		
+		st.dispose();
 	}
 }

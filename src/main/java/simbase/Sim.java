@@ -17,7 +17,6 @@ import org.joda.time.DateTime;
 import productbase.Product;
 import productbase.ProductManager;
 import agentbase.Agent;
-import agentbase.AgentManager;
 import agentbase.AgentMaster;
 import agentbase.Buyer;
 import agentbase.Seller;
@@ -85,6 +84,7 @@ public class Sim extends BaseObject {
 	public void setAgentManager(AgentManager agentManager) {
 		this.agentManager = agentManager;
 		this.agentManager.setSessionId(this.sessionId);
+		this.agentManager.setSim(this);
 		bank.setAgentManager(agentManager);
 	}
 
@@ -154,6 +154,7 @@ public class Sim extends BaseObject {
 		transactionManager = new TransactionManager();
 		transactionManager.sim = this;
 		inventoryManager.sim = this;
+		agentManager.sim = this;
 	}
 
 	public void initialize() throws Exception {
@@ -321,6 +322,12 @@ public class Sim extends BaseObject {
 		logger.info("*** Simulation is running...");
 		while (scheduler.isRunning()) {
 			advanceTime();
+			for (Entity e : agentManager.getAll()) {
+				Agent agent = (Agent) e;
+				if (agent.isIdentityChangable() && agent.requestNewIdentity()) {
+					agentManager.requestNewIdentity(agent);
+				}
+			}
 			for (Object e : getAgentManager().getAllBuyers()) {
 				buyer = (Buyer) e;
 				if (agentManager.isCustomAgent((Agent) e) && scheduler.isWarmingup())

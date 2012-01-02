@@ -10,7 +10,6 @@ import generatorbase.ProductModel;
 import org.junit.Before;
 
 import productbase.ProductManager;
-import agentbase.AgentManager;
 import configbase.AgentConfig;
 import configbase.DistributionConfig;
 import configbase.ProductConfig;

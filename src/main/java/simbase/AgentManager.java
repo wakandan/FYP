@@ -1,4 +1,4 @@
-package agentbase;
+package simbase;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -6,17 +6,22 @@ import java.util.HashMap;
 import generatorbase.EntityManager;
 import modelbase.Entity;
 
+import agentbase.Agent;
+import agentbase.Buyer;
+
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 
 import configbase.AgentConfig;
 
 public class AgentManager extends EntityManager {
+	Sim						sim;
 	EntityManager			buyers;
 	EntityManager			sellers;
 	HashMap<String, Agent>	customAgents;
 	public final static int	BUYER_AGENT_TYPE	= 1;
 	public final static int	SELLER_AGENT_TYPE	= 2;
+	private static int		staticAgentCount	= 0;
 
 	public Collection getAllBuyers() {
 		Collection result = buyers.getAll();
@@ -54,6 +59,7 @@ public class AgentManager extends EntityManager {
 		st.bind(1, this.getSessionId()).bind(2, e.getName())
 				.bind(3, ((AgentConfig) this.config).getInitialBalance()).bind(4, aType);
 		st.step();
+		staticAgentCount++;
 	}
 
 	/**
@@ -78,7 +84,7 @@ public class AgentManager extends EntityManager {
 	 */
 	public Agent getAgentByName(String agentName) {
 		Entity e = buyers.get(agentName);
-		if (e==null) {
+		if (e == null) {
 			e = sellers.get(agentName);
 		}
 		return (Agent) e;
@@ -89,6 +95,53 @@ public class AgentManager extends EntityManager {
 	}
 
 	public boolean isCustomAgent(Agent agent) {
-		return (this.customAgents.get(agent.getName())!=null);
+		return (this.customAgents.get(agent.getName()) != null);
 	}
+
+	protected String findNewName() {
+		return (++staticAgentCount) + "";
+	}
+
+	public void requestNewIdentity(Agent agent) throws SQLiteException {
+		String oldName = agent.getName();
+		if (agent instanceof Buyer) {
+			agent.setName("B" + findNewName());
+			buyers.replace(oldName, agent.getName());
+		} else {
+			agent.setName("S" + findNewName());
+			sellers.replace(oldName, agent.getName());
+		}
+
+		System.out
+				.println(String.format("Changing identity for %s -> %s", oldName, agent.getName()));
+		/* Update the agent table */
+		st = db.prepare("UPDATE Agents SET name=? WHERE name=?");
+		st.bind(1, agent.getName()).bind(2, oldName);
+		sim.bank.changeIdentity(oldName, agent.getName());
+		sim.transactionManager.changeIdentity(oldName, agent.getName());
+
+		/* Update the identity mapping */
+		st = db.prepare("SELECT original FROM Identities WHERE changed=?");
+		st.bind(1, oldName);
+
+		String originalName;
+		if (st.step()) {
+			originalName = st.columnString(0);
+		} else {
+			originalName = oldName;
+		}
+
+		st = db.prepare("INSERT INTO Identities(original, changed) VALUES (?, ?)");
+		st.bind(1, originalName).bind(2, agent.getName());
+		st.step();
+	}
+
+	public Sim getSim() {
+		return sim;
+	}
+
+	public void setSim(Sim sim) {
+		this.sim = sim;
+	}
+
 }

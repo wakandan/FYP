@@ -10,7 +10,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import agentbase.AgentManager;
+import simbase.AgentManager;
+
 import agentbase.SimpleAgentManager;
 
 import com.almworks.sqlite4java.SQLiteStatement;

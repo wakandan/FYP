@@ -23,6 +23,7 @@ public class TestSimRunParent {
 
 	protected DBConfig	dbConfig;
 	protected Sim		sim;
+	protected SimConfig	simConfig;
 
 	@Before
 	public void setUp() throws IOException, SQLiteException {
@@ -31,7 +32,8 @@ public class TestSimRunParent {
 		dbConfig.addDdlFile("src/main/resources/sql/Agents.ddl");
 		dbConfig.addDdlFile("src/main/resources/sql/Inventories.ddl");
 		dbConfig.addDdlFile("src/main/resources/sql/Executions.ddl");
-		SimConfig simConfig = new SimConfig();
+		dbConfig.addDdlFile("src/main/resources/sql/Identities.ddl");
+		simConfig = new SimConfig();
 		simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
 		sim = new Sim();
 		sim.setSimConfig(simConfig);

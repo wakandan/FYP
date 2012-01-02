@@ -10,7 +10,6 @@ import java.util.HashMap;
 
 import modelbase.Entity;
 import agentbase.Agent;
-import agentbase.AgentManager;
 import agentbase.Buyer;
 
 import com.almworks.sqlite4java.SQLiteException;
@@ -42,7 +41,7 @@ public class Bank extends EntityManager {
 		st.bind(1, creditPerTurn).bind(2, AgentManager.BUYER_AGENT_TYPE);
 		st.step();
 		for (Account a : accounts.values()) {
-			a.setBalance(a.getBalance()+creditPerTurn);
+			a.setBalance(a.getBalance() + creditPerTurn);
 		}
 
 	}
@@ -68,7 +67,7 @@ public class Bank extends EntityManager {
 	}
 
 	public void accountNotExistError(String accountName) {
-		logger.error("Account "+accountName+" does not exist");
+		logger.error("Account " + accountName + " does not exist");
 	}
 
 	public void setBalance(String accountName, double value) {
@@ -82,7 +81,7 @@ public class Bank extends EntityManager {
 	public void creditBalance(Buyer buyer, double value) {
 		if (accounts.containsKey(buyer.getName())) {
 			accounts.get(buyer.getName()).setBalance(
-					value+accounts.get(buyer.getName()).getBalance());
+					value + accounts.get(buyer.getName()).getBalance());
 		} else {
 			accountNotExistError(buyer.getName());
 		}
@@ -90,9 +89,18 @@ public class Bank extends EntityManager {
 
 	public void reportBalance(ArrayList<String> accountNames) {
 		for (String accountName : accountNames) {
-			logger.debug(String.format("Balance %5s: %10.2f", accountName, accounts.get(accountName)
-					.getBalance()));
+			if (accounts.containsKey(accountName)) {
+				logger.debug(String.format("Balance %5s: %10.2f", accountName,
+						accounts.get(accountName).getBalance()));
+			}
 		}
 	}
 
+	/* Just change the mapping for an account */
+	public void changeIdentity(String oldName, String newName) {
+		if (accounts.containsKey(oldName)) {
+			accounts.put(newName, accounts.get(oldName));
+			accounts.remove(oldName);
+		}
+	}
 }
