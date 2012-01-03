@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import core.BaseObject;
-
 import modelbase.Entity;
+import core.BaseObject;
 
 public abstract class Config extends BaseObject {
 	HashMap<String, String>	configEntries;
@@ -33,10 +35,8 @@ public abstract class Config extends BaseObject {
 	 */
 	protected abstract boolean processConfigKey(String key, String value);
 
-	/*
-	 * Read a config file in format config=data, each entry is on its own line.
-	 * Ignore lines with "#" character at the beginning as the comment
-	 */
+	/* Read a config file in format config=data, each entry is on its own line.
+	 * Ignore lines with "#" character at the beginning as the comment */
 	public static HashMap<String, String> readConfigFile(String filename) throws IOException {
 		String line;
 		String[] lineData;
@@ -44,10 +44,8 @@ public abstract class Config extends BaseObject {
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
 		while ((line = br.readLine()) != null) {
 
-			/*
-			 * Ignore lines start with hash "#". This line will be considered as
-			 * comments
-			 */
+			/* Ignore lines start with hash "#". This line will be considered as
+			 * comments */
 			if (line.startsWith("#"))
 				continue;
 			lineData = line.split("=");
@@ -67,6 +65,37 @@ public abstract class Config extends BaseObject {
 		if (!configEntries.containsKey(key))
 			logger.error("Config file does not have entry: " + key);
 		return configEntries.get(key);
+	}
+
+	public static Object config(Class klass, String configFile) throws ClassNotFoundException,
+			NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchFieldException, IOException {
+		Object klassInstance = klass.newInstance();
+		Method getAttrMethod = klass.getMethod("getConfigAttributes");
+		String[] attrNames = (String[]) getAttrMethod.invoke(klassInstance);
+		HashMap<String, String> configMap = Config.readConfigFile(configFile);
+		for (String attrName : attrNames) {
+			Field field = klass.getField(attrName);
+			Class<?> fieldType = field.getType();
+			String value = configMap.get(attrName);
+			if (value == null) {
+				System.out.println("Unable to find key: " + attrName);
+				continue;
+			}
+			if (attrName.endsWith("Class")) {
+				/* For dealing with key which are classes */
+				Class attrClass = Class.forName(value);
+				field.set(klassInstance, attrClass);
+			} else if (fieldType.equals(Double.TYPE)) {
+				field.setDouble(klassInstance, Double.parseDouble(value));
+			} else if (fieldType.equals(Integer.TYPE)) {
+				field.setInt(klassInstance, Integer.parseInt(value));
+			} else {
+				field.set(klassInstance, value);
+			}
+		}
+		return klassInstance;
 	}
 
 }

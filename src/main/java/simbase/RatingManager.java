@@ -153,10 +153,8 @@ public class RatingManager extends EntityManager {
 		return result;
 	}
 
-	/*
-	 * Find buyers who transacted with the same seller before the current time
-	 * stamp
-	 */
+	/* Find buyers who transacted with the same seller before the current time
+	 * stamp */
 	public ArrayList<String> findAdvisorNames(String buyerName, String sellerName) {
 		ArrayList<String> result = null;
 		try {
@@ -174,9 +172,7 @@ public class RatingManager extends EntityManager {
 		return result;
 	}
 
-	/*
-	 * Find common ratees between a buyer and an advisor
-	 */
+	/* Find common ratees between a buyer and an advisor */
 	public ArrayList<String> findCommonRatees(String buyerName, String advisorName) {
 		ArrayList<String> result = null;
 		try {
@@ -205,5 +201,9 @@ public class RatingManager extends EntityManager {
 				negative++;
 		}
 		return new Pair<Integer, Integer>(positive, negative);
+	}
+
+	public ArrayList<String> getAllRaters() {
+		return new ArrayList<String>(buyerRatings.keySet());
 	}
 }
