@@ -22,11 +22,10 @@ public class Marketplace_Reader
 	public Marketplace_Reader(Marketplace_Main market,char mode)
 	{  
 		this.market = market;
-		market.main.setVisible(false);
 		if(mode=='R')
-			readFile(initFileChooser());
+			readFile(initFileOpenChooser());
 		else if(mode=='W')
-			writeFile(initFileChooser());		
+			writeFile(initFileSaveChooser());		
 	}
 	
 	//To read in the ini file format
@@ -75,23 +74,40 @@ public class Marketplace_Reader
     }
     
     //Open dialogue box
-    public String initFileChooser() {
+    public String initFileOpenChooser() {
     	
     	String fileName = "";
     	try
     	{
-        	Display display = new Display();
-    	    final Shell shell = new Shell(display);
-    	    shell.open();
-        	FileDialog dlg = new FileDialog(shell, SWT.OPEN);
-        	fileName = dlg.open();
-    	    display.dispose();
-    	    market.main.setVisible(true);
+    		final JFileChooser fc = new JFileChooser();
+    		int value = fc.showOpenDialog(market);
+    		if (value == JFileChooser.APPROVE_OPTION) 
+    			fileName = fc.getSelectedFile().getAbsolutePath();
     	    
     	}
     	catch (Exception e)
     	{
-    		
+    		System.out.println(e.getMessage());
+    	}
+    	
+    	return fileName;
+    }
+    
+    //Save Dialog Box
+    public String initFileSaveChooser() {
+    	
+    	String fileName = "";
+    	try
+    	{
+    		final JFileChooser fc = new JFileChooser();
+    		int value = fc.showSaveDialog(market);
+    		if (value == JFileChooser.APPROVE_OPTION) 
+    			fileName = fc.getSelectedFile().getAbsolutePath();
+    	    
+    	}
+    	catch (Exception e)
+    	{
+    		System.out.println(e.getMessage());
     	}
     	
     	return fileName;

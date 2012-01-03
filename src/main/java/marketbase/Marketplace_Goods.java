@@ -118,6 +118,6 @@ class Marketplace_Goods extends JPanel implements MarketEntityInterface{
 
 	public void setCompSize(int x, int y, int width, int height) {
 		this.setBounds(x, y, width, height);
-		((FlowLayout)this.getLayout()).setHgap(width/5 - getComponent(0).getWidth());
+		((FlowLayout)this.getLayout()).setHgap(width/3 - getComponent(0).getWidth());
 	}
 }

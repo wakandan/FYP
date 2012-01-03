@@ -60,12 +60,14 @@ public class SimulationAnalyzer_Main extends JPanel {
 			Scanner readLog = new Scanner(debug);
 			String nextLine = "",transaction = "";
 			Vector<String> transData = new Vector<String>();
-	    
+	        int i = 0;
+	        System.out.println("Reading Lines");
 			while(readLog.hasNextLine())
 			{
 				nextLine = readLog.nextLine();
 				transaction = nextLine.split(" - ")[nextLine.split(" - ").length-1];
 				setText(transaction);
+				System.out.println(i++);
 				if(transaction.contains("(OK)"))
 				{
 					transData = new Vector<String>();
@@ -78,6 +80,7 @@ public class SimulationAnalyzer_Main extends JPanel {
 				}
 				
 			}
+			System.out.println("Reading Finished!");
 			readLog.close();
 		    debug.delete();
 		}
