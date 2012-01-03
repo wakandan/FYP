@@ -101,7 +101,7 @@ public class ProductConfig extends Config {
 	 * java.lang.String)
 	 */
 	@Override
-	protected boolean processConfigKey(String key, String value) {
+	public boolean processConfigKey(String key, String value) {
 		String configFileNameEntry = "distributionConfigFile";
 		String configClassNameEntry="distributionConfigClassName";
 		ClassLoader classLoader = Distribution.class.getClassLoader();

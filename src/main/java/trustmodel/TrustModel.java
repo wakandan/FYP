@@ -3,6 +3,8 @@
  */
 package trustmodel;
 
+import java.util.ArrayList;
+
 import simbase.RatingManager;
 
 /**
@@ -21,4 +23,18 @@ public abstract class TrustModel {
 	}
 
 	public abstract double calcTrust(String buyerName, String sellerName);
+
+	public String chooseSeller(String buyerName, ArrayList<String> sellerNames) {
+		String tmpSeller = null;
+		double maxTrust = 0;
+		for (String sellerName : sellerNames) {
+			double trust = calcTrust(buyerName, sellerName);
+			if (trust > maxTrust) {
+				maxTrust = trust;
+				tmpSeller = sellerName;
+			}
+		}
+		return tmpSeller;
+	}
+
 }

@@ -323,8 +323,12 @@ public class Sim extends BaseObject {
 			advanceTime();
 			for (Object e : getAgentManager().getAllBuyers()) {
 				buyer = (Buyer) e;
-				if (agentManager.isCustomAgent((Agent) e) && scheduler.isWarmingup())
+				if (agentManager.isCustomAgent((Agent) e) && scheduler.isWarmingup()) {
+					if (buyer.getPurchaseLogic() != null
+							&& buyer.getPurchaseLogic().trustModel != null)
+						buyer.getPurchaseLogic().trustModel.setRatingManager(ratingManager);
 					continue;
+				}
 				transaction = buyer.makeTransaction();
 				if (transaction != null) {
 					execution = transactionManager.addTransaction(transaction);

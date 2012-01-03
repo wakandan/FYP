@@ -13,7 +13,7 @@ import modelbase.Entity;
 import core.BaseObject;
 
 public abstract class Config extends BaseObject {
-	HashMap<String, String>	configEntries;
+	public HashMap<String, String>	configEntries;
 
 	public abstract void configure(Entity e);
 
@@ -33,7 +33,7 @@ public abstract class Config extends BaseObject {
 	 * @param value
 	 * @return true if the key is processed
 	 */
-	protected abstract boolean processConfigKey(String key, String value);
+	public abstract boolean processConfigKey(String key, String value);
 
 	/* Read a config file in format config=data, each entry is on its own line.
 	 * Ignore lines with "#" character at the beginning as the comment */
@@ -92,10 +92,26 @@ public abstract class Config extends BaseObject {
 			} else if (fieldType.equals(Integer.TYPE)) {
 				field.setInt(klassInstance, Integer.parseInt(value));
 			} else {
-				field.set(klassInstance, value);
+				/* If encounter a complex key-value pair, invoke created
+				 * object's key processing capability */
+				Class parameterTypes[] = new Class[2];
+				parameterTypes[0] = String.class;
+				parameterTypes[1] = String.class;
+				boolean processResult = false;
+				try {
+					Method processComplexKeyMethod = klass.getMethod("processConfigKey",
+							parameterTypes);
+					Field configEntriesField = klass.getField("configEntries");
+					configEntriesField.set(klassInstance, configMap);
+					processResult = (Boolean) processComplexKeyMethod.invoke(klassInstance,
+							attrName, value);
+				} catch (NoSuchMethodError e) {
+					processResult = false;
+				}
+				if (!processResult)
+					field.set(klassInstance, value);
 			}
 		}
 		return klassInstance;
 	}
-
 }

@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import simbase.RatingManager;
+import trustmodel.TrustModel;
+
 import modelbase.AgentLogicModel;
 import modelbase.Entity;
 import modelbase.PurchaseLogic;
@@ -17,6 +20,7 @@ import modelbase.RatingLogic;
 import configbase.AgentConfig;
 import configbase.Config;
 import configbase.DistributionConfig;
+import core.Configurable;
 
 /**
  * This is use on per-config file basis.
@@ -24,35 +28,30 @@ import configbase.DistributionConfig;
  * @author akai
  * 
  */
-public class AgentMasterConfig extends Config {
+public class AgentMasterConfig extends Config implements Configurable {
 
-	Class<PurchaseLogic>	purchaseLogic;
-	Class<RatingLogic>		ratingLogic;
-	int						agentNum;
-	String					masterName;
-	AgentMaster				master;
+	public Class<PurchaseLogic>	purchaseLogicClass;
+	public Class<RatingLogic>	ratingLogicClass;
+	public Class<TrustModel>	trustModelClass;
+	public int					agentNum;
+	public String				masterName;
+	public AgentMaster			master;
+	public RatingManager		ratingManager;
 
-	public int getAgentNum() {
-		return agentNum;
-	}
-
-	public String getMasterName() {
-		return masterName;
-	}
-
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
-	 * @see configbase.Config#configure(modelbase.Entity)
-	 */
+	 * @see configbase.Config#configure(modelbase.Entity) */
 	@Override
 	public void configure(Entity e) {
 		Buyer buyer = (Buyer) e;
 		try {
-			buyer.setPurchaseLogic(purchaseLogic.newInstance());
+			buyer.setPurchaseLogic(purchaseLogicClass.newInstance());
 			buyer.getPurchaseLogic().setConfig(this);
+			if (trustModelClass != null) {
+				buyer.getPurchaseLogic().trustModel = trustModelClass.newInstance();
+			}
 			buyer.getPurchaseLogic().config();
-			buyer.setRatingLogic(ratingLogic.newInstance());
+			buyer.setRatingLogic(ratingLogicClass.newInstance());
 			buyer.getRatingLogic().setConfig(this);
 			buyer.getRatingLogic().config();
 		} catch (Exception ex) {
@@ -60,52 +59,22 @@ public class AgentMasterConfig extends Config {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
+	 * 
+	 * @see core.Configurable#getConfigAttributes() */
+	public String[] getConfigAttributes() {
+		String[] list = { "masterName", "purchaseLogicClass", "agentNum", "ratingLogicClass",
+				"trustModelClass" };
+		return list;
+	}
+
+	/* (non-Javadoc)
 	 * 
 	 * @see configbase.Config#processConfigKey(java.lang.String,
-	 * java.lang.String)
-	 */
+	 * java.lang.String) */
 	@Override
-	protected boolean processConfigKey(String key, String value) {
-		ClassLoader classLoader = AgentLogicModel.class.getClassLoader();
-		if (key.equalsIgnoreCase("agentPurchaseLogicClass")) {
-			try {
-				this.purchaseLogic = ((Class<PurchaseLogic>) classLoader.loadClass(value));
-			} catch (Exception e) {
-				logger.error("Error loading class: " + value);
-				e.printStackTrace();
-			}
-		} else if (key.equalsIgnoreCase("agentRatingLogicClass")) {
-			try {
-				this.ratingLogic = ((Class<RatingLogic>) classLoader.loadClass(value));
-			} catch (Exception e) {
-				logger.error("Error loading class: " + value);
-				e.printStackTrace();
-			}
-		} else if (key.equalsIgnoreCase("agentNum")) {
-			this.agentNum = Integer.parseInt(value);
-		} else if (key.equalsIgnoreCase("masterName")) {
-			this.masterName = value;
-		} else
-			return false;
-		return true;
+	public boolean processConfigKey(String key, String value) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-
-	public Class<PurchaseLogic> getPurchaseLogic() {
-		return purchaseLogic;
-	}
-
-	public void setPurchaseLogic(Class<PurchaseLogic> purchaseLogic) {
-		this.purchaseLogic = purchaseLogic;
-	}
-
-	public Class<RatingLogic> getRatingLogic() {
-		return ratingLogic;
-	}
-
-	public void setRatingLogic(Class<RatingLogic> ratingLogic) {
-		this.ratingLogic = ratingLogic;
-	}
-
 }

@@ -61,7 +61,7 @@ public class AgentConfig extends Config {
 	 * java.lang.String)
 	 */
 	@Override
-	protected boolean processConfigKey(String key, String value) {
+	public boolean processConfigKey(String key, String value) {
 		if (key.equalsIgnoreCase("buyerNum"))
 			this.buyerNum = Integer.parseInt(value);
 		else if (key.equalsIgnoreCase("sellerNum"))

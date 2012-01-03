@@ -19,11 +19,9 @@ import simbase.Transaction;
  */
 public class PurchaseLogicRandom extends PurchaseLogic {
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
-	 * @see modelbase.PurchaseBehaviorLogic#transact()
-	 */
+	 * @see modelbase.PurchaseBehaviorLogic#transact() */
 	@Override
 	public Transaction transact() {
 		// TODO Auto-generated method stub
@@ -31,23 +29,25 @@ public class PurchaseLogicRandom extends PurchaseLogic {
 		Random random = new Random();
 		String prodName = (String) buyer.getInventoryManager().getAllProductsNames()[random
 				.nextInt(prodCount)];
-		ArrayList<Inventory> sellerList = buyer.getInventoryManager().getSellersByProductName(
+		ArrayList<String> sellerNames = buyer.getInventoryManager().getSellerNamesByProductName(
 				prodName);
-		if (sellerList.size() > 0) {
-			Inventory inventory = sellerList.get(random.nextInt(sellerList.size()));
-			return new Transaction(buyer, (Seller) inventory.getAgent(), inventory.getProd(), 1,
-					inventory.getPrice());
-		} else {
-			logger.debug(String.format("No seller's selling product %5s", prodName));
-			return null;
+		String sellerName = this.chooseSeller(sellerNames);
+		if (sellerName == null) {
+			if (sellerNames != null && sellerNames.size() > 0) {
+				sellerName = sellerNames.get(random.nextInt(sellerNames.size()));
+			} else {
+				logger.debug(String.format("No seller's selling product %5s", prodName));
+				return null;
+			}
 		}
+		Inventory inventory = buyer.getInventoryManager().getInventory(sellerName, prodName);
+		return new Transaction(buyer, (Seller) inventory.getAgent(), inventory.getProd(), 1,
+				inventory.getPrice());
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
-	 * @see modelbase.ActionLogic#config()
-	 */
+	 * @see modelbase.ActionLogic#config() */
 	@Override
 	public void config() {
 		// TODO Auto-generated method stub

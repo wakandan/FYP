@@ -21,7 +21,7 @@ import configbase.SimConfig;
  */
 public class TestPersonalized extends TestSimRunParent {
 
-	@Test
+	// @Test
 	public void testBRSRun() throws Exception {
 		sim.run();
 		TrustModelPersonalized personalized = (TrustModelPersonalized) Config.config(
