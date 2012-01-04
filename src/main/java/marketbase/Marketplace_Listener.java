@@ -1,16 +1,18 @@
-package Marketplace;
+package marketbase;
+
+import interfaces.MarketEntityInterface;
 
 import java.awt.event.*;
 import javax.swing.*;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import simbase.Sim;
 import configbase.DBConfig;
 import configbase.SimConfig;
 
-import java.awt.*;
-import java.io.IOException;
 
-import Interfaces.MarketEntityInterface;
 
 //Class to handle the button listener
 public class Marketplace_Listener implements ActionListener {
@@ -28,6 +30,7 @@ public class Marketplace_Listener implements ActionListener {
 		dbConfig.addDdlFile("src/main/resources/sql/Products.ddl");
 		dbConfig.addDdlFile("src/main/resources/sql/Agents.ddl");
 		dbConfig.addDdlFile("src/main/resources/sql/Inventories.ddl");		
+		dbConfig.addDdlFile("src/main/resources/sql/Executions.ddl");	
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -51,12 +54,14 @@ public class Marketplace_Listener implements ActionListener {
 			SimConfig simConfig = new SimConfig();
 			setUpRun();
 			try {
+				PropertyConfigurator.configure("src/main/resources/log4j.properties");
 				simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
 				Sim sim = new Sim();
 				sim.setSimConfig(simConfig);
 				sim.setDb(dbConfig.setUpDb());
-				//sim.setOutputReader(marketControls.outputReader);
 				sim.run();
+				Logger.shutdown();
+				marketControls.outputReader.readLogFile();
 				JOptionPane.showMessageDialog(marketControls.market,"Simulation Successfully Completed. Check Simulation Analyzer page to see data");
 			} catch (Exception e1) {
 				e1.printStackTrace();

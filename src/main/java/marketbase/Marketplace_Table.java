@@ -1,4 +1,4 @@
-package Marketplace;
+package marketbase;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,6 +27,7 @@ public class Marketplace_Table extends JPanel {
 	{
 		this.cols = columns;
 		initTable(columnData);
+		this.setLayout(new GridLayout (1, 1));
 	}
 	
 	private void initTable(String columnData[])
@@ -41,22 +42,15 @@ public class Marketplace_Table extends JPanel {
 		add(new JScrollPane(table));
 	}
 	
-	public void addRowData(Transaction transData)
+	public void addRowData(Vector<String> transData)
 	{
-	   Vector<String> data = new Vector<String>();
 	   removeAll();
-	   data.addElement(transData.getBuyer().getName());
-	   data.addElement(transData.getSeller().getName());
-	   data.addElement(transData.getProd().getName());
-	   data.addElement(Integer.toString(transData.getQuantity()));
-	   data.addElement(Double.toString(transData.getPrice()));
-	   
-	   rowData.addElement(data);
+	   rowData.addElement(transData);
 	   DefaultTableModel model = new DefaultTableModel(rowData,columnNames);
 	   table = new JTable(model);
 	   table.setEnabled(false);
 	   JTableHeader header = table.getTableHeader();
-	   header.setBackground(Color.yellow);;
+	   header.setBackground(Color.yellow);
 	   add(new JScrollPane(table));
 	}
 }

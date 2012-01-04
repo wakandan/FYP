@@ -1,4 +1,4 @@
-package Marketplace;
+package marketbase;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +16,6 @@ public class Marketplace_Controls extends JPanel
 	public Marketplace_Controls(Marketplace_Main market)
 	{
 		this.market = market;
-		this.setLayout(new FlowLayout(FlowLayout.LEFT));
 		initButtons();
 	}
 	
@@ -24,6 +23,20 @@ public class Marketplace_Controls extends JPanel
 	public void setSimAnalyzer(SimulationAnalyzer_Main outputReader)
 	{
 		this.outputReader = outputReader;
+	}
+	
+	public void setPanelSize(int x,int y,int width,int height)
+	{
+		this.setSize(width,height);
+		width = (width/marketBtns.length) - 20;
+		height = 50;
+		x = 10;
+	    y = 10;
+		for(int i = 0;i < marketBtns.length;i++)
+		{
+			marketBtns[i].setBounds(x,y,width,height);
+			x += width + 10;
+		}
 	}
 	
 	//Initalise buttons
@@ -36,7 +49,6 @@ public class Marketplace_Controls extends JPanel
 			this.add(marketBtns[i]);
 		}
 	}
-	
 	//Method to return the number of buttons
 	public int getButtonLength()
 	{
