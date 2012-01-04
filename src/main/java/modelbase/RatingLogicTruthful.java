@@ -28,10 +28,21 @@ public class RatingLogicTruthful extends RatingLogic {
 	public Rating calcRating(Execution execution, Product prod) {
 		// TODO Auto-generated method stub
 		Random random = new Random();
-		int rate = (int) Math.round(1+prod.getValue()*4);
-		if (rate>=5)
-			rate = 4+(int) Math.round(random.nextDouble());
+		int rate = (int) Math.round(1 + prod.getValue() * 4);
+		if (rate >= 5)
+			rate = 4 + (int) Math.round(random.nextDouble());
 		return new Rating(this.buyer.getName(), execution.getSeller().getName(), rate);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see modelbase.ActionLogic#config()
+	 */
+	@Override
+	public void config() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

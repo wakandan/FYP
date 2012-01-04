@@ -21,7 +21,7 @@ public abstract class Config extends BaseObject {
 		for (String key : configEntries.keySet()) {
 			value = configEntries.get(key);
 			if (!processConfigKey(key, value))
-				logger.error("Error processing parameter name: "+key+", value: "+value);
+				logger.error("Config key maybe invalid: " + key + ", value: " + value);
 		}
 
 	}
@@ -42,7 +42,7 @@ public abstract class Config extends BaseObject {
 		String[] lineData;
 		HashMap<String, String> result = new HashMap<String, String>();
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
-		while ((line = br.readLine())!=null) {
+		while ((line = br.readLine()) != null) {
 
 			/*
 			 * Ignore lines start with hash "#". This line will be considered as
@@ -53,7 +53,7 @@ public abstract class Config extends BaseObject {
 			lineData = line.split("=");
 
 			/* Ignore invalid lines */
-			if (lineData.length<2)
+			if (lineData.length < 2)
 				continue;
 			if (!result.containsKey(lineData[0])) {
 				result.put(lineData[0].trim(), lineData[1].trim());
@@ -65,7 +65,7 @@ public abstract class Config extends BaseObject {
 	/* Return a value for specified config entry */
 	public String getConfigEntry(String key) {
 		if (!configEntries.containsKey(key))
-			logger.error("Config file does not have entry: "+key);
+			logger.error("Config file does not have entry: " + key);
 		return configEntries.get(key);
 	}
 

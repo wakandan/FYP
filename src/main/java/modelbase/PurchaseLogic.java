@@ -11,8 +11,12 @@ import core.BaseObject;
  * @author akai
  * 
  */
-public abstract class PurchaseLogic extends BaseObject {
+public abstract class PurchaseLogic extends ActionLogic {
 	protected Buyer	buyer;
+
+	public PurchaseLogic() {
+		super();
+	}
 
 	public void setBuyer(Buyer buyer) {
 		this.buyer = buyer;

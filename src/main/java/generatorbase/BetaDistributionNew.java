@@ -25,15 +25,16 @@ public class BetaDistributionNew extends DistributionNew {
 	public void setParameters(double a, double b) {
 		this.a = a;
 		this.b = b;
-		c = DistributionNew.logGamma(a+b)-DistributionNew.logGamma(a)-DistributionNew.logGamma(b);
+		c = DistributionNew.logGamma(a + b) - DistributionNew.logGamma(a)
+				- DistributionNew.logGamma(b);
 		double lower;
-		if (a<(double) 1) {
+		if (a < (double) 1) {
 			lower = 0.001D;
 		} else {
 			lower = 0.0D;
 		}
 		double upper;
-		if (b<(double) 1) {
+		if (b < (double) 1) {
 			upper = 0.999D;
 		} else {
 			upper = 1.0D;
@@ -44,49 +45,50 @@ public class BetaDistributionNew extends DistributionNew {
 	}
 
 	public double density(double x) {
-		if ((x<(double) 0)|(x>(double) 1)) {
+		if ((x < (double) 0) | (x > (double) 1)) {
 			return 0.0D;
 		}
-		if ((x==(double) 0)&(a==(double) 1)) {
+		if ((x == (double) 0) & (a == (double) 1)) {
 			return b;
 		}
-		if ((x==(double) 0)&(a<(double) 1)) {
-			return (1.0D/0.0D);
+		if ((x == (double) 0) & (a < (double) 1)) {
+			return (1.0D / 0.0D);
 		}
-		if ((x==(double) 0)&(a>(double) 1)) {
+		if ((x == (double) 0) & (a > (double) 1)) {
 			return 0.0D;
 		}
-		if ((x==(double) 1)&(b==(double) 1)) {
+		if ((x == (double) 1) & (b == (double) 1)) {
 			return a;
 		}
-		if ((x==(double) 1)&(b<(double) 1)) {
-			return (1.0D/0.0D);
+		if ((x == (double) 1) & (b < (double) 1)) {
+			return (1.0D / 0.0D);
 		}
-		if ((x==(double) 1)&(b>(double) 1)) {
+		if ((x == (double) 1) & (b > (double) 1)) {
 			return 0.0D;
 		} else {
-			return Math.exp(c+(a-(double) 1)*Math.log(x)+(b-(double) 1)*Math.log((double) 1-x));
+			return Math.exp(c + (a - (double) 1) * Math.log(x) + (b - (double) 1)
+					* Math.log((double) 1 - x));
 		}
 	}
 
 	public double maxDensity() {
 		double mode;
-		if (a<(double) 1) {
+		if (a < (double) 1) {
 			mode = 0.001D;
-		} else if (b<=(double) 1) {
+		} else if (b <= (double) 1) {
 			mode = 0.999D;
 		} else {
-			mode = (a-(double) 1)/((a+b)-(double) 2);
+			mode = (a - (double) 1) / ((a + b) - (double) 2);
 		}
 		return density(mode);
 	}
 
 	public double mean() {
-		return a/(a+b);
+		return a / (a + b);
 	}
 
 	public double variance() {
-		return (a*b)/((a+b)*(a+b)*(a+b+(double) 1));
+		return (a * b) / ((a + b) * (a + b) * (a + b + (double) 1));
 	}
 
 	public double CDF(double x) {
@@ -114,25 +116,25 @@ public class BetaDistributionNew extends DistributionNew {
 	 */
 
 	public double getProbabilityOfQuantile(double q) {
-		if (q==0)
+		if (q == 0)
 			return 0;
-		else if (q==1)
+		else if (q == 1)
 			return 1;
 		else
 			return BinarySearch(q, 0, 1);
 	}
 
 	public double BinarySearch(double q, double low, double high) {
-		if (high<low)
+		if (high < low)
 			return -1; // not found
 		double eps = 0.001;
-		double mid = (low+high)/2;
-		if (high-low<=eps)
+		double mid = (low + high) / 2;
+		if (high - low <= eps)
 			return mid;
 		double midVal = CDF(mid);
-		if (java.lang.Math.abs(midVal-q)<=eps) {
+		if (java.lang.Math.abs(midVal - q) <= eps) {
 			return mid;
-		} else if (midVal>q) {
+		} else if (midVal > q) {
 			return BinarySearch(q, low, mid);
 		} else {
 			return BinarySearch(q, mid, high);

@@ -17,6 +17,6 @@ public class BaseObject {
 
 	public BaseObject() {
 		logger = Logger.getLogger(this.getClass().getName());
-		//logger.setLevel(Level.ERROR);
+		//		logger.setLevel(Level.ERROR);
 	}
 }

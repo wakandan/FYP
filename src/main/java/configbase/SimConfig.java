@@ -91,25 +91,26 @@ public class SimConfig extends Config {
 					 */
 					Class<AgentConfig> agentConfigClass = (Class<AgentConfig>) classLoader
 							.loadClass(value);
-					logger.debug("Initiating agent logic class "+agentConfigClass.getName());
+					logger.debug("Initiating agent logic class " + agentConfigClass.getName());
 					this.agentConfig = agentConfigClass.newInstance();
 				} catch (ClassNotFoundException e) {
-					logger.error("Class "+value+" cannot be found");
+					logger.error("Class " + value + " cannot be found");
 					e.printStackTrace();
 				} catch (InstantiationException e) {
 					logger.error("Class "
-							+value
-							+" cannot be instantiated. Unable to read config entries/Does your class have a default constructor?");
+							+ value
+							+ " cannot be instantiated. Unable to read config entries/Does your class have a default constructor?");
 					e.printStackTrace();
 				} catch (Exception e) {
-					logger.error("Error loading class: "+value);
+					logger.error("Error loading class: " + value);
 					e.printStackTrace();
 				}
 			} else if (key.equalsIgnoreCase("agentMasterConfigFile")) {
 				String[] dataList = value.split(";");
-				if (agentMasters==null)
+				if (agentMasters == null)
 					agentMasters = new HashMap<String, AgentMaster>();
-				for (int i = 0; i<dataList.length; i++) {
+				for (int i = 0; i < dataList.length; i++) {
+					logger.debug("Processing config file: " + dataList[i]);
 					AgentMasterConfig agentMasterConfig = new AgentMasterConfig();
 					agentMasterConfig.readConfig(dataList[i]);
 					AgentMaster agentMaster = new AgentMaster(agentMasterConfig);

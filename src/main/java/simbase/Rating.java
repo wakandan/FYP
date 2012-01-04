@@ -17,6 +17,14 @@ public class Rating extends Entity {
 		this.rating = rating;
 	}
 
+	public Rating(String buyer_name, String seller_name, int rating, int stime) {
+		super();
+		this.buyer_name = buyer_name;
+		this.seller_name = seller_name;
+		this.rating = rating;
+		this.stime = stime;
+	}
+
 	public Rating(Buyer buyer, Seller seller, int rating) {
 		super();
 		this.buyer_name = buyer.getName();
@@ -38,6 +46,14 @@ public class Rating extends Entity {
 
 	public void setStime(int stime) {
 		this.stime = stime;
+	}
+
+	public String getBuyer_name() {
+		return buyer_name;
+	}
+
+	public String getSeller_name() {
+		return seller_name;
 	}
 
 }

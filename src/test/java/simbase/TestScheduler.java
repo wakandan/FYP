@@ -22,7 +22,7 @@ public class TestScheduler {
 		SchedulerConfig schedulerConfig = new SchedulerConfig();
 		schedulerConfig.readConfig("src/test/resources/simbase/SchedulerConfig.ini");
 		assertEquals(5, schedulerConfig.getWarmUpPeriod());
-		assertEquals(50, schedulerConfig.getMaxTimestep());
+		assertEquals(100, schedulerConfig.getMaxTimestep());
 	}
 
 }

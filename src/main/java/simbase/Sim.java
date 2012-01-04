@@ -54,6 +54,10 @@ public class Sim extends BaseObject {
 		return transactionManager;
 	}
 
+	public RatingManager getRatingManager() {
+		return ratingManager;
+	}
+
 	public void setTransactionManager(TransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 		this.transactionManager.setSim(this);
@@ -218,9 +222,9 @@ public class Sim extends BaseObject {
 			seller = (Seller) e;
 			/* Pick products until a non-zero number of items is picked */
 			/* No more products to assign, terminate */
-			if (prodManager.getSize()==0) {
+			if (prodManager.getSize() == 0) {
 				logger.info("Products exhausted, no more products to be assigned");
-				logger.info("Total of "+(numSellerAssigned)+" sellers were assigned products");
+				logger.info("Total of " + (numSellerAssigned) + " sellers were assigned products");
 				break;
 			}
 
@@ -228,19 +232,19 @@ public class Sim extends BaseObject {
 			prodNum = prodRandom.nextInt(prodManager.getSize());
 			prod = (Product) prodManager
 					.get((String) prodManager.getAvailableProducts().toArray()[prodNum]);
-			while (prod==null||prod.getQuantity()==0) {
+			while (prod == null || prod.getQuantity() == 0) {
 				prodNum = prodRandom.nextInt(prodManager.getSize());
 				prod = (Product) prodManager.get((String) prodManager.getAvailableProducts()
 						.toArray()[prodNum]);
 			}
 			tmpProd = new Product(prod);
-			if (prod.getQuantity()<=quantityAssignThres)
+			if (prod.getQuantity() <= quantityAssignThres)
 				numProd = prod.getQuantity();
 			else {
 				numProd = prodNumRandom.nextInt(prod.getQuantity());
-				while (numProd==0) {
+				while (numProd == 0) {
 					numProd = prodNumRandom.nextInt(prod.getQuantity());
-					if (numProd==0) {
+					if (numProd == 0) {
 						numProd = prod.getQuantity();
 						break;
 					}
@@ -249,15 +253,15 @@ public class Sim extends BaseObject {
 			quantityAssigned += numProd;
 			tmpProd.setQuantity(numProd);
 			tmpProd.setPriceMin(prod.getPriceMin());
-			tmpProd.setPriceMax(prod.getPriceMin()+prodPriceRandom.nextDouble()
-					*(prod.getPriceMax()-prod.getPriceMin()));
+			tmpProd.setPriceMax(prod.getPriceMin() + prodPriceRandom.nextDouble()
+					* (prod.getPriceMax() - prod.getPriceMin()));
 			inventory = new Inventory(seller, tmpProd, tmpProd.getQuantity(),
 					tmpProd.getPriceMax(), 0);
 			inventory.setValue(seller.initValue(tmpProd));
 			inventoryManager.add(inventory);
 			prodManager.update(prod);
-			if (prod.getQuantity()==0) {
-				logger.debug("Product "+prod.getName()+" is up!");
+			if (prod.getQuantity() == 0) {
+				logger.debug("Product " + prod.getName() + " is up!");
 			}
 			logger.debug(String.format("Assigned product %-3s(x%5d) to seller %s", prod.getName(),
 					tmpProd.getQuantity(), seller.getName()));
@@ -320,12 +324,12 @@ public class Sim extends BaseObject {
 			advanceTime();
 			for (Object e : getAgentManager().getAllBuyers()) {
 				buyer = (Buyer) e;
-				if (agentManager.isCustomAgent((Agent) e)&&scheduler.isWarmingup())
+				if (agentManager.isCustomAgent((Agent) e) && scheduler.isWarmingup())
 					continue;
 				transaction = buyer.makeTransaction();
-				if (transaction!=null) {
+				if (transaction != null) {
 					execution = transactionManager.addTransaction(transaction);
-					if (execution!=null) {
+					if (execution != null) {
 						logger.debug(execution);
 					}
 				}

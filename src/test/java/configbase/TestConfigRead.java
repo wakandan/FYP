@@ -56,18 +56,26 @@ public class TestConfigRead {
 		simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
 		Sim sim = new Sim();
 		sim.setSimConfig(simConfig);
-		assertTrue(sim.getAgentManager().getConfig()!=null);
-		assertTrue(sim.getProdManager().getConfig()!=null);
-		assertTrue(((ProductConfig)sim.getProdManager().getConfig()).getDistribution() instanceof NormalDistribution); 
+		assertTrue(sim.getAgentManager().getConfig() != null);
+		assertTrue(sim.getProdManager().getConfig() != null);
+		assertTrue(((ProductConfig) sim.getProdManager().getConfig()).getDistribution() instanceof NormalDistribution);
 		assertEquals(100, ((AgentConfig) sim.getAgentManager().getConfig()).getBuyerNum());
 	}
 
 	@Test
 	public void testDistributionConfigRead() throws IOException {
 		DistributionConfig distributionConfig = new DistributionConfig();
-		distributionConfig.readConfig("src/test/resources/configbase/testNormalDistributionConfig.ini");
+		distributionConfig
+				.readConfig("src/test/resources/configbase/testNormalDistributionConfig.ini");
 		assertEquals(100, distributionConfig.mean, 0.1);
 		assertEquals(2500, distributionConfig.variance, 0.1);
+	}
+
+	@Test
+	public void testSimConfig() throws IOException {
+		SimConfig simConfig = new SimConfig();
+		simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
+		assertEquals(3, simConfig.getAgentMasters().keySet().size());
 	}
 
 }
