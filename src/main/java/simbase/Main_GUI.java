@@ -1,4 +1,5 @@
 package simbase;
+
 import interfaces.MarketTabPanels;
 
 import java.awt.*;
