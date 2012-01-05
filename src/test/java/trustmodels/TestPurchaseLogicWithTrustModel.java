@@ -3,22 +3,16 @@
  */
 package trustmodels;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-
-import org.junit.Before;
 import org.junit.Test;
 
 import simbase.TestSimRunParent;
 import trustmodel.TrustModelBRS;
-
-import configbase.Config;
-import configbase.SimConfig;
-
 import agentbase.AgentMasterConfig;
 import agentbase.Buyer;
+import configbase.Config;
+import configbase.SimConfig;
 
 /**
  * @author akai

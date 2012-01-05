@@ -41,8 +41,20 @@ public class PurchaseLogicWishlist extends PurchaseLogic {
 		this.wishListIndex = wishListIndex;
 	}
 
+	/* (non-Javadoc)
+	 * 
+	 * @see modelbase.ActionLogic#config() */
 	@Override
-	public Transaction transact() {
+	public void config() {
+		wishList = new ArrayList<String>(
+				Arrays.asList(config.getConfigEntry("wishlist").split(",")));
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 * @see modelbase.PurchaseLogic#pickProduct() */
+	@Override
+	protected String pickProduct() {
 		// TODO Auto-generated method stub
 		String prodName;
 		ArrayList<Inventory> sellerList;
@@ -61,29 +73,6 @@ public class PurchaseLogicWishlist extends PurchaseLogic {
 			this.wishList = wishList;
 		}
 
-		prodName = wishList.get(wishListIndex);
-		sellerList = buyer.getInventoryManager().getSellersByProductName(prodName);
-
-		/* If currently there's no seller having this product, skip */
-		if (sellerList != null && sellerList.size() > 0) {
-			inventory = sellerList.get(random.nextInt(sellerList.size()));
-			wishListIndex = wishListIndex++ % wishList.size();
-			return new Transaction(buyer, (Seller) inventory.getAgent(), inventory.getProd(), 1,
-					inventory.getPrice());
-		} else {
-			logger.debug(String.format("No seller's selling product %5s", prodName));
-			return null;
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see modelbase.ActionLogic#config()
-	 */
-	@Override
-	public void config() {
-		wishList = new ArrayList<String>(
-				Arrays.asList(config.getConfigEntry("wishlist").split(",")));
+		return wishList.get(wishListIndex);
 	}
 }
