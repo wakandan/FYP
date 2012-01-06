@@ -28,6 +28,7 @@ import com.almworks.sqlite4java.SQLiteException;
 import configbase.ProductConfig;
 import configbase.SimConfig;
 import core.BaseObject;
+import core.Pair;
 
 /**
  * @author akai Main file of the project.
@@ -48,6 +49,7 @@ public class Sim extends BaseObject {
 	Bank				bank;
 	TransactionManager	transactionManager;
 	RatingManager		ratingManager;
+	ResultAnalyzer		resultAnalyzer;
 
 	public TransactionManager getTransactionManager() {
 		return transactionManager;
@@ -151,9 +153,11 @@ public class Sim extends BaseObject {
 		agentModel = new AgentModel();
 		simConfig = new SimConfig();
 		scheduler = new Scheduler();
+		resultAnalyzer = new ResultAnalyzer(this);
 		transactionManager = new TransactionManager();
 		transactionManager.sim = this;
 		inventoryManager.sim = this;
+
 	}
 
 	public void initialize() throws Exception {
@@ -344,6 +348,9 @@ public class Sim extends BaseObject {
 		ratingManager.reportRating();
 		logger.info("*** Balance Report ***");
 		bank.reportBalance(this.agentManager.getBuyers().getEntitiesNames());
+		logger.info("*** Simualation result ***");
+		resultAnalyzer.reportResult();
 		logger.info("*** Simulation has finished!");
+
 	}
 }

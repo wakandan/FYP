@@ -3,6 +3,7 @@ package agentbase;
 import java.util.Collection;
 import java.util.HashMap;
 
+import generatorbase.AgentModel;
 import generatorbase.EntityManager;
 import modelbase.Entity;
 
@@ -12,11 +13,12 @@ import com.almworks.sqlite4java.SQLiteStatement;
 import configbase.AgentConfig;
 
 public class AgentManager extends EntityManager {
-	EntityManager			buyers;
-	EntityManager			sellers;
-	HashMap<String, Agent>	customAgents;
-	public final static int	BUYER_AGENT_TYPE	= 1;
-	public final static int	SELLER_AGENT_TYPE	= 2;
+	EntityManager					buyers;
+	EntityManager					sellers;
+	public HashMap<String, Agent>	customAgents;
+	public final static int			BUYER_AGENT_TYPE	= 1;
+	public final static int			SELLER_AGENT_TYPE	= 2;
+	public AgentModel				agentModel;
 
 	public Collection getAllBuyers() {
 		Collection result = buyers.getAll();
@@ -78,7 +80,7 @@ public class AgentManager extends EntityManager {
 	 */
 	public Agent getAgentByName(String agentName) {
 		Entity e = buyers.get(agentName);
-		if (e==null) {
+		if (e == null) {
 			e = sellers.get(agentName);
 		}
 		return (Agent) e;
@@ -89,6 +91,6 @@ public class AgentManager extends EntityManager {
 	}
 
 	public boolean isCustomAgent(Agent agent) {
-		return (this.customAgents.get(agent.getName())!=null);
+		return (this.customAgents.get(agent.getName()) != null);
 	}
 }

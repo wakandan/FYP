@@ -46,20 +46,16 @@ public class AgentConfig extends Config {
 		return initialBalance;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
-	 * @see configbase.Config#configure(modelbase.Entity)
-	 */
+	 * @see configbase.Config#configure(modelbase.Entity) */
 	@Override
 	public void configure(Entity e) {}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
 	 * @see configbase.Config#processConfigKey(java.lang.String,
-	 * java.lang.String)
-	 */
+	 * java.lang.String) */
 	@Override
 	public boolean processConfigKey(String key, String value) {
 		if (key.equalsIgnoreCase("buyerNum"))
@@ -71,5 +67,10 @@ public class AgentConfig extends Config {
 		else
 			return false;
 		return true;
+	}
+
+	/* To be overriden by child classes */
+	public double checkHonest(Agent agent) {
+		return 0;
 	}
 }
