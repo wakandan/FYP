@@ -5,6 +5,8 @@ package trustmodels;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import simbase.TestSimRunParent;
@@ -35,6 +37,14 @@ public class TestPurchaseLogicWithTrustModel extends TestSimRunParent {
 	public void testRunSimWithTrustModelLoaded() throws Exception {
 		SimConfig simConfig = new SimConfig();
 		simConfig.readConfig("src/test/resources/simbase/TestSimConfigBRS.ini");
+		sim.setSimConfig(simConfig);
+		sim.run();
+	}
+	
+	@Test
+	public void testBRSTRAVOS() throws Exception {
+		SimConfig simConfig = new SimConfig();
+		simConfig.readConfig("src/test/resources/simbase/TestSimConfigBRS_TRAVOS.ini");
 		sim.setSimConfig(simConfig);
 		sim.run();
 	}
