@@ -350,7 +350,7 @@ public class Sim extends BaseObject {
 		logger.info("*** Rating Report ***");
 		ratingManager.reportRating();
 		logger.info("*** Balance Report ***");
-		bank.reportBalance(this.agentManager.getBuyers().getEntitiesNames());
+		bank.reportBalance(this.agentManager.getBuyers().getAllNames());
 		logger.info("*** Simulation has finished!");
 	}
 }

@@ -6,6 +6,7 @@ package simbase;
 import generatorbase.EntityManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import modelbase.Entity;
@@ -23,10 +24,12 @@ import core.Account;
  */
 public class Bank extends EntityManager {
 	HashMap<String, Account>	accounts;
+	HashMap<String, String>		oldAccounts;
 
 	public Bank() {
 		super();
 		accounts = new HashMap<String, Account>();
+		oldAccounts = new HashMap<String, String>();
 	}
 
 	/**
@@ -87,11 +90,14 @@ public class Bank extends EntityManager {
 		}
 	}
 
-	public void reportBalance(ArrayList<String> accountNames) {
+	public void reportBalance(Collection<String> accountNames) {
 		for (String accountName : accountNames) {
+			String tmpName = accountName;
 			if (accounts.containsKey(accountName)) {
-				logger.debug(String.format("Balance %5s: %10.2f", accountName,
-						accounts.get(accountName).getBalance()));
+				if (oldAccounts.containsKey(accountName))
+					tmpName = oldAccounts.get(accountName);
+				logger.debug(String.format("Balance %5s: %10.2f", tmpName, accounts
+						.get(accountName).getBalance()));
 			}
 		}
 	}
@@ -101,6 +107,12 @@ public class Bank extends EntityManager {
 		if (accounts.containsKey(oldName)) {
 			accounts.put(newName, accounts.get(oldName));
 			accounts.remove(oldName);
+			if (oldAccounts.containsKey(oldName)) {
+				oldAccounts.put(newName, oldAccounts.get(oldName));
+				System.out.println("==> " + oldAccounts.get(oldName));
+			} else {
+				oldAccounts.put(newName, oldName);
+			}
 		}
 	}
 }
