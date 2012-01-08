@@ -134,6 +134,8 @@ public class AgentManager extends EntityManager {
 		st = db.prepare("INSERT INTO Identities(original, changed) VALUES (?, ?)");
 		st.bind(1, originalName).bind(2, agent.getName());
 		st.step();
+
+		sim.ratingManager.changeIdentity(oldName, agent);
 	}
 
 	public Sim getSim() {

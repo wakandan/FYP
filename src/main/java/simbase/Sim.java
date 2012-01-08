@@ -287,6 +287,10 @@ public class Sim extends BaseObject {
 
 	}
 
+	public SQLiteConnection getDb() {
+		return db;
+	}
+
 	/**
 	 * Advance the simulation. At the beginning of each time step, all buyers
 	 * will be credited an amount of money
