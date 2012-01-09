@@ -37,6 +37,7 @@ public class AgentMasterConfig extends Config implements Configurable {
 	public String				masterName;
 	public AgentMaster			master;
 	public RatingManager		ratingManager;
+	public String				trustModelConfigFile;
 
 	/* (non-Javadoc)
 	 * 
@@ -49,6 +50,8 @@ public class AgentMasterConfig extends Config implements Configurable {
 			buyer.getPurchaseLogic().setConfig(this);
 			if (trustModelClass != null) {
 				buyer.getPurchaseLogic().trustModel = trustModelClass.newInstance();
+				buyer.getPurchaseLogic().trustModel = (TrustModel) Config.config(trustModelClass,
+						trustModelConfigFile);
 			}
 			buyer.getPurchaseLogic().config();
 			buyer.setRatingLogic(ratingLogicClass.newInstance());
@@ -64,7 +67,7 @@ public class AgentMasterConfig extends Config implements Configurable {
 	 * @see core.Configurable#getConfigAttributes() */
 	public String[] getConfigAttributes() {
 		String[] list = { "masterName", "purchaseLogicClass", "agentNum", "ratingLogicClass",
-				"trustModelClass" };
+				"trustModelClass", "trustModelConfigFile" };
 		return list;
 	}
 
@@ -74,7 +77,6 @@ public class AgentMasterConfig extends Config implements Configurable {
 	 * java.lang.String) */
 	@Override
 	public boolean processConfigKey(String key, String value) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }
