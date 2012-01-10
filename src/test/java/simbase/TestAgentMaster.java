@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import agentbase.AgentMasterConfig;
 import agentbase.Buyer;
+import configbase.Config;
 import configbase.DBConfig;
 
 /**
@@ -26,10 +27,10 @@ public class TestAgentMaster {
 	@Test
 	public void testAgentMasterConfig() throws Exception {
 		String masterConfigFile = "src/test/resources/configbase/testAgentMasterConfigTruthful.ini";
-		AgentMasterConfig config = new AgentMasterConfig();
-		config.readConfig(masterConfigFile);
+		AgentMasterConfig config = (AgentMasterConfig) Config.config(AgentMasterConfig.class,
+				masterConfigFile);
 		int[] productNames = { 0, 4, 5, 7, 9 };
-		assertEquals(10, config.getAgentNum());
+		assertEquals(10, config.agentNum);
 		Buyer buyer = new Buyer("B1");
 		config.configure(buyer);
 		ArrayList<String> wishlist = ((PurchaseLogicWishlist) buyer.getPurchaseLogic())
@@ -37,6 +38,6 @@ public class TestAgentMaster {
 		for (int prodNum : productNames) {
 			assertTrue(wishlist.indexOf(prodNum + "") > -1);
 		}
-		assertTrue(config.getMasterName().equalsIgnoreCase("AM01"));
+		assertTrue(config.masterName.equalsIgnoreCase("AM01"));
 	}
 }

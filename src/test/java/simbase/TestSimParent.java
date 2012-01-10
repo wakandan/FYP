@@ -14,7 +14,7 @@ import configbase.AgentConfig;
 import configbase.DistributionConfig;
 import configbase.ProductConfig;
 import configbase.SimConfig;
-import configbase.SimpleAgentConfig;
+import configbase.AgentConfigSimple;
 import core.TestWithDBParent;
 
 /**
@@ -36,7 +36,7 @@ public class TestSimParent extends TestWithDBParent {
 	public void setUp() throws Exception {
 		super.setUp();
 		/* Generate agents */
-		agentConfig = new SimpleAgentConfig();
+		agentConfig = new AgentConfigSimple();
 		agentConfig.readConfig("src/test/resources/generatorbase/TestAgentModelConfig.ini");
 		agentModel = new AgentModel();
 		agentManager = new AgentManager();
@@ -47,7 +47,7 @@ public class TestSimParent extends TestWithDBParent {
 
 		/* Generate products */
 		int prcMean = 500;
-		int prcDeviation = 300*300;
+		int prcDeviation = 300 * 300;
 		prodConfig = new ProductConfig();
 		prodConfig.setDistribution(new NormalDistribution(new DistributionConfig(prcMean,
 				prcDeviation)));

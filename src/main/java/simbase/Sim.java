@@ -27,6 +27,7 @@ import com.almworks.sqlite4java.SQLiteException;
 import configbase.ProductConfig;
 import configbase.SimConfig;
 import core.BaseObject;
+import core.Pair;
 
 /**
  * @author akai Main file of the project.
@@ -47,6 +48,7 @@ public class Sim extends BaseObject {
 	Bank				bank;
 	TransactionManager	transactionManager;
 	RatingManager		ratingManager;
+	ResultAnalyzer		resultAnalyzer;
 
 	public TransactionManager getTransactionManager() {
 		return transactionManager;
@@ -151,6 +153,7 @@ public class Sim extends BaseObject {
 		agentModel = new AgentModel();
 		simConfig = new SimConfig();
 		scheduler = new Scheduler();
+		resultAnalyzer = new ResultAnalyzer(this);
 		transactionManager = new TransactionManager();
 		transactionManager.sim = this;
 		inventoryManager.sim = this;
@@ -334,8 +337,12 @@ public class Sim extends BaseObject {
 			}
 			for (Object e : getAgentManager().getAllBuyers()) {
 				buyer = (Buyer) e;
-				if (agentManager.isCustomAgent((Agent) e) && scheduler.isWarmingup())
+				if (agentManager.isCustomAgent((Agent) e) && scheduler.isWarmingup()) {
+					if (buyer.getPurchaseLogic() != null
+							&& buyer.getPurchaseLogic().trustModel != null)
+						buyer.getPurchaseLogic().trustModel.setRatingManager(ratingManager);
 					continue;
+				}
 				transaction = buyer.makeTransaction();
 				if (transaction != null) {
 					execution = transactionManager.addTransaction(transaction);
@@ -351,6 +358,9 @@ public class Sim extends BaseObject {
 		ratingManager.reportRating();
 		logger.info("*** Balance Report ***");
 		bank.reportBalance(this.agentManager.getBuyers().getAllNames());
+		logger.info("*** Simualation result ***");
+		resultAnalyzer.reportResult();
 		logger.info("*** Simulation has finished!");
+
 	}
 }

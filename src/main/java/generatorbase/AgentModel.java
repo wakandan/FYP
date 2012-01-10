@@ -11,11 +11,9 @@ public class AgentModel extends EntityModel {
 	public final static String	BUYER_NAME_PREFIX	= "B";
 	public final static String	SELLER_NAME_PREFIX	= "S";
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
-	 * @see generatorbase.EntityModel#generate(generatorbase.EntityManager)
-	 */
+	 * @see generatorbase.EntityModel#generate(generatorbase.EntityManager) */
 	@Override
 	public void generate(EntityManager manager) throws Exception {
 		Agent tmpAgent;
@@ -26,19 +24,20 @@ public class AgentModel extends EntityModel {
 		aManager.beginTransaction();
 		int numBuyer = agConfig.getBuyerNum();
 		int numSeller = agConfig.getSellerNum();
-		for (int i = 0; i<numBuyer; i++) {
-			tmpAgent = new Buyer(BUYER_NAME_PREFIX+i);
+		for (int i = 0; i < numBuyer; i++) {
+			tmpAgent = new Buyer(BUYER_NAME_PREFIX + i);
 			agConfig.configure(tmpAgent);
 			aManager.add(tmpAgent);
 		}
-		for (int i = 0; i<numSeller; i++) {
-			tmpAgent = new Seller(SELLER_NAME_PREFIX+i);
+		for (int i = 0; i < numSeller; i++) {
+			tmpAgent = new Seller(SELLER_NAME_PREFIX + i);
 			agConfig.configure(tmpAgent);
 			aManager.add(tmpAgent);
 		}
 		aManager.commitTransaction();
+		aManager.agentModel = this;
 		logger.info("Finish generating Automatic Agents");
-		logger.info("No. Buyers generated: "+aManager.getBuyerNum());
-		logger.info("No. Sellers generated: "+aManager.getSellerNum());
+		logger.info("No. Buyers generated: " + aManager.getBuyerNum());
+		logger.info("No. Sellers generated: " + aManager.getSellerNum());
 	}
 }

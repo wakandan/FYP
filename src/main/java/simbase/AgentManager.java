@@ -3,6 +3,7 @@ package simbase;
 import java.util.Collection;
 import java.util.HashMap;
 
+import generatorbase.AgentModel;
 import generatorbase.EntityManager;
 import modelbase.Entity;
 
@@ -15,13 +16,14 @@ import com.almworks.sqlite4java.SQLiteStatement;
 import configbase.AgentConfig;
 
 public class AgentManager extends EntityManager {
-	Sim						sim;
-	EntityManager			buyers;
-	EntityManager			sellers;
-	HashMap<String, Agent>	customAgents;
-	public final static int	BUYER_AGENT_TYPE	= 1;
-	public final static int	SELLER_AGENT_TYPE	= 2;
-	private static int		staticAgentCount	= 0;
+	private static int				staticAgentCount	= 0;
+	Sim								sim;
+	EntityManager					buyers;
+	EntityManager					sellers;
+	public HashMap<String, Agent>	customAgents;
+	public final static int			BUYER_AGENT_TYPE	= 1;
+	public final static int			SELLER_AGENT_TYPE	= 2;
+	public AgentModel				agentModel;
 
 	public Collection getAllBuyers() {
 		Collection result = buyers.getAll();

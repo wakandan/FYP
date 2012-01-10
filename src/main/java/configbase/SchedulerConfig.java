@@ -39,7 +39,7 @@ public class SchedulerConfig extends Config {
 	 * java.lang.String)
 	 */
 	@Override
-	protected boolean processConfigKey(String key, String value) {
+	public boolean processConfigKey(String key, String value) {
 		if (key.equalsIgnoreCase("maxTimestep")) {
 			this.maxTimestep = Integer.parseInt(value);
 		} else if (key.equalsIgnoreCase("warmupPeriod")) {

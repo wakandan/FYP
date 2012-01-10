@@ -60,7 +60,7 @@ public class DistributionConfig extends Config {
 	 * java.lang.String)
 	 */
 	@Override
-	protected boolean processConfigKey(String key, String value) {
+	public boolean processConfigKey(String key, String value) {
 		if (key.equalsIgnoreCase("mean"))
 			this.mean = Double.parseDouble(value);
 		else if (key.equalsIgnoreCase("variance"))

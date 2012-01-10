@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 
+import core.Configurable;
 import core.Pair;
 
 import agentbase.Buyer;
@@ -20,79 +21,44 @@ import simbase.RatingManager;
  * @author akai
  * 
  */
-public class Personalized {
-	RatingManager				ratingManager;
-	/*
-	 * The personalized approach allows a buyer to model the trustworthiness of
+public class TrustModelPersonalized extends TrustModel implements Configurable {
+	/* The personalized approach allows a buyer to model the trustworthiness of
 	 * another buyer (advisor) The ratings provided by less trustworthy advisors
-	 * will be discounted.
-	 */
+	 * will be discounted. */
 
-	/*
-	 * To use the personalized method of this class, the two static parameters
+	/* To use the personalized method of this class, the two static parameters
 	 * have to be first initialized. This two parameters are used for
 	 * determining the weight of private reputation. They represent the buyer's
-	 * own preference or nature.
-	 */
-	double						lamda;
-	double						gamma;						// this is the
-															// confidence
-															// measure
-															// when determining
-															// the weight of
-															// private
-															// reputation
-	double						epsilon;					// this is the
-															// acceptable error
-															// for
-															// determining the
-															// weight of private
-															// reputation and
-															// the threshold for
-															// determining the
-															// consistency of
-															// advisor's ratings
-															// with the
-															// majority ratings
-	double						inconsistency;
-	double						forgetting;
-	int							timeWindow;				/*
-															 * Do a fixed time
-															 * window for now
-															 */
+	 * own preference or nature. */
+	public double				lamda;
+
+	/* this is the confidence measure when determining the weight of private
+	 * reputation */
+	public double				gamma;
+
+	/* this is the acceptable error for determining the weight of private
+	 * reputation and the threshold for determining the consistency of advisor's
+	 * ratings with the majority ratings */
+	public double				epsilon;
+	public double				inconsistency;
+	public double				forgetting;
+
+	/* Do a fixed time window for now */
+	public int					timeWindow;
 	private int					nPosPrivate;
 	private int					nNegPrivate;
 	SQLiteStatement[]			sqlStatements;
 	private static final int	ST_getPrivateRep	= 0;
 	private static final int	ST_getPublicRep		= 1;
 
-	public Personalized() {
+	public TrustModelPersonalized() {
 		this.nNegPrivate = 0;
 		this.nPosPrivate = 0;
 	}
 
-	public double getForgetting() {
-		return forgetting;
-	}
-
-	public void setForgetting(double forgetting) {
-		this.forgetting = forgetting;
-	}
-
-	public int getTimeWindow() {
-		return timeWindow;
-	}
-
-	public void setTimeWindow(int time_window) {
-		this.timeWindow = time_window;
-	}
-
-	public RatingManager getRatingManager() {
-		return ratingManager;
-	}
-
+	@Override
 	public void setRatingManager(RatingManager ratingManager) {
-		this.ratingManager = ratingManager;
+		super.setRatingManager(ratingManager);
 		this.sqlStatements = new SQLiteStatement[10];
 		try {
 			this.sqlStatements[ST_getPrivateRep] = this.ratingManager.getDb().prepare(
@@ -115,30 +81,6 @@ public class Personalized {
 		}
 	}
 
-	public double getLamda() {
-		return lamda;
-	}
-
-	public void setLamda(double lamda) {
-		this.lamda = lamda;
-	}
-
-	public double getGamma() {
-		return gamma;
-	}
-
-	public void setGamma(double gamma) {
-		this.gamma = gamma;
-	}
-
-	public double getEpsilon() {
-		return epsilon;
-	}
-
-	public void setEpsilon(double epsilon) {
-		this.epsilon = epsilon;
-	}
-
 	public double getInconsistency() {
 		return inconsistency;
 	}
@@ -147,7 +89,8 @@ public class Personalized {
 		this.inconsistency = inconsistency;
 	}
 
-	public double personalized(String buyerName, String sellerName) {
+	@Override
+	public double calcTrust(String buyerName, String sellerName) {
 		ArrayList<String> advisors = ratingManager.findAdvisorNames(buyerName, sellerName);
 		double alpha = 0;
 		double beta = 0;
@@ -180,10 +123,8 @@ public class Personalized {
 		return w * privateRating + (1 - w) * publicRating;
 	}
 
-	/*
-	 * Return private reputation of an advisor from consumer's perspective. It's
-	 * based on the number of shared raters between buyer & advisor
-	 */
+	/* Return private reputation of an advisor from consumer's perspective. It's
+	 * based on the number of shared raters between buyer & advisor */
 	private double getPrivateRep(String buyerName, String advisorName) {
 		SQLiteStatement st = null;
 		this.nNegPrivate = 0;
@@ -229,10 +170,8 @@ public class Personalized {
 		return 0;
 	}
 
-	/*
-	 * Return public reputation of an advisor name. It's based on the number of
-	 * majority-consistent rating from other raters
-	 */
+	/* Return public reputation of an advisor name. It's based on the number of
+	 * majority-consistent rating from other raters */
 	private double getPublicRep(String advisorName) {
 		SQLiteStatement st = null;
 		try {
@@ -256,5 +195,13 @@ public class Personalized {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 * @see core.Configurable#getConfigAttributes() */
+	public String[] getConfigAttributes() {
+		String[] list = { "gamma", "epsilon", "forgetting", "timeWindow" };
+		return list;
 	}
 }

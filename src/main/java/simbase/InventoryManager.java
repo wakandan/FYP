@@ -11,7 +11,6 @@ import java.util.Random;
 
 import modelbase.Entity;
 import productbase.Product;
-import productbase.ProductManager;
 import agentbase.Agent;
 import agentbase.Seller;
 
@@ -25,14 +24,10 @@ import com.almworks.sqlite4java.SQLiteStatement;
  */
 public class InventoryManager extends EntityManager {
 	Sim										sim;
-	HashMap<String, ArrayList<Inventory>>	owners; /*
-													 * Hashmap for Seller's name
-													 * -> Inventories
-													 */
-	HashMap<String, ArrayList<Inventory>>	stores; /*
-													 * Hashmap for Inventory's
-													 * name -> Seller's names
-													 */
+	HashMap<String, ArrayList<Inventory>>	owners; /* Hashmap for Seller's name
+													 * -> Inventories */
+	HashMap<String, ArrayList<Inventory>>	stores; /* Hashmap for Inventory's
+													 * name -> Seller's names */
 
 	public InventoryManager() {
 		super();
@@ -114,6 +109,16 @@ public class InventoryManager extends EntityManager {
 		return stores.get(prodName);
 	}
 
+	public ArrayList<String> getSellerNamesByProductName(String prodName) {
+		ArrayList<String> result = new ArrayList<String>();
+		for (Inventory inventory : getSellersByProductName(prodName)) {
+			result.add(inventory.getAgent().getName());
+		}
+		if (result.size() == 0)
+			return null;
+		return result;
+	}
+
 	public double getPrice(String sellerName, String prodName) {
 		try {
 			return getInventory(sellerName, prodName).getPrice();
@@ -159,12 +164,10 @@ public class InventoryManager extends EntityManager {
 		return this.stores.size();
 	}
 
-	/*
-	 * A method to select the product with minimum quantity in the market and
+	/* A method to select the product with minimum quantity in the market and
 	 * recreate a new bunch of items. Minimum means the minimal ratio between
 	 * current quantity over (distributed) allocated quantity for that product
-	 * type. New quantity would be random, but it must be larger or equal to 2
-	 */
+	 * type. New quantity would be random, but it must be larger or equal to 2 */
 	public Product restock(Seller seller) throws Exception {
 		/* Get the product with smallest current/distributed ratio */
 		st = db.prepare("SELECT SUM(I.quantity)*1.0/P.quantity AS sum_quantity, prod_name, P.quantity "

@@ -3,6 +3,7 @@
  */
 package modelbase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import configbase.Config;
@@ -20,17 +21,6 @@ import simbase.Transaction;
 public class PurchaseLogicCollusion extends PurchaseLogic {
 	String	sellerName;
 
-	@Override
-	public Transaction transact() {
-		HashMap<String, Inventory> productsOnSale = buyer.getInventoryManager()
-				.getProductsBySellerName(sellerName);
-		for (Inventory inventory : productsOnSale.values()) {
-			return new Transaction(buyer, (Seller) inventory.getAgent(), inventory.getProd(), 1,
-					inventory.getPrice());
-		}
-		return null;
-	}
-
 	public String getSellerName() {
 		return sellerName;
 	}
@@ -39,7 +29,29 @@ public class PurchaseLogicCollusion extends PurchaseLogic {
 		this.sellerName = sellerName;
 	}
 
-	public void config() {
-		this.sellerName = ((AgentMasterConfig) config).getConfigEntry("targetSeller");
+	public void config() {}
+
+	/* (non-Javadoc)
+	 * 
+	 * @see modelbase.PurchaseLogic#pickProduct() */
+	@Override
+	protected String pickProduct() {
+		HashMap<String, Inventory> productsOnSale = buyer.getInventoryManager()
+				.getProductsBySellerName(sellerName);
+		for (Inventory inventory : productsOnSale.values()) {
+			return inventory.getProd().getName();
+		}
+		return null;
+	}
+
+	@Override
+	protected String chooseSeller(ArrayList<String> sellerNames) {
+		return sellerName;
+	}
+
+	@Override
+	public void setConfig(Config config) {
+		super.setConfig(config);
+		this.sellerName = config.getConfigEntry("targetSeller");
 	}
 }

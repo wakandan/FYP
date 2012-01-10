@@ -217,4 +217,8 @@ public class RatingManager extends EntityManager {
 		st.bind(1, oldName);
 		st.step();
 	}
+
+	public ArrayList<String> getAllRaters() {
+		return new ArrayList<String>(buyerRatings.keySet());
+	}
 }

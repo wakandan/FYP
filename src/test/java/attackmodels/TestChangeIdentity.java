@@ -29,11 +29,16 @@ public class TestChangeIdentity extends TestSimRunParent {
 	}
 
 	@Test
-	public void test() throws Exception {
+	public void testWithSimRun() throws Exception {
 		sim.run();
-		SQLiteStatement st = sim.getDb().prepare("SELECT * FROM Executions WHERE buyer_name LIKE ?");
+		SQLiteStatement st = sim.getDb().prepare("SELECT * FROM Identities WHERE original LIKE ?");
 		st.bind(1, "AMWhitewash%");
-		assertTrue(!st.step());
+		assertTrue(st.step());
 	}
 
+	@Test
+	public void testWithSimRunBRS() throws Exception {
+		simConfig.readConfig("src/test/resources/simbase/SimConfigForIdentityChangeBRS.ini");
+		sim.run();
+	}
 }

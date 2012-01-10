@@ -107,13 +107,11 @@ public class BetaDistributionNew extends DistributionNew {
 		return "Beta Distribution";
 	}
 
-	/*
-	 * public double getQuantileOf(double x) { double sum = 0; double step =
+	/* public double getQuantileOf(double x) { double sum = 0; double step =
 	 * 0.002; for (double start = 0; start <= x; start += step) { double mid, w;
 	 * if (1 - start > step) { w = step; } else { w = (1 - start); } mid = start
 	 * + (w / 2); double density = density(mid); sum += density * w; } return
-	 * sum; }
-	 */
+	 * sum; } */
 
 	public double getProbabilityOfQuantile(double q) {
 		if (q == 0)
@@ -139,5 +137,9 @@ public class BetaDistributionNew extends DistributionNew {
 		} else {
 			return BinarySearch(q, mid, high);
 		}
+	}
+
+	public double getAccuracy(double epsilon) {
+		return (CDF(mean() + epsilon) - CDF(mean() - epsilon)) / CDF(1);
 	}
 }

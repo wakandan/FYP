@@ -10,8 +10,9 @@ import org.junit.Test;
 import simbase.Sim;
 import simbase.TestSimRun;
 import simbase.TestSimRunParent;
-import trustmodel.BRS;
-import trustmodel.Personalized;
+import trustmodel.TrustModelBRS;
+import trustmodel.TrustModelPersonalized;
+import configbase.Config;
 import configbase.SimConfig;
 
 /**
@@ -20,19 +21,18 @@ import configbase.SimConfig;
  */
 public class TestPersonalized extends TestSimRunParent {
 
-//	@Test
-//	public void testBRSRun() throws Exception {
-//		sim.run();
-//		Personalized personalized = new Personalized();
-//		personalized.setEpsilon(0.4);
-//		personalized.setGamma(0.5);
-//		personalized.setForgetting(0.5);
-//		personalized.setTimeWindow(5);
-//		personalized.setRatingManager(sim.getRatingManager());
-//		for (String agentName : sim.getAgentManager().getSellers().getAllNames()) {
-//			System.out.println(String.format("B1, Advisor %6s -> %.3f | B2, Advisor %6s -> %.3f",
-//					agentName, personalized.personalized("B1", agentName), agentName,
-//					personalized.personalized("B2", agentName)));
-//		}
-//	}
+	// @Test
+	public void testBRSRun() throws Exception {
+		sim.run();
+		TrustModelPersonalized personalized = (TrustModelPersonalized) Config.config(
+				TrustModelPersonalized.class,
+				"src/test/resources/trustmodel/TrustModelPersonalizedConfig.ini");
+
+		personalized.setRatingManager(sim.getRatingManager());
+		for (String agentName : sim.getAgentManager().getSellers().getAllNames()) {
+			System.out.println(String.format("B1, Advisor %6s -> %.3f | B2, Advisor %6s -> %.3f",
+					agentName, personalized.calcTrust("B1", agentName), agentName,
+					personalized.calcTrust("B2", agentName)));
+		}
+	}
 }

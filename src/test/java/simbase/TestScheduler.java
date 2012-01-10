@@ -20,9 +20,9 @@ public class TestScheduler {
 	@Test
 	public void testSchedulerConfig() throws IOException {
 		SchedulerConfig schedulerConfig = new SchedulerConfig();
-		schedulerConfig.readConfig("src/test/resources/simbase/SchedulerConfig.ini");
+		schedulerConfig.readConfig("src/test/resources/simbase/TestSchedulerConfig.ini");
 		assertEquals(5, schedulerConfig.getWarmUpPeriod());
-		assertEquals(100, schedulerConfig.getMaxTimestep());
+		assertEquals(10, schedulerConfig.getMaxTimestep());
 	}
 
 }

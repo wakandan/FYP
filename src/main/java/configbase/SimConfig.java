@@ -55,25 +55,21 @@ public class SimConfig extends Config {
 		this.prodConfig = prodConfig;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
-	 * @see configbase.Config#configure(modelbase.Entity)
-	 */
+	 * @see configbase.Config#configure(modelbase.Entity) */
 	@Override
 	public void configure(Entity e) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
 	 * @see configbase.Config#processConfigKey(java.lang.String,
-	 * java.lang.String)
-	 */
+	 * java.lang.String) */
 	@Override
-	protected boolean processConfigKey(String key, String value) {
+	public boolean processConfigKey(String key, String value) {
 		ClassLoader classLoader = AgentLogicModel.class.getClassLoader();
 		try {
 			if (key.equalsIgnoreCase("creditPerTurn")) {
@@ -85,10 +81,8 @@ public class SimConfig extends Config {
 				this.prodConfig.readConfig(value);
 			} else if (key.equalsIgnoreCase("agentConfigClass")) {
 				try {
-					/*
-					 * Dynamically create a new object from the distribution
-					 * class
-					 */
+					/* Dynamically create a new object from the distribution
+					 * class */
 					Class<AgentConfig> agentConfigClass = (Class<AgentConfig>) classLoader
 							.loadClass(value);
 					logger.debug("Initiating agent logic class " + agentConfigClass.getName());
@@ -110,8 +104,8 @@ public class SimConfig extends Config {
 				agentMasters = new HashMap<String, AgentMaster>();
 				for (int i = 0; i < dataList.length; i++) {
 					logger.debug("Processing config file: " + dataList[i]);
-					AgentMasterConfig agentMasterConfig = new AgentMasterConfig();
-					agentMasterConfig.readConfig(dataList[i]);
+					AgentMasterConfig agentMasterConfig = (AgentMasterConfig) Config.config(
+							AgentMasterConfig.class, dataList[i]);					
 					AgentMaster agentMaster = new AgentMaster(agentMasterConfig);
 					agentMasters.put(agentMaster.getMasterName(), agentMaster);
 				}
