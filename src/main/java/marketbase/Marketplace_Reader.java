@@ -1,6 +1,6 @@
 package marketbase;
 import interfaces.MarketEntityInterface;
-
+import interfaces.File_Reader;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Window;
@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 //Class to read to import and export file
-public class Marketplace_Reader 
+public class Marketplace_Reader implements File_Reader 
 {
 	Marketplace_Main market;
 	JPanel tempPanel;
