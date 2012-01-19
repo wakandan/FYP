@@ -12,6 +12,7 @@ import java.util.Random;
 
 import modelbase.Entity;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.joda.time.DateTime;
 
 import productbase.Product;

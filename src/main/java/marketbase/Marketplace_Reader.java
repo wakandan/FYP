@@ -1,27 +1,31 @@
-package Marketplace;
+package marketbase;
+import interfaces.MarketEntityInterface;
+import interfaces.File_Reader;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Window;
 import java.io.*;
 import javax.swing.*;
+
 import org.eclipse.swt.*;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import Interfaces.MarketEntityInterface;
 
 //Class to read to import and export file
-public class Marketplace_Reader 
+public class Marketplace_Reader implements File_Reader 
 {
 	Marketplace_Main market;
 	JPanel tempPanel;
 	
 	public Marketplace_Reader(Marketplace_Main market,char mode)
-	{
+	{  
 		this.market = market;
 		if(mode=='R')
-			readFile(initFileChooser());
+			readFile(initFileOpenChooser());
 		else if(mode=='W')
-			writeFile(saveFileDialog());		
+			writeFile(initFileSaveChooser());		
 	}
 	
 	//To read in the ini file format
@@ -69,76 +73,60 @@ public class Marketplace_Reader
     	
     }
     
-  /*  public String initFileChooser()
-    {
-    	String fileName = "";
-	    JFileChooser fd = new JFileChooser(".");
-	    int returnVal = fd.showOpenDialog(null);
-	    if(returnVal == JFileChooser.APPROVE_OPTION)
-	    	fileName = fd.getSelectedFile().getPath();
-	    
-		return fileName;
-    }*/
-    
     //Open dialogue box
-    public String initFileChooser() {
+    public String initFileOpenChooser() {
     	
     	String fileName = "";
     	try
     	{
-        	Display display = new Display();
-    	    final Shell shell = new Shell(display);
-        	FileDialog dlg = new FileDialog(shell, SWT.OPEN);
-        	fileName = dlg.open();
+    		final JFileChooser fc = new JFileChooser();
+    		int value = fc.showOpenDialog(market);
+    		if (value == JFileChooser.APPROVE_OPTION) 
+    			fileName = fc.getSelectedFile().getAbsolutePath();
     	    
-    	    if (fileName != null) {
-    	      System.out.println(fileName);	    
-    	    }
-    	    display.dispose();
     	}
     	catch (Exception e)
     	{
-    		
+    		System.out.println(e.getMessage());
     	}
     	
     	return fileName;
     }
     
-    //To save dialogue box
-    public String saveFileDialog()
-    {
+    //Save Dialog Box
+    public String initFileSaveChooser() {
+    	
     	String fileName = "";
     	try
     	{
-	    	Display display = new Display();
-	        final Shell shell = new Shell(display);
-	
-	        FileDialog dlg = new FileDialog(shell, SWT.SAVE);
-	
-	        fileName = dlg.open();
-	        if (fileName != null) {
-	          System.out.println(fileName);
-	        }
-	
-	        display.dispose();
+    		final JFileChooser fc = new JFileChooser();
+    		int value = fc.showSaveDialog(market);
+    		if (value == JFileChooser.APPROVE_OPTION) 
+    			fileName = fc.getSelectedFile().getAbsolutePath();
+    	    
     	}
-    	catch(Exception e)
+    	catch (Exception e)
     	{
-    		
+    		System.out.println(e.getMessage());
     	}
-        return fileName;
+    	
+    	return fileName;
     }
     
     public void setFieldForMain(String[] values)
     {
     	for(int i = 0;i < market.getComponentCount(); i++)
     		if(market.getComponent(i) instanceof JPanel)
-    		{
-    			tempPanel = (JPanel)market.getComponent(i);
-    			for(int j = 0; j < tempPanel.getComponentCount(); j++)
-    				if(tempPanel.getComponent(j) instanceof JPanel)
-    					setTextFieldForPanel((JPanel) tempPanel.getComponent(j),values);
-
+    			traversePanels((JPanel) market.getComponent(i),values);
+    }
+    
+    public void traversePanels(JPanel panel,String[] values)
+    {
+    	for(int i = 0;i < panel.getComponentCount(); i++)
+    		if(panel.getComponent(i) instanceof JPanel)
+    		{	
+    			setTextFieldForPanel((JPanel) panel.getComponent(i),values);
+    			traversePanels((JPanel) panel.getComponent(i),values);
     		}
     }
     
@@ -157,11 +145,19 @@ public class Marketplace_Reader
     	
     	for(int i = 0;i < market.getComponentCount(); i++)
     		if(market.getComponent(i) instanceof JPanel)
-    		{
-    			tempPanel = (JPanel)market.getComponent(i);
-    			for(int j = 0; j < tempPanel.getComponentCount(); j++)
-    				if(tempPanel.getComponent(j) instanceof JPanel)
-    					output += getTextForEachField((JPanel) tempPanel.getComponent(j)) + newL;
+    			output += traverseFieldPanels((JPanel) market.getComponent(i),"") + newL;
+    	
+    	return output;
+    }
+    
+    public String traverseFieldPanels(JPanel panel,String output)
+    {
+    	String newL = System.getProperty("line.separator");
+    	for(int i = 0;i < panel.getComponentCount(); i++)
+    		if(panel.getComponent(i) instanceof JPanel)
+    		{	
+    			output += getTextForEachField((JPanel) panel.getComponent(i)) + newL;
+    			traverseFieldPanels((JPanel) panel.getComponent(i),output);
     		}
     	
     	return output;
