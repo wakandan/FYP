@@ -16,5 +16,7 @@
 	<classpathentry kind="lib" path="lib/swt.jar"/>
 	<classpathentry kind="lib" path="lib/swt-64.jar"/>
 	<classpathentry kind="lib" path="lib/swt-debug-64.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Sky/Desktop/jfreechart-1.0.14/jfreechart-1.0.14-demo.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Sky/Desktop/jfreechart-1.0.14/lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
