@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import marketbase.ChartAnalyzer_Main;
 import marketbase.Marketplace_Main;
 import marketbase.SimulationAnalyzer_Main;
 
@@ -13,8 +14,8 @@ import marketbase.SimulationAnalyzer_Main;
 public class Main_GUI extends JFrame{
 	
 	JPanel mainPanel = new JPanel(new GridLayout(1,1));
-	JPanel panels[] = {new Marketplace_Main(this),new JPanel(),new SimulationAnalyzer_Main()};
-	String title[] = {"Marketplace Setup","Model Selection","Simulation Analyzer"};
+	JPanel panels[] = {new Marketplace_Main(this),new JPanel(),new SimulationAnalyzer_Main(), new ChartAnalyzer_Main()};
+	String title[] = {"Marketplace Setup","Model Selection","Simulation Analyzer", "Chart Analyzer"};
 	
 	public Main_GUI(String title)
 	{
@@ -24,7 +25,7 @@ public class Main_GUI extends JFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(false);
 		this.setVisible(true);
-		this.setPanelsSize(600,600);
+		this.setPanelsSize(600,700);
 		//this.pack();
 	}
 	public void createTabs()
@@ -65,9 +66,10 @@ public class Main_GUI extends JFrame{
 		return panels.length;
 	}
 	
+	//Main GUI
 	public static void main(String[] args)
 	{
-		Main_GUI gui = new Main_GUI("Robustness System");
+		Main_GUI gui = new Main_GUI("Trust Robustness System");
 	}
 
 }
