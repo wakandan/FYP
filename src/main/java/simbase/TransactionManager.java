@@ -60,23 +60,23 @@ public class TransactionManager extends EntityManager {
 					.getProd();
 		} catch (NullPointerException e) {}
 		seller = (Seller) sim.getAgentManager().getAgentByName(sellerName);
-		if (seller!=null) {
+		if (seller != null) {
 			if (!transactions.containsKey(sellerName)) {
 				transactions.put(sellerName, new ArrayList<Transaction>());
 			}
 
-			if (product==null) {
+			if (product == null) {
 				/* Check if item is in seller's possession */
 				execution.setReason(String.format("Seller %5s doesn't have prod. %5s", sellerName,
 						item));
-			} else if (product.getPriceMax()>sim.bank.getBalance(transaction.buyer.getName())) {
+			} else if (product.getPriceMax() > sim.bank.getBalance(transaction.buyer.getName())) {
 				/* Check for buyer's balance */
 				execution.setReason(String.format("Buyer %5s: low balance",
 						transaction.buyer.getName()));
-			} else if (product.getQuantity()<=0) {
+			} else if (product.getQuantity() <= 0) {
 				/* Check if there are available quantity */
 				execution.setReason(String.format("Product %5s not available", item));
-			} else if (product.getQuantity()<quantity) {
+			} else if (product.getQuantity() < quantity) {
 				execution.setReason(String.format("Invalid quantity prod. %5s: Req %d v/s Avai %d",
 						item, quantity, product.getQuantity()));
 			} else {
@@ -85,7 +85,7 @@ public class TransactionManager extends EntityManager {
 				return null;
 			}
 		} else {
-			execution.setReason("No such seller name: ["+sellerName+"]");
+			execution.setReason("No such seller name: [" + sellerName + "]");
 		}
 		return execution;
 	}
@@ -113,8 +113,8 @@ public class TransactionManager extends EntityManager {
 			transactions.put(sellerName, new ArrayList<Transaction>());
 			HashMap<String, Inventory> prodSale = sim.inventoryManager
 					.getProductsBySellerName(sellerName);
-			if (prodSale==null) {
-				logger.debug("Restocking for "+sellerName);
+			if (prodSale == null) {
+				logger.debug("Restocking for " + sellerName);
 				sim.inventoryManager.restock((Seller) sim.agentManager.get(sellerName));
 			}
 		}
@@ -130,7 +130,7 @@ public class TransactionManager extends EntityManager {
 			double prodValue = sim.inventoryManager.getValue(execution.seller, execution.prod);
 			/* Credit buyer's balance */
 			sim.bank.creditBalance(execution.buyer, execution.quantity
-					*((prodValue-1)*execution.price));
+					* ((prodValue - 1) * execution.price));
 
 			Product oldProd = (Product) sim.inventoryManager.getInventory(execution.seller,
 					execution.prod).getProd();
@@ -144,7 +144,7 @@ public class TransactionManager extends EntityManager {
 			 * inventory manager will be used
 			 */
 			prod.setValue(prodValue);
-			oldProd.setQuantity(oldProd.getQuantity()-execution.quantity);
+			oldProd.setQuantity(oldProd.getQuantity() - execution.quantity);
 			sim.prodManager.update(oldProd);
 
 			/* Update buyer's inventory */
@@ -169,16 +169,23 @@ public class TransactionManager extends EntityManager {
 
 	public void updateExecution(Execution execution, Rating rating) throws SQLiteException {
 		int rate = 0;
-		if (rating==null) {
+		if (rating == null) {
 			rate = 0;
 		} else
 			rate = rating.rating;
 		st = db.prepare("INSERT INTO Executions(buyer_name, seller_name, prod_name, status, rating, Stime) "
-				+"VALUES(?, ?, ?, ?, ?, ?)");
+				+ "VALUES(?, ?, ?, ?, ?, ?)");
 		st.bind(1, execution.buyer.getName()).bind(2, execution.seller.getName())
 				.bind(3, execution.prod.getName())
 				.bind(4, (execution.success) ? Execution.STATUS_SUCCESS : Execution.STATUS_FAILED)
 				.bind(5, rate).bind(6, sim.scheduler.currentTimestep);
 		st.step();
+	}
+
+	public void changeIdentity(String oldName, String newName) {
+		if (transactions.containsKey(oldName)) {
+			transactions.put(newName, transactions.get(oldName));
+			transactions.remove(oldName);
+		}
 	}
 }

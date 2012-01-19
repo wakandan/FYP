@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import configbase.AgentConfig;
+import core.Configurable;
 
 import modelbase.AgentLogicModel;
 
@@ -17,16 +18,15 @@ public class AgentMaster extends EntityManager {
 		return masterName;
 	}
 
-	public AgentMaster(AgentMasterConfig masterConfig) {		
+	public AgentMaster(AgentMasterConfig masterConfig) {
 		super();
 		Buyer buyer;
 		this.masterConfig = masterConfig;
-		this.masterName = masterConfig.getMasterName();
-		for (int i = 0; i<masterConfig.agentNum; i++) {
-			buyer = new Buyer(masterConfig.masterName+"_"+i);
+		this.masterName = masterConfig.masterName;
+		for (int i = 0; i < masterConfig.agentNum; i++) {
+			buyer = new Buyer(masterConfig.masterName + "_" + i);
 			masterConfig.configure(buyer);
 			entities.put(buyer.getName(), buyer);
 		}
 	}
-
 }

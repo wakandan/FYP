@@ -73,6 +73,7 @@ public class TestTransactionManager extends TestSimParent {
 				assertTrue(sim.getBalance(buyer0)>0);
 				assertTrue(buyer0.getProduct(prod.getName())!=null);
 				assertTrue(sim.getBalance(buyer1)>0);
+				System.out.println("Transaction success");
 			} else {
 				/*
 				 * Incase of an auto dishonest seller, he will refuse to sell,

@@ -6,17 +6,17 @@ package generatorbase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import agentbase.AgentManager;
+import simbase.AgentManager;
+
 import agentbase.SimpleAgentManager;
 
 import com.almworks.sqlite4java.SQLiteStatement;
 
 import configbase.AgentConfig;
-import configbase.SimpleAgentConfig;
+import configbase.AgentConfigSimple;
 import core.TestWithDBParent;
 
 /**
@@ -57,18 +57,17 @@ public class TestAgentModel extends TestWithDBParent {
 
 	@Test
 	public void testSimpleAgentConfig() throws Exception {
-		AgentConfig aConfig = new SimpleAgentConfig();
+		AgentConfig aConfig = new AgentConfigSimple();
 		aConfig.readConfig("src/test/resources/generatorbase/TestAgentModelConfig.ini");
 		AgentModel aModel = new AgentModel();
 		AgentManager aManager = new SimpleAgentManager();
 		aManager.setDb(db);
 		aModel.setConfig(aConfig);
 		aModel.generate(aManager);
-		/*
-		 * The ratios in SimpleAgentConfig was hardcoded, so for this test, test
+		/* The ratios in SimpleAgentConfig was hardcoded, so for this test, test
 		 * data are also hardcoded. Probability of Honest buyers: 0.7
-		 * Probability of Honest sellers: 0.9
-		 */
-		assertTrue(((SimpleAgentManager) aManager).getHonestSellerNum()*1.0/aManager.getSellerNum()>=0.5);
+		 * Probability of Honest sellers: 0.9 */
+		assertTrue(((SimpleAgentManager) aManager).getHonestSellerNum() * 1.0
+				/ aManager.getSellerNum() >= 0.5);
 	}
 }

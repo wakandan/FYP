@@ -3,6 +3,8 @@ package trustmodel;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import core.Configurable;
+
 import simbase.Rating;
 import simbase.RatingManager;
 
@@ -10,31 +12,12 @@ import agentbase.Buyer;
 
 import generatorbase.BetaDistributionNew;
 
-public class BRS {
+public class TrustModelBRS extends TrustModel implements Configurable {
 
-	RatingManager	ratingManager;
+	public double	quantile;
 
-	double			quantile;
-
-	public RatingManager getRatingManager() {
-		return ratingManager;
-	}
-
-	public void setRatingManager(RatingManager ratingManager) {
-		this.ratingManager = ratingManager;
-	}
-
-	public double getQuantile() {
-		return quantile;
-	}
-
-	public void setQuantile(double quantile) {
-		this.quantile = quantile;
-	}
-
-	/*
-	 * The BRS system uses an iterated filtering approach to filter out the
-	 * ratings provided advisors that are considered as unfair When aggregating
+	/* The BRS system uses an iterated filtering approach to filter out the
+	 * ratings provided advisors that are considered as unfair. When aggregating
 	 * ratings of sellers for estimating their trustworthiness, those unfair
 	 * ratings will not be considered.
 	 * 
@@ -44,10 +27,10 @@ public class BRS {
 	 * seller after filtering out dishonest advisor's ratings
 	 * 
 	 * This method returns a list of all dishonest buyers for one particular
-	 * seller with id number sid
-	 */
-	public double brs(String seller_name, ArrayList<String> allBuyers) {
-
+	 * seller with id number sid */
+	@Override
+	public double calcTrust(String buyerName, String sellerName) {
+		ArrayList<String> allBuyers = ratingManager.getAllRaters();
 		ArrayList<String> dishonest = new ArrayList<String>();
 		ArrayList<String> honest = new ArrayList<String>();
 		honest = new ArrayList<String>(allBuyers);
@@ -58,22 +41,19 @@ public class BRS {
 
 		do {
 			size = honest.size();
-			/*
-			 * num of positive ratings provided by all buyers for the seller
-			 */
+			/* num of positive & negative ratings provided by all buyers for the
+			 * seller */
 			int positive = 0;
-			/*
-			 * num of negative ratings provided by all buyers for the seller
-			 */
 			int negative = 0;
+
 			for (String buyer_name : allBuyers) {
 				if (honest.contains(buyer_name)) {
 					// go through each buyer's rating list and find all ratings
 					// for the seller
-					ArrayList<Rating> ratings = ratingManager.getRating(buyer_name, seller_name);
-					if (ratings!=null) {
+					ArrayList<Rating> ratings = ratingManager.getRating(buyer_name, sellerName);
+					if (ratings != null) {
 						for (Rating rating : ratings) {
-							if (rating.getRating()>=3) {
+							if (rating.getRating() >= 3) {
 								positive++;
 							} else {
 								negative++;
@@ -84,27 +64,24 @@ public class BRS {
 				}
 			}
 
-			// create beta distribution of positive and negative ratings
-			BetaDistributionNew rep_distribution = new BetaDistributionNew((double) (positive+1),
-					(double) (negative+1));
-			// the expected value of the distribution, which is the overall
-			// reputation of the seller
+			/* create beta distribution of positive and negative ratings */
+			BetaDistributionNew rep_distribution = new BetaDistributionNew(positive + 1.0,
+					negative + 1.0);
+			/* the expected value of the distribution, which is the overall
+			 * reputation of the seller */
 			reputation = rep_distribution.mean();
-
-			// System.out.println(positive);
-			// System.out.println(negative);
 
 			for (String buyer_name : allBuyers) {
 				if (honest.contains(buyer_name)) {
-					ArrayList<Rating> ratings = ratingManager.getRating(buyer_name, seller_name);
-					if (ratings!=null) {
+					ArrayList<Rating> ratings = ratingManager.getRating(buyer_name, sellerName);
+					if (ratings != null) {
 						int p = 0; // #positive ratings provided by each buyer
 									// for the seller
 						int n = 0; // #negative ratings provided by each buyer
 									// for the seller
 
 						for (Rating rating : ratings) {
-							if (rating.getRating()>=3)
+							if (rating.getRating() >= 3)
 								p++;
 							else
 								n++;
@@ -113,14 +90,14 @@ public class BRS {
 						// create beta distribution of ratings provided by the
 						// buyer for the seller
 						BetaDistributionNew rep_distribution_buyer = new BetaDistributionNew(
-								(double) (p+1), (double) (n+1));
+								(double) (p + 1), (double) (n + 1));
 						// lower quantile and upper quantile of the distribution
 						// created from the buyer's ratings for the seller
 
 						double l = rep_distribution_buyer.getProbabilityOfQuantile(quantile);
-						double u = rep_distribution_buyer.getProbabilityOfQuantile(1-quantile);
+						double u = rep_distribution_buyer.getProbabilityOfQuantile(1 - quantile);
 
-						if (reputation<l||reputation>u) {
+						if (reputation < l || reputation > u) {
 
 							// this buyer is dishonest, and add it to the
 							// dishont list
@@ -131,22 +108,22 @@ public class BRS {
 					}
 				}
 			}
-		} while (size!=honest.size());
+		} while (size != honest.size());
 
 		// add the reputation of the seller at the end of the list
 		ArrayList lists = new ArrayList();
-//		System.out.print(seller_name+" "+honest.size()+" "+dishonest.size());
-//		for (String buyer_name : dishonest) {
-//			System.out.print(" "+buyer_name);
-//		}
-//		System.out.println("");
+		// System.out.print(seller_name+" "+honest.size()+" "+dishonest.size());
+		// for (String buyer_name : dishonest) {
+		// System.out.print(" "+buyer_name);
+		// }
+		// System.out.println("");
 		int positive = 0;
 		int negative = 0;
 		for (String buyer_name : honest) {
-			ArrayList<Rating> ratings = ratingManager.getRating(buyer_name, seller_name);
-			if (ratings!=null) {
+			ArrayList<Rating> ratings = ratingManager.getRating(buyer_name, sellerName);
+			if (ratings != null) {
 				for (Rating rating : ratings) {
-					if (rating.getRating()>=3) {
+					if (rating.getRating() >= 3) {
 						positive++;
 					} else {
 						negative++;
@@ -154,11 +131,20 @@ public class BRS {
 				}
 			}
 		}
-		BetaDistributionNew rep_distribution_buyer = new BetaDistributionNew((double) (positive+1),
-				(double) (negative+1));
+		BetaDistributionNew rep_distribution_buyer = new BetaDistributionNew(
+				(double) (positive + 1), (double) (negative + 1));
 		return rep_distribution_buyer.mean();
 		// lists.add(dishonest);
 		// lists.add(reputation+"");
 		// return lists;
 	}
+
+	/* (non-Javadoc)
+	 * 
+	 * @see core.Configurable#getConfigAttributes() */
+	public String[] getConfigAttributes() {
+		String[] list = { "quantile" };
+		return list;
+	}
+
 }

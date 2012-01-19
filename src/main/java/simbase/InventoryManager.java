@@ -11,9 +11,7 @@ import java.util.Random;
 
 import modelbase.Entity;
 import productbase.Product;
-import productbase.ProductManager;
 import agentbase.Agent;
-import agentbase.AgentManager;
 import agentbase.Seller;
 
 import com.almworks.sqlite4java.SQLiteException;
@@ -26,14 +24,10 @@ import com.almworks.sqlite4java.SQLiteStatement;
  */
 public class InventoryManager extends EntityManager {
 	Sim										sim;
-	HashMap<String, ArrayList<Inventory>>	owners; /*
-													 * Hashmap for Seller's name
-													 * -> Inventories
-													 */
-	HashMap<String, ArrayList<Inventory>>	stores; /*
-													 * Hashmap for Inventory's
-													 * name -> Seller's names
-													 */
+	HashMap<String, ArrayList<Inventory>>	owners; /* Hashmap for Seller's name
+													 * -> Inventories */
+	HashMap<String, ArrayList<Inventory>>	stores; /* Hashmap for Inventory's
+													 * name -> Seller's names */
 
 	public InventoryManager() {
 		super();
@@ -106,7 +100,7 @@ public class InventoryManager extends EntityManager {
 		for (Inventory inventory : owners.get(sellerName)) {
 			result.put(inventory.getProd().getName(), inventory);
 		}
-		if (result.size()==0)
+		if (result.size() == 0)
 			return null;
 		return result;
 	}
@@ -115,11 +109,21 @@ public class InventoryManager extends EntityManager {
 		return stores.get(prodName);
 	}
 
+	public ArrayList<String> getSellerNamesByProductName(String prodName) {
+		ArrayList<String> result = new ArrayList<String>();
+		for (Inventory inventory : getSellersByProductName(prodName)) {
+			result.add(inventory.getAgent().getName());
+		}
+		if (result.size() == 0)
+			return null;
+		return result;
+	}
+
 	public double getPrice(String sellerName, String prodName) {
 		try {
 			return getInventory(sellerName, prodName).getPrice();
 		} catch (NullPointerException e) {
-			logger.error("Seller "+sellerName+" does not have product: "+prodName);
+			logger.error("Seller " + sellerName + " does not have product: " + prodName);
 			return 0;
 		}
 	}
@@ -130,7 +134,7 @@ public class InventoryManager extends EntityManager {
 
 	public Inventory getInventory(String sellerName, String prodName) {
 		ArrayList<Inventory> ownerList = owners.get(sellerName);
-		if (ownerList!=null)
+		if (ownerList != null)
 			for (Inventory inventory : owners.get(sellerName)) {
 				if (prodName.equalsIgnoreCase(inventory.getProd().getName()))
 					return inventory;
@@ -147,7 +151,7 @@ public class InventoryManager extends EntityManager {
 		try {
 			return getInventory(seller, prod).getValue();
 		} catch (Exception e) {
-			logger.error("Unable to get value for product "+prod);
+			logger.error("Unable to get value for product " + prod);
 			return 0;
 		}
 	}
@@ -160,28 +164,26 @@ public class InventoryManager extends EntityManager {
 		return this.stores.size();
 	}
 
-	/*
-	 * A method to select the product with minimum quantity in the market and
+	/* A method to select the product with minimum quantity in the market and
 	 * recreate a new bunch of items. Minimum means the minimal ratio between
 	 * current quantity over (distributed) allocated quantity for that product
-	 * type. New quantity would be random, but it must be larger or equal to 2
-	 */
+	 * type. New quantity would be random, but it must be larger or equal to 2 */
 	public Product restock(Seller seller) throws Exception {
 		/* Get the product with smallest current/distributed ratio */
 		st = db.prepare("SELECT SUM(I.quantity)*1.0/P.quantity AS sum_quantity, prod_name, P.quantity "
-				+"FROM Inventories I, Agents A, Products P "
-				+"WHERE I.agent_name = A.name AND A.atype=? AND I.prod_name=P.name "
-				+"GROUP BY prod_name ORDER BY sum_quantity LIMIT 1");
+				+ "FROM Inventories I, Agents A, Products P "
+				+ "WHERE I.agent_name = A.name AND A.atype=? AND I.prod_name=P.name "
+				+ "GROUP BY prod_name ORDER BY sum_quantity LIMIT 1");
 		st.bind(1, AgentManager.SELLER_AGENT_TYPE);
 		st.step();
 		String prodName = st.columnString(1);
 		int maxQuantity = st.columnInt(2);
 		/* Randomize this new quantity */
 		int quantity;
-		if (maxQuantity<2)
+		if (maxQuantity < 2)
 			quantity = maxQuantity;
 		else
-			quantity = 2+(new Random()).nextInt(maxQuantity-2);
+			quantity = 2 + (new Random()).nextInt(maxQuantity - 2);
 		Product prod = new Product((Product) sim.prodManager.get(prodName));
 		prod.setQuantity(quantity);
 		this.add(seller, prod);
@@ -193,10 +195,10 @@ public class InventoryManager extends EntityManager {
 	/* Update inventory of an agent */
 	public void updateInventory(Agent agent, Product prod) throws Exception {
 		Inventory inventory = getInventory(agent.getName(), prod.getName());
-		if (inventory==null) {
-			if (prod.getQuantity()!=0)
+		if (inventory == null) {
+			if (prod.getQuantity() != 0)
 				add(agent, prod);
-		} else if (prod.getQuantity()>0) {
+		} else if (prod.getQuantity() > 0) {
 			inventory.setQuantity(prod.getQuantity());
 			st = db.prepare("UPDATE Inventories SET quantity=? WHERE agent_name=? AND prod_name=?");
 			st.bind(1, prod.getQuantity()).bind(2, agent.getName()).bind(3, prod.getName());
@@ -205,20 +207,30 @@ public class InventoryManager extends EntityManager {
 			st = db.prepare("DELETE FROM Inventories WHERE agent_name=? AND prod_name=?");
 			st.bind(1, agent.getName()).bind(2, prod.getName());
 			st.step();
-			for (int i = 0; i<owners.get(agent.getName()).size(); i++) {
+			for (int i = 0; i < owners.get(agent.getName()).size(); i++) {
 				if (owners.get(agent.getName()).get(i).getProd().getName()
 						.equalsIgnoreCase(prod.getName())) {
 					owners.get(agent.getName()).remove(i);
 					break;
 				}
 			}
-			for (int i = 0; i<stores.get(prod.getName()).size(); i++) {
+			for (int i = 0; i < stores.get(prod.getName()).size(); i++) {
 				if (stores.get(prod.getName()).get(i).getAgent().getName()
 						.equalsIgnoreCase(agent.getName())) {
 					stores.get(prod.getName()).remove(i);
 					break;
 				}
 			}
+		}
+	}
+
+	public void changeIdentity(String oldName, String newName) {
+		if (owners.containsKey(oldName)) {
+			owners.put(newName, owners.get(oldName));
+			for (Inventory inventory : owners.get(newName)) {
+				inventory.getAgent().setName(newName);
+			}
+			owners.remove(oldName);
 		}
 	}
 }

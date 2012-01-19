@@ -16,4 +16,8 @@ public class Pair<K extends Object, V extends Object> {
 		this.val2 = val2;
 	}
 
+	public String toString() {
+		return this.val1 + ", " + this.val2;
+	}
+
 }

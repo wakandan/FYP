@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import core.Configurable;
 import core.Pair;
 
 import simbase.Rating;
@@ -23,51 +24,15 @@ import agentbase.Buyer;
  * opinion given its past opinions and later observed interactions with the
  * trustees for which opinions were given
  */
-public class TRAVOS {
-	int				numBins;
-	RatingManager	ratingManager;
-
-	double			errorThreshold;
-	double			minAccuracyValue;
-
-	public double getErrorThreshold() {
-		return errorThreshold;
-	}
-
-	public void setErrorThreshold(double errorThreshold) {
-		this.errorThreshold = errorThreshold;
-	}
-
-	public double getMinAccuracyValue() {
-		return minAccuracyValue;
-	}
-
-	public void setMinAccuracyValue(double minAccuracyValue) {
-		this.minAccuracyValue = minAccuracyValue;
-	}
-
-	public RatingManager getRatingManager() {
-		return ratingManager;
-	}
-
-	public void setRatingManager(RatingManager ratingManager) {
-		this.ratingManager = ratingManager;
-	}
-
-	public int getNumBins() {
-		return numBins;
-	}
-
-	public void setNumBins(int numBins) {
-		this.numBins = numBins;
-	}
+public class TrustModelTRAVOS extends TrustModel implements Configurable {
+	public int		numBins;
+	public double	errorThreshold;
+	public double	minAccuracyValue;
 
 	/* Evaluate an advisor's accuracy */
 	private Pair<Double, Double> getAdvises(String buyerName, String sellerName, String advisorName) {
 
-		/*
-		 * find the rating distribution of advisor -> seller
-		 */
+		/* find the rating distribution of advisor -> seller */
 		int positive = 0;
 		int negative = 0;
 
@@ -80,10 +45,8 @@ public class TRAVOS {
 				negative++;
 		}
 
-		/*
-		 * calculate the expected reputation of the seller based on the ratings
-		 * of the advisor the bin that the expected reputation falls into
-		 */
+		/* calculate the expected reputation of the seller based on the ratings
+		 * of the advisor the bin that the expected reputation falls into */
 		BetaDistributionNew erAdvisorDis = new BetaDistributionNew(positive + 1, negative + 1);
 		// double er_advisor = 1.0 * (positive + 1) / (positive + negative + 2);
 		double er_advisor = erAdvisorDis.mean();
@@ -103,16 +66,12 @@ public class TRAVOS {
 		/* Get common ratees between B & A */
 		ArrayList<String> commonRatees = ratingManager.findCommonRatees(buyerName, advisorName);
 		for (String rateeName : commonRatees) {
-			/*
-			 * For each ratee, get past transactions between B & ratee,
-			 * chronological order
-			 */
+			/* For each ratee, get past transactions between B & ratee,
+			 * chronological order */
 			ArrayList<Rating> pastRatings = ratingManager.getRating(buyerName, rateeName);
 
-			/*
-			 * For each past rating, check its outcome with provided opinions at
-			 * the time
-			 */
+			/* For each past rating, check its outcome with provided opinions at
+			 * the time */
 			for (Rating rating : pastRatings) {
 				ArrayList<Rating> pastAdvisedRatings = ratingManager.getRatingsBefore(advisorName,
 						rateeName, rating.getStime());
@@ -121,11 +80,9 @@ public class TRAVOS {
 				if (pastAdvisedRatings == null)
 					continue;
 
-				/*
-				 * Update frequency parameters using the outcomes, if the
+				/* Update frequency parameters using the outcomes, if the
 				 * opinion provided is similar to what is provided now (in a
-				 * same bin)
-				 */
+				 * same bin) */
 				if (isBounded(pastAdvisedRatings, lb, ub)) {
 					if (rating.getRating() >= 3)
 						goodOutcome++;
@@ -139,10 +96,8 @@ public class TRAVOS {
 		BetaDistributionNew dis = new BetaDistributionNew(goodOutcome + 1, badOutcome + 1);
 		double advisorAccuracy = dis.CDF(ub) - dis.CDF(lb);
 
-		/*
-		 * Based on the calculated accuracy, estimate the true parameters for
-		 * the provided opinions
-		 */
+		/* Based on the calculated accuracy, estimate the true parameters for
+		 * the provided opinions */
 		BetaDistributionNew uniformDis = new BetaDistributionNew(1, 1);
 		double trueExpectedMean = uniformDis.mean() + advisorAccuracy
 				* (dis.mean() - uniformDis.mean());
@@ -156,10 +111,8 @@ public class TRAVOS {
 		return new Pair<Double, Double>(adjustedSuccessOutcome, adjustedFailureOutcome);
 	}
 
-	/*
-	 * Check if a distribution's expected value is bounded by provided lower
-	 * bound and upper bound
-	 */
+	/* Check if a distribution's expected value is bounded by provided lower
+	 * bound and upper bound */
 	private boolean isBounded(ArrayList<Rating> ratings, double lowerBound, double upperBound) {
 		int positive = 0;
 		int negative = 0;
@@ -174,13 +127,12 @@ public class TRAVOS {
 		return expectedValue >= lowerBound && expectedValue <= upperBound;
 	}
 
-	/*
-	 * Using TRAVOS model to calculate a trust level between buyer & seller.
+	/* Using TRAVOS model to calculate a trust level between buyer & seller.
 	 * First trust value is calculated based on his own experience first. If the
 	 * confidence level is not very high, adviors who bought from the same
-	 * seller before will be consulted
-	 */
-	public double travos(String buyerName, String sellerName) {
+	 * seller before will be consulted */
+	@Override
+	public double calcTrust(String buyerName, String sellerName) {
 		ArrayList<Rating> ratings = ratingManager.getRating(buyerName, sellerName);
 		int pos = 0;
 		int neg = 0;
@@ -211,5 +163,13 @@ public class TRAVOS {
 		BetaDistributionNew dis = new BetaDistributionNew(adjustedAlpha + 1, adjustedBeta + 1);
 		return dis.mean();
 
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 * @see core.Configurable#getConfigAttributes() */
+	public String[] getConfigAttributes() {
+		String[] list = { "numBins", "errorThreshold", "minAccuracyValue" };
+		return list;
 	}
 }

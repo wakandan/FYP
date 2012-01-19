@@ -18,7 +18,6 @@ import org.joda.time.DateTime;
 import productbase.Product;
 import productbase.ProductManager;
 import agentbase.Agent;
-import agentbase.AgentManager;
 import agentbase.AgentMaster;
 import agentbase.Buyer;
 import agentbase.Seller;
@@ -29,6 +28,7 @@ import com.almworks.sqlite4java.SQLiteException;
 import configbase.ProductConfig;
 import configbase.SimConfig;
 import core.BaseObject;
+import core.Pair;
 
 /**
  * @author akai Main file of the project.
@@ -49,6 +49,7 @@ public class Sim extends BaseObject {
 	Bank				bank;
 	TransactionManager	transactionManager;
 	RatingManager		ratingManager;
+	ResultAnalyzer		resultAnalyzer;
 
 	public TransactionManager getTransactionManager() {
 		return transactionManager;
@@ -86,6 +87,7 @@ public class Sim extends BaseObject {
 	public void setAgentManager(AgentManager agentManager) {
 		this.agentManager = agentManager;
 		this.agentManager.setSessionId(this.sessionId);
+		this.agentManager.setSim(this);
 		bank.setAgentManager(agentManager);
 	}
 
@@ -152,9 +154,11 @@ public class Sim extends BaseObject {
 		agentModel = new AgentModel();
 		simConfig = new SimConfig();
 		scheduler = new Scheduler();
+		resultAnalyzer = new ResultAnalyzer(this);
 		transactionManager = new TransactionManager();
 		transactionManager.sim = this;
 		inventoryManager.sim = this;
+		agentManager.sim = this;
 	}
 
 	public void initialize() throws Exception {
@@ -287,6 +291,10 @@ public class Sim extends BaseObject {
 
 	}
 
+	public SQLiteConnection getDb() {
+		return db;
+	}
+
 	/**
 	 * Advance the simulation. At the beginning of each time step, all buyers
 	 * will be credited an amount of money
@@ -322,10 +330,20 @@ public class Sim extends BaseObject {
 		logger.info("*** Simulation is running...");
 		while (scheduler.isRunning()) {
 			advanceTime();
+			for (Entity e : agentManager.getAll()) {
+				Agent agent = (Agent) e;
+				if (agent.isIdentityChangable() && agent.requestNewIdentity()) {
+					agentManager.requestNewIdentity(agent);
+				}
+			}
 			for (Object e : getAgentManager().getAllBuyers()) {
 				buyer = (Buyer) e;
-				if (agentManager.isCustomAgent((Agent) e) && scheduler.isWarmingup())
+				if (agentManager.isCustomAgent((Agent) e) && scheduler.isWarmingup()) {
+					if (buyer.getPurchaseLogic() != null
+							&& buyer.getPurchaseLogic().trustModel != null)
+						buyer.getPurchaseLogic().trustModel.setRatingManager(ratingManager);
 					continue;
+				}
 				transaction = buyer.makeTransaction();
 				if (transaction != null) {
 					execution = transactionManager.addTransaction(transaction);
@@ -340,7 +358,10 @@ public class Sim extends BaseObject {
 		logger.info("*** Rating Report ***");
 		ratingManager.reportRating();
 		logger.info("*** Balance Report ***");
-		bank.reportBalance(this.agentManager.getBuyers().getEntitiesNames());
+		bank.reportBalance(this.agentManager.getBuyers().getAllNames());
+		logger.info("*** Simualation result ***");
+		resultAnalyzer.reportResult();
 		logger.info("*** Simulation has finished!");
+
 	}
 }

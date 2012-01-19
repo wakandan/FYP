@@ -10,9 +10,9 @@ import simbase.Transaction;
 
 public class Buyer extends Agent {
 
-	RatingLogic		ratingLogic;
-	PurchaseLogic	purchaseLogic;
-	ArrayList<Seller> targetSeller;
+	RatingLogic			ratingLogic;
+	PurchaseLogic		purchaseLogic;
+	ArrayList<Seller>	targetSeller;
 
 	/**
 	 * @param string
@@ -51,14 +51,13 @@ public class Buyer extends Agent {
 	public Rating leaveRating(Execution execution, Product product) {
 		return this.ratingLogic.calcRating(execution, product);
 	}
-	 
-	public ArrayList<Seller> getTargetSeller()
-	{
+
+	public ArrayList<Seller> getTargetSeller() {
 		return targetSeller;
 	}
-	
-	public void addTarget(Seller seller)
-	{
+
+	public void addTarget(Seller seller) {
 		targetSeller.add(seller);
 	}
+
 }

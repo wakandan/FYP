@@ -17,7 +17,6 @@ import org.junit.Test;
 import productbase.Product;
 import productbase.ProductManager;
 import agentbase.Agent;
-import agentbase.AgentManager;
 
 import com.almworks.sqlite4java.SQLiteStatement;
 
