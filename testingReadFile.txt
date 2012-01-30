@@ -1,0 +1,7 @@
+#this is an example of file format
+$Trust_Model Accuracy Manipluation_Power 
+A 10 6
+B 9 7.5
+C 8 8
+D 7 9
+E 6 10.1
