@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public class BaseObject {
-	protected Logger	logger;
+	public Logger	logger;
 
 	public BaseObject() {
 		logger = Logger.getLogger(this.getClass().getName());

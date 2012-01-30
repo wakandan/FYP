@@ -36,9 +36,9 @@ public class TestChangeIdentity extends TestSimRunParent {
 		assertTrue(st.step());
 	}
 
-	@Test
-	public void testWithSimRunBRS() throws Exception {
-		simConfig.readConfig("src/test/resources/simbase/SimConfigForIdentityChangeBRS.ini");
-		sim.run();
-	}
+//	@Test
+//	public void testWithSimRunBRS() throws Exception {
+//		simConfig.readConfig("src/test/resources/simbase/SimConfigForIdentityChangeBRS.ini");
+//		sim.run();
+//	}
 }
