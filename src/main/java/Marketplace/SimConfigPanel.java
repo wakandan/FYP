@@ -1,7 +1,5 @@
 package marketplace;
 
-//package Marketplace;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -108,5 +106,4 @@ public class SimConfigPanel extends JPanel implements FocusListener {
 	}
 
 	public void focusLost(FocusEvent e) {}
-
 }

@@ -1,4 +1,5 @@
 package marketplace;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -76,5 +77,6 @@ public class BRSConfigPanel extends JPanel implements FocusListener, ActionListe
     {
         
     }
+    
        
 }
