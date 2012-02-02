@@ -13,10 +13,11 @@ import org.apache.log4j.Logger;
  * 
  */
 public class BaseObject {
-	public Logger	logger;
+	public MyLogger	logger;
 
 	public BaseObject() {
-		logger = Logger.getLogger(this.getClass().getName());
+//		logger = Logger.getLogger(this.getClass().getName());
+		logger = new MyLogger(this.getClass().getName());
 		//		logger.setLevel(Level.ERROR);
 	}
 }
