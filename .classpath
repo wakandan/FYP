@@ -7,16 +7,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/joda-time-2.0-javadoc.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time-2.0-sources.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/sqlite4java.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="lib/swt-debug.jar"/>
-	<classpathentry kind="lib" path="lib/swt.jar"/>
-	<classpathentry kind="lib" path="lib/swt-64.jar"/>
-	<classpathentry kind="lib" path="lib/swt-debug-64.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Sky/Desktop/jfreechart-1.0.14/jfreechart-1.0.14-demo.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Sky/Desktop/jfreechart-1.0.14/lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

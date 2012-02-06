@@ -28,6 +28,7 @@ import com.almworks.sqlite4java.SQLiteException;
 import configbase.ProductConfig;
 import configbase.SimConfig;
 import core.BaseObject;
+import core.MyEventListener;
 import core.Pair;
 
 /**
@@ -319,6 +320,15 @@ public class Sim extends BaseObject {
 		return bank.getBalance(agent.getName());
 	}
 
+	public void registerEventListeners(MyEventListener listener) {
+		this.logger.addMyEventListener(listener);
+		this.agentManager.logger.addMyEventListener(listener);
+		this.prodManager.logger.addMyEventListener(listener);
+		this.transactionManager.logger.addMyEventListener(listener);
+		this.bank.logger.addMyEventListener(listener);
+		this.resultAnalyzer.logger.addMyEventListener(listener);
+	}
+	
 	public void run() throws Exception {
 		Buyer buyer;
 		Seller seller;
@@ -338,10 +348,12 @@ public class Sim extends BaseObject {
 			}
 			for (Object e : getAgentManager().getAllBuyers()) {
 				buyer = (Buyer) e;
-				if (agentManager.isCustomAgent((Agent) e) && scheduler.isWarmingup()) {
+				if (agentManager.isCustomAgent((Agent) e) && scheduler.isWarmingup()) {					
 					if (buyer.getPurchaseLogic() != null
-							&& buyer.getPurchaseLogic().trustModel != null)
+							&& buyer.getPurchaseLogic().trustModel != null) {
 						buyer.getPurchaseLogic().trustModel.setRatingManager(ratingManager);
+					}
+					
 					continue;
 				}
 				transaction = buyer.makeTransaction();
@@ -362,6 +374,5 @@ public class Sim extends BaseObject {
 		logger.info("*** Simualation result ***");
 		resultAnalyzer.reportResult();
 		logger.info("*** Simulation has finished!");
-
 	}
 }

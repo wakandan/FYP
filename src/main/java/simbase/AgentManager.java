@@ -116,6 +116,10 @@ public class AgentManager extends EntityManager {
 
 		System.out
 				.println(String.format("Changing identity for %s -> %s", oldName, agent.getName()));
+		if(customAgents.containsKey(oldName)) {
+			customAgents.put(agent.getName(), customAgents.get(oldName));
+			customAgents.remove(oldName);
+		}
 		/* Update the agent table */
 		st = db.prepare("UPDATE Agents SET name=? WHERE name=?");
 		st.bind(1, agent.getName()).bind(2, oldName);
