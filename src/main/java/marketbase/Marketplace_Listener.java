@@ -11,8 +11,7 @@ import org.apache.log4j.PropertyConfigurator;
 import simbase.Sim;
 import configbase.DBConfig;
 import configbase.SimConfig;
-
-
+import core.MyEventListener;
 
 //Class to handle the button listener
 public class Marketplace_Listener implements ActionListener {
@@ -59,8 +58,8 @@ public class Marketplace_Listener implements ActionListener {
 				Sim sim = new Sim();
 				sim.setSimConfig(simConfig);
 				sim.setDb(dbConfig.setUpDb());
+				sim.registerEventListeners((MyEventListener) marketControls.outputReader);
 				sim.run();
-				Logger.shutdown();
 				marketControls.outputReader.readLogFile();
 				JOptionPane.showMessageDialog(marketControls.market,"Simulation Successfully Completed. Check Simulation Analyzer page to see data");
 			} catch (Exception e1) {
