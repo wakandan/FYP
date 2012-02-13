@@ -5,6 +5,7 @@ import java.awt.Font;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import core.MyEvent;
 import core.MyEventListener;
@@ -17,8 +18,16 @@ public class MyPanel extends JPanel implements MyEventListener {
 	 * 
 	 * @see core.MyEventListener#onRecvMyEvent(core.MyEvent) */
 	public void onRecvMyEvent(MyEvent event) {
-		this.textArea.append(event.text + "\n");
-		textArea.setCaretPosition(textArea.getDocument().getLength());
+		this.updateStatus(event.text);
+	}
+
+	private void updateStatus(final String status) {
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run() {
+				textArea.append(status + "\n");
+				textArea.setCaretPosition(textArea.getDocument().getLength());
+			}
+		});
 	}
 
 	public MyPanel() {

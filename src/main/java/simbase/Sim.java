@@ -337,7 +337,7 @@ public class Sim extends BaseObject {
 		initialize();
 		assignProducts();
 		Execution execution;
-		logger.info("*** Simulation is running...");
+		logger.info("*** Simulation is running...");		
 		while (scheduler.isRunning()) {
 			advanceTime();
 			for (Entity e : agentManager.getAll()) {
@@ -367,12 +367,13 @@ public class Sim extends BaseObject {
 			transactionManager.processTransactions();
 			// prodManager.reportQuantity();
 		}
-		logger.info("*** Rating Report ***");
+		logger.info("*** Rating Report ***");												
 		ratingManager.reportRating();
-		logger.info("*** Balance Report ***");
-		bank.reportBalance(this.agentManager.getBuyers().getAllNames());
-		logger.info("*** Simualation result ***");
+		logger.info("*** Balance Report ***");	
+		bank.reportBalance(this.agentManager.getBuyers().getAllNames());		
+		logger.info("*** Simulation result ***");
 		resultAnalyzer.reportResult();
 		logger.info("*** Simulation has finished!");
+		this.db.dispose();
 	}
 }

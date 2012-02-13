@@ -1,5 +1,6 @@
 package simbase;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -116,7 +117,7 @@ public class AgentManager extends EntityManager {
 
 		System.out
 				.println(String.format("Changing identity for %s -> %s", oldName, agent.getName()));
-		if(customAgents.containsKey(oldName)) {
+		if (customAgents.containsKey(oldName)) {
 			customAgents.put(agent.getName(), customAgents.get(oldName));
 			customAgents.remove(oldName);
 		}
@@ -142,6 +143,31 @@ public class AgentManager extends EntityManager {
 		st.step();
 
 		sim.ratingManager.changeIdentity(oldName, agent);
+	}
+
+	public ArrayList<String> requestPastIdentities(String agentName) throws SQLiteException {
+		ArrayList<String> result = new ArrayList<String>();
+		String originalName;
+		result.add(agentName);
+		st = db.prepare("SELECT original FROM Identities WHERE changed=?");
+		st.bind(1, agentName);
+		if (st.step()) {
+			originalName = st.columnString(0);
+			result.add(originalName);
+		} else {
+			originalName = agentName;
+		}
+
+		st = db.prepare("SELECT changed FROM Identities WHERE original=?");
+		st.bind(1, originalName);
+		while (st.step()) {
+			String name = st.columnString(0);
+			if (name.equalsIgnoreCase(agentName)) {
+				result.add(name);
+			}
+		}
+
+		return result;
 	}
 
 	public Sim getSim() {
