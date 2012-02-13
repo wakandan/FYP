@@ -43,6 +43,30 @@ public class Main_GUI extends JFrame{
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	}
 	
+	public void changeTab(int index)
+	{
+		JTabbedPane tabbedPane = null;
+		for(int i = 0;i < mainPanel.getComponentCount();i++)
+			if(mainPanel.getComponent(i) instanceof JTabbedPane)
+			{
+				tabbedPane = (JTabbedPane)mainPanel.getComponent(i);
+				break;
+			}
+		tabbedPane.setSelectedIndex(index%tabbedPane.getComponentCount());		
+	}
+	
+	public int getTab()
+	{
+		JTabbedPane tabbedPane = null;
+		for(int i = 0;i < mainPanel.getComponentCount();i++)
+			if(mainPanel.getComponent(i) instanceof JTabbedPane)
+			{
+				tabbedPane = (JTabbedPane)mainPanel.getComponent(i);
+				break;
+			}
+		return tabbedPane.getSelectedIndex();	
+	}
+	
 	public void setPanelsSize(int width,int height)
 	{
 		this.setSize(width,height);
