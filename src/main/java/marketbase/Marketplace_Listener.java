@@ -50,21 +50,37 @@ public class Marketplace_Listener implements ActionListener {
 		}
 		else if(e.getActionCommand().equalsIgnoreCase("Run"))
 		{
-			SimConfig simConfig = new SimConfig();
-			setUpRun();
-			try {
-				PropertyConfigurator.configure("src/main/resources/log4j.properties");
-				simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
-				Sim sim = new Sim();
-				sim.setSimConfig(simConfig);
-				sim.setDb(dbConfig.setUpDb());
-				sim.registerEventListeners((MyEventListener) marketControls.outputReader);
-				sim.run();
-				marketControls.outputReader.readLogFile();
-				JOptionPane.showMessageDialog(marketControls.market,"Simulation Successfully Completed. Check Simulation Analyzer page to see data");
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
+			//Change tab to simulation analyzer upon run button clicked
+			Thread tabChange = new Thread()
+			{
+			  public void run()
+			  {
+				  marketControls.market.main.changeTab(2);
+			  }
+			};
+			Thread simRunner = new Thread()
+			{
+				public void run()
+				{
+					SimConfig simConfig = new SimConfig();
+					setUpRun();
+					try {
+						PropertyConfigurator.configure("src/main/resources/log4j.properties");
+						simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
+						Sim sim = new Sim();
+						sim.setSimConfig(simConfig);
+						sim.setDb(dbConfig.setUpDb());
+						sim.registerEventListeners((MyEventListener) marketControls.outputReader);
+						sim.run();
+						marketControls.outputReader.readLogFile();
+						JOptionPane.showMessageDialog(marketControls.market,"Simulation Successfully Completed");
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+			};
+			tabChange.start();
+			simRunner.start();
 		}
 	}
 
