@@ -92,7 +92,7 @@ public class TransactionManager extends EntityManager {
 
 	@SuppressWarnings("unchecked")
 	public void processTransactions() throws Exception {
-		logger.info("Processing transactions");
+		logger.info("Processing transactions");		
 
 		for (String sellerName : transactions.keySet()) {
 			HashMap<String, Inventory> myInventory = this.sim.inventoryManager
