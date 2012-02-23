@@ -76,7 +76,8 @@ public class ResultAnalyzer extends BaseObject {
 				result.add(trustValue - assignValue);
 			}
 		}
-		System.out.println("*** Trust difference ***");
+		logger.info("*** Trust difference ***");
+		//System.out.println("*** Trust difference ***");
 		aggregateResult(dataByTrustModel);
 	}
 
@@ -111,7 +112,8 @@ public class ResultAnalyzer extends BaseObject {
 
 		}
 
-		System.out.println("*** Total rating ***");
+		logger.info("*** Total rating ***");
+		//System.out.println("*** Total rating ***");
 		aggregateResult(dataByTrustModel);
 	}
 
@@ -143,11 +145,13 @@ public class ResultAnalyzer extends BaseObject {
 			}
 
 		}
-
-		System.out.println("*** # Success transactions ***");
+		logger.info("*** # Success transactions ***");
+		//System.out.println("*** # Success transactions ***");
 		for (String trustModelName : transCounts.keySet()) {
-			System.out.println(String.format("%s: %.3f", trustModelName,
+			logger.debug(String.format("%s: %.3f", trustModelName,
 					transCounts.get(trustModelName)));
+			//System.out.println(String.format("%s: %.3f", trustModelName,
+				//	transCounts.get(trustModelName)));
 		}
 	}
 
@@ -163,8 +167,10 @@ public class ResultAnalyzer extends BaseObject {
 			DescriptiveStatistics statistics = new DescriptiveStatistics(resultArray);
 			Pair<Double, Double> finalResult = new Pair<Double, Double>(statistics.getMean(),
 					statistics.getStandardDeviation());
-			System.out.println(String.format("Mean: %.3f, Std. variance: %.3f", finalResult.val1,
+			logger.debug(String.format("Mean: %.3f, Std. variance: %.3f", finalResult.val1,
 					finalResult.val2));
+			//System.out.println(String.format("Mean: %.3f, Std. variance: %.3f", finalResult.val1,
+				//	finalResult.val2));
 		}
 	}
 
