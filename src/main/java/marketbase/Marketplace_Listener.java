@@ -11,6 +11,7 @@ import org.apache.log4j.PropertyConfigurator;
 import simbase.Sim;
 import configbase.DBConfig;
 import configbase.SimConfig;
+import core.MyDB;
 import core.MyEventListener;
 
 //Class to handle the button listener
@@ -18,6 +19,9 @@ public class Marketplace_Listener implements ActionListener {
 
 	Marketplace_Controls marketControls;
 	DBConfig dbConfig;
+	public MyDB					mydb;
+	public String				dbFile;
+	public String				dbInitDir;
 	
 	public Marketplace_Listener(Marketplace_Controls marketControls)
 	{
@@ -25,11 +29,9 @@ public class Marketplace_Listener implements ActionListener {
 	}
 	
 	public void setUpRun() {
-		dbConfig = new DBConfig(null);
-		dbConfig.addDdlFile("src/main/resources/sql/Products.ddl");
-		dbConfig.addDdlFile("src/main/resources/sql/Agents.ddl");
-		dbConfig.addDdlFile("src/main/resources/sql/Inventories.ddl");		
-		dbConfig.addDdlFile("src/main/resources/sql/Executions.ddl");	
+		dbFile = "C:/Users/Sky/FYP2/FYP/testMydb.sqlite";
+		dbInitDir = "C:/Users/Sky/FYP2/FYP/src/main/resources/sql";
+		mydb = new MyDB(dbFile, dbInitDir);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -66,10 +68,10 @@ public class Marketplace_Listener implements ActionListener {
 					setUpRun();
 					try {
 						PropertyConfigurator.configure("src/main/resources/log4j.properties");
-						simConfig.readConfig("src/test/resources/simbase/SimConfig.ini");
+						simConfig.readConfig("src/test/resources/simbase/TestSimConfigBRS_TRAVOS.ini");
 						Sim sim = new Sim();
 						sim.setSimConfig(simConfig);
-						sim.setDb(dbConfig.setUpDb());
+						sim.setDb(mydb.conn);
 						sim.registerEventListeners((MyEventListener) marketControls.outputReader);
 						sim.run();
 						marketControls.outputReader.readLogFile();
