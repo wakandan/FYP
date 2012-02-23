@@ -103,6 +103,7 @@ public class SimulationAnalyzer_Main extends JPanel implements MyEventListener {
 					ratingData = new Vector<String>();
 					ratingData = splitLine(nextLine);
 					ratingData.removeElementAt(0);
+					ratingData.removeElementAt(0);
 					setRowData(ratingData,'C');
 				}
 				else if(nextLine.startsWith("Balance"))
@@ -142,7 +143,7 @@ public class SimulationAnalyzer_Main extends JPanel implements MyEventListener {
 	{
 		Vector<String> listofWords = new Vector<String>();
 		String word = "";
-		
+
 		for(char curChar : line.toCharArray())
 		{
 			
@@ -158,6 +159,7 @@ public class SimulationAnalyzer_Main extends JPanel implements MyEventListener {
 		if(!word.isEmpty())
 			listofWords.addElement(word);
 		return listofWords;
+
 	}
 	
 	public void setRowData(Vector<String> transData, char type)
