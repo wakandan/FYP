@@ -326,6 +326,7 @@ public class Sim extends BaseObject {
 		this.prodManager.logger.addMyEventListener(listener);
 		this.transactionManager.logger.addMyEventListener(listener);
 		this.bank.logger.addMyEventListener(listener);
+		this.ratingManager.logger.addMyEventListener(listener);//Added by chin hwee
 		this.resultAnalyzer.logger.addMyEventListener(listener);
 	}
 	
