@@ -2,6 +2,7 @@ package marketbase;
 
 import java.awt.GridLayout;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Vector;
 import javax.swing.*;
@@ -22,8 +23,15 @@ public class SimulationAnalyzer_Main extends JPanel implements MyEventListener {
 	private String columnBalData[] = {"Buyer", "Balance"};
 	//For rating details
 	private Marketplace_Table transRatingTable;
+	private ChartAnalyzer_Main chartMain;
 	private String columnRatingData[] = {"Seller", "Rating"};
-	
+	private ArrayList<Vector<Vector<Object>>> charts = new ArrayList<Vector<Vector<Object>>>(); 
+	private ArrayList<Vector<Object>> chartCols = new ArrayList<Vector<Object>>();
+	private ArrayList<String> chartTitles = new ArrayList<String>();
+    private Vector<Object> col = new Vector<Object>();
+    private Vector<Vector <Object>> data = new Vector<Vector <Object>>();
+    private boolean isResult = false;
+    
 	public SimulationAnalyzer_Main()
 	{
 		initTable();
@@ -76,11 +84,10 @@ public class SimulationAnalyzer_Main extends JPanel implements MyEventListener {
 		add(tablePanel);
 	}
 	
-//	public void setText(String text)
-//	{
-//		String newL = System.getProperty("line.separator");
-//		this.simLog.setText(simLog.getText()+newL+text);
-//	}
+	public void setChartAnalyzer(ChartAnalyzer_Main chartMain)
+	{
+		this.chartMain = chartMain;
+	}
 	
 	public void readLogFile()
 	{
@@ -93,50 +100,120 @@ public class SimulationAnalyzer_Main extends JPanel implements MyEventListener {
 			Vector<String> transData = new Vector<String>(); //Use for storing transaction info
 			Vector<String> balData = new Vector<String>(); //Use for storing of balance info
 			Vector<String> ratingData = new Vector<String>(); //Use for storing of rating info
-	        int i = 0;
-	        
+			int i = 0;
 			while(readLog.hasNextLine())
 			{
 				nextLine = readLog.nextLine();
-				if(nextLine.startsWith("Rating"))
-				{
-					ratingData = new Vector<String>();
-					ratingData = splitLine(nextLine);
-					ratingData.removeElementAt(0);
-					ratingData.removeElementAt(0);
-					setRowData(ratingData,'C');
-				}
-				else if(nextLine.startsWith("Balance"))
-				{
-					balData = new Vector<String>();
-					balData = splitLine(nextLine);
-					balData.removeElementAt(0);
-					setRowData(balData,'B');
-				}
+				
+				if(isResult)
+					processResults(nextLine);
 				else
 				{
-					transaction = nextLine.split(" - ")[nextLine.split(" - ").length-1];
-					//setText(transaction);
-					if(transaction.contains("(OK)"))
+					if(nextLine.startsWith("Rating"))
 					{
-						transData = new Vector<String>();
-						transData.addElement(transaction.split(" <-")[0]);
-						transData.addElement(transaction.split("-> ")[1].substring(0,transaction.split("-> ")[1].indexOf("(OK")));
-						transData.addElement(transaction.split(" <-")[1].split("-> ")[0].substring(0,transaction.split(" <-")[1].split("-> ")[0].indexOf("(x")-1));
-						transData.addElement(transaction.split(" <-")[1].split("-> ")[0].substring(transaction.split(" <-")[1].split("-> ")[0].indexOf("(x")+2,
-						transaction.split(" <-")[1].split("-> ")[0].length()-1));
-						setRowData(transData,'A');
+						ratingData = new Vector<String>();
+						ratingData = splitLine(nextLine);
+						ratingData.removeElementAt(0);
+						ratingData.removeElementAt(0);
+						setRowData(ratingData,'C');
+					}
+					else if(nextLine.startsWith("Balance"))
+					{
+						balData = new Vector<String>();
+						balData = splitLine(nextLine);
+						balData.removeElementAt(0);
+						setRowData(balData,'B');
+					}
+					else if(nextLine.contains("Simulation result"))
+					{
+						isResult = true;
+					}
+					else
+					{
+						transaction = nextLine.split(" - ")[nextLine.split(" - ").length-1];
+						if(transaction.contains("(OK)"))
+						{
+							transData = new Vector<String>();
+							transData.addElement(transaction.split(" <-")[0]);
+							transData.addElement(transaction.split("-> ")[1].substring(0,transaction.split("-> ")[1].indexOf("(OK")));
+							transData.addElement(transaction.split(" <-")[1].split("-> ")[0].substring(0,transaction.split(" <-")[1].split("-> ")[0].indexOf("(x")-1));
+							transData.addElement(transaction.split(" <-")[1].split("-> ")[0].substring(transaction.split(" <-")[1].split("-> ")[0].indexOf("(x")+2,
+							transaction.split(" <-")[1].split("-> ")[0].length()-1));
+							setRowData(transData,'A');
+						}
 					}
 				}
 				
 			}
 			System.out.println("Reading Finished!");
 			readLog.close();
+			if(!charts.isEmpty())
+			   chartMain.setChartData(charts, chartCols,chartTitles);
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void processResults(String nextLine)
+	{
+		if(nextLine.contains("*** #"))
+		{
+			charts.add(data);
+			data = new Vector<Vector <Object>>();
+			col = new Vector<Object>();
+			isResult = false;
+			return;
+		}
+		
+		if(nextLine.startsWith("*** "))
+		{
+			chartTitles.add(nextLine.substring(nextLine.indexOf("***")+3,nextLine.lastIndexOf("***")).trim());
+			if(!data.isEmpty())
+			{
+				charts.add(data);
+				data = new Vector<Vector <Object>>();
+				col = new Vector<Object>();
+			}
+		}
+		else
+		{
+			if(col.isEmpty())
+			{
+				col.addAll(processChartColumns(nextLine));
+				chartCols.add(processChartColumns(nextLine));
+			}
+			data.add(processChartData(nextLine));
+		}
+	}
+	
+	public Vector<Object> processChartData(String line)
+	{
+		if(line.split("[,]").length < 1)
+			return null;
+		
+		String[] columns = line.split(",");
+		Vector<Object> row = new Vector<Object>();
+		
+		for(String column : columns)
+			row.add(column.split(":")[1].trim());
+		
+		return row;
+	}
+	
+	public Vector<Object> processChartColumns(String line)
+	{
+		if(line.split("[,]").length < 1)
+			return null;
+		
+		String[] columns = line.split(",");
+		Vector<Object> col = new Vector<Object>();
+		
+		for(String column : columns)
+			col.add(column.split(":")[0].trim());
+		
+		return col;
 	}
 	
 	public Vector<String> splitLine(String line)
@@ -160,6 +237,22 @@ public class SimulationAnalyzer_Main extends JPanel implements MyEventListener {
 			listofWords.addElement(word);
 		return listofWords;
 
+	}
+	
+	public void setText(String text)
+	{
+		simLog.append(text + "\n");
+		simLog.setCaretPosition(simLog.getDocument().getLength());
+	}
+	
+	public ArrayList<Vector<Vector<Object>>> getCharts()
+	{
+		return charts;
+	}
+	
+	public ArrayList<Vector<Object>> getChartColumns()
+	{
+		return chartCols;
 	}
 	
 	public void setRowData(Vector<String> transData, char type)

@@ -39,6 +39,7 @@ public class Chart_TableReader extends AbstractTableModel implements File_Reader
 		return colName;
 	}
 	
+	public void addSeries(){}
 	//Read from file
 	public void readFile(String fileName) {
 		// TODO Auto-generated method stub

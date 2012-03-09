@@ -6,22 +6,21 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Scanner;
 
-public class Marketplace_Personnel extends JPanel implements FocusListener {
+public class Marketplace_Schedule extends JPanel implements FocusListener {
 	SpringLayout	layout		= new SpringLayout();
-	String[]		labels		= { "Number Of Buyer:", "Number Of Seller:", "Initial Balance:" };
+	String[]		labels		= { "Maximum Time Step:", "Warm Up Period:" };
 	
 	final String[] DEFAULT =
-		{
-			"<For Example: 100>",
-			"<For Example: 100>",
-			"<For Example: 100.54>"
-		};
-	JLabel[]		label		= new JLabel[3];
-	JTextField[]	textfield	= new JTextField[3];
+						{"<For Example: 100>",
+						 "<For Example: 5>"
+						};
+	
+	JLabel[]		label		= new JLabel[2];
+	JTextField[]	textfield	= new JTextField[2];
 
-	public Marketplace_Personnel() {
+	public Marketplace_Schedule() {
 		this.setLayout(layout);
 
 		for (int i = 0; i < label.length; i++) {
@@ -31,13 +30,12 @@ public class Marketplace_Personnel extends JPanel implements FocusListener {
 			this.add(textfield[i]);
 			textfield[i].addFocusListener(this);
 		}
-		
 		setTextField();
-		
+
 		layout.putConstraint(SpringLayout.WEST, label[0], 5, SpringLayout.WEST, this);
 		layout.putConstraint(SpringLayout.NORTH, label[0], 5, SpringLayout.NORTH, this);
 
-		layout.putConstraint(SpringLayout.WEST, textfield[0], 113, SpringLayout.EAST, label[0]);
+		layout.putConstraint(SpringLayout.WEST, textfield[0], 95, SpringLayout.EAST, label[0]);
 		layout.putConstraint(SpringLayout.NORTH, textfield[0], 5, SpringLayout.NORTH, this);
 		layout.putConstraint(SpringLayout.EAST, this, 10, SpringLayout.EAST, textfield[0]);
 
@@ -59,16 +57,14 @@ public class Marketplace_Personnel extends JPanel implements FocusListener {
 
 	public String configuration(String filename) {
 		String fileS = "SavedConfiguration\\" + filename;
-		Boolean success = new File(fileS).mkdirs();
+		boolean success = new File(fileS).mkdirs();
 		try {
-			File file = new File(fileS + "\\AgentConfiguration.ini");
+			File file = new File(fileS + "\\SchedulerConfiguration.ini");
 			PrintWriter output = new PrintWriter(file);
-			output.print("buyerNum=");
+			output.print("maxTimeStep=");
 			output.println(this.textfield[0].getText());
-			output.print("sellerNum=");
+			output.print("warmupPeriod=");
 			output.println(this.textfield[1].getText());
-			output.print("initialBalance=");
-			output.println(this.textfield[2].getText());
 			output.close();
 			fileS = file.getAbsolutePath();
 		} catch (Exception ex) {
@@ -114,7 +110,6 @@ public class Marketplace_Personnel extends JPanel implements FocusListener {
 				{
 					textfield[i].setText("");
 				}
-				
 			}
 		}
 	}
@@ -130,7 +125,5 @@ public class Marketplace_Personnel extends JPanel implements FocusListener {
 			textfield[i].setText(DEFAULT[i]);
 			textfield[i].setToolTipText(DEFAULT[i]);
 		}
-		
-
 	}
 }
