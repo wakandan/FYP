@@ -20,6 +20,8 @@ public class Chart_Table extends JPanel{
 	private JTable table;
 	private JScrollPane scrollPane;
 	private Container tablePane;
+	private Vector<Vector <Object>> row;
+	private Vector <Object> col;
 
     public Chart_Table() {
 
@@ -27,12 +29,29 @@ public class Chart_Table extends JPanel{
     	createTable();
     }
     
+    public Chart_Table(Vector<Vector <Object>> row,Vector <Object> col) {
+    	this.setLayout(new GridLayout(1, 0));
+    	this.row = row;
+    	this.col = col;
+    	createTableWithData();
+    }
+    
+    public void createTableWithData()
+    {
+    	DefaultTableModel model = new DefaultTableModel(row,col);
+    	table = new JTable(model);
+    	table.setPreferredScrollableViewportSize(getPreferredSize());
+        table.setFillsViewportHeight(true);
+        
+        //Create the scroll pane and add the table to it.
+        scrollPane = new JScrollPane(table);
+        this.add(scrollPane);
+    }
+    
     public void createTable()
     {
     	tableReader = new Chart_TableReader();
-    	tableReader.readFile("testingReadFile.txt");
-    	//System.out.println(tableReader.getColName());
-    	//System.out.println(tableReader.getRow());
+    	//tableReader.readFile("testingReadFile.txt");
     	DefaultTableModel model = new DefaultTableModel(tableReader.getRow(), tableReader.getColName());
     	//table = new JTable(tableReader.getRow(), tableReader.getColName());
     	table = new JTable(model);
@@ -57,9 +76,14 @@ public class Chart_Table extends JPanel{
         }
     }
     
-    public Chart_TableReader getTable()
+    public Vector<Vector <Object>> getRow()
     {
-    	return tableReader;
+    	return row;
+    }
+    
+    public Vector<Object> getCol()
+    {
+    	return col;
     }
 
     public void printDebugData(JTable table) {
