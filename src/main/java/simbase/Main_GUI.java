@@ -8,14 +8,15 @@ import javax.swing.*;
 
 import marketbase.ChartAnalyzer_Main;
 import marketbase.Marketplace_Main;
+import marketbase.Marketplace_Master;
 import marketbase.SimulationAnalyzer_Main;
 
 
 public class Main_GUI extends JFrame{
 	
 	JPanel mainPanel = new JPanel(new GridLayout(1,1));
-	JPanel panels[] = {new Marketplace_Main(this),new JPanel(),new SimulationAnalyzer_Main(), new ChartAnalyzer_Main()};
-	String title[] = {"Marketplace Setup","Model Selection","Simulation Analyzer", "Chart Analyzer"};
+	public JPanel panels[] = {new Marketplace_Main(this), new SimulationAnalyzer_Main(), new ChartAnalyzer_Main()};
+	String title[] = {"Marketplace Setup","Simulation Analyzer", "Chart Analyzer"};
 	
 	public Main_GUI(String title)
 	{
@@ -35,8 +36,6 @@ public class Main_GUI extends JFrame{
         for(int i = 0;i < panels.length;i++)
         {
         	tabbedPane.addTab(title[i],panels[i]);
-        	if(panels[i] instanceof Marketplace_Main)
-        		((Marketplace_Main)panels[i]).passSimAnalyzer(this);
         }
         
         mainPanel.add(tabbedPane);
