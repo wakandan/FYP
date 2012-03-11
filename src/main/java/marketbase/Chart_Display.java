@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
@@ -32,20 +33,29 @@ public class Chart_Display extends JPanel implements ActionListener{
 	private CategoryDataset dataset;
 	private JFreeChart chart;
 	private ChartPanel chartPanel;
-	//Need to think of dynamic reading of chart and title
-	private String [] chartType = {"Reputation Metric", "Honest-Dishonest Metric"};
 	//Label and dropbox
+	private String title;
 	private JLabel chartLabel;
 	private Chart_Table chartTable;
+	private Container contentChartPane;
 	private JComboBox chartComboBox;
-	private Container contentlabelDropBoxPane, contentChartPane;
+	private Container contentlabelDropBoxPane;
+	private ArrayList<String> chartTitles;
+	private ChartAnalyzer_Main chart_Main;
 	
-	
-    public Chart_Display(Chart_Table chartTable) {
+    public Chart_Display(Chart_Table chartTable,ArrayList<String> chartTitles,int index,ChartAnalyzer_Main chart_Main) {
+    	this.title = chartTitles.get(index);
+    	this.chartTitles = chartTitles;
+    	this.chart_Main = chart_Main;
     	this.setLayout(new BorderLayout(10, 10));
     	this.chartTable = chartTable;
     	initLabelAndDropBox();
     	initChartData();
+    }
+    
+    public void setSelectedIndex(int index)
+    {
+    	this.chartComboBox.setSelectedIndex(index);
     }
     
     //To create label and drop box for the chart
@@ -55,14 +65,16 @@ public class Chart_Display extends JPanel implements ActionListener{
     	contentlabelDropBoxPane = new Container();
     	contentlabelDropBoxPane.setLayout(new FlowLayout());
     	chartLabel = new JLabel("Chart Type: ");
-    	chartComboBox = new JComboBox(chartType);
+    	chartComboBox = new JComboBox(chartTitles.toArray());
     	chartComboBox.setSelectedIndex(0); //Default selected drop box value
     	chartComboBox.addActionListener(this);
     	//Adding container to the panel
     	contentlabelDropBoxPane.add(chartLabel);
     	contentlabelDropBoxPane.add(chartComboBox);
-    	this.add(contentlabelDropBoxPane, BorderLayout.NORTH);
+    	contentlabelDropBoxPane.setSize(this.getWidth(),20);
+    	this.add(contentlabelDropBoxPane,BorderLayout.NORTH);
     }
+    
     
     //To create chart diagram
     public void initChartData()
@@ -87,77 +99,37 @@ public class Chart_Display extends JPanel implements ActionListener{
         Vector<String> xAxis = new Vector<String>();
     	DefaultCategoryDataset dataset = new DefaultCategoryDataset();
     	
-    	for(Vector<Object> row : chartTable.getTable().getRow())
+    	char x = 65;
+    	for(int i = 0;i < chartTable.getRow().size();i++)
     	{
-    		for(Object value : row)
-    		{
-    		    series.addElement((String) value);
-    		    break;
-    		}
-        }
+    		x += i;
+    		series.addElement(""+x);
+    	}
          
-         for(int i = 1;i < chartTable.getTable().getColName().size();i++)
-        	 xAxis.addElement(chartTable.getTable().getColName().get(i));
-         
-         int rowIndex = 0,col = 0;
-         for(Vector<Object> row : chartTable.getTable().getRow())
+    	
+         for(Object col : chartTable.getCol())
          {
-        	 col = 0;
-        	 for(int i = 0;i < row.size();i++)
-        	 {
-        		 if(i==0)
-        			 continue;
-        		 dataset.addValue(Double.parseDouble((String)row.get(i)),series.get(rowIndex),xAxis.get(col++));
-        	 } 
-        	rowIndex++;
+        	 xAxis.addElement((String)col);
          }
          
-
-        //Create the dataset
-        
-
-//        dataset.addValue(1.0, series1, type1);
-//        dataset.addValue(4.0, series1, type2);
-//        dataset.addValue(3.0, series1, type3);
-//        dataset.addValue(5.0, series1, type4);
-//        dataset.addValue(5.0, series1, type5);
-//        dataset.addValue(7.0, series1, type6);
-//        dataset.addValue(7.0, series1, type7);
-//        dataset.addValue(8.0, series1, type8);
-//
-//        dataset.addValue(5.0, series2, type1);
-//        dataset.addValue(7.0, series2, type2);
-//        dataset.addValue(6.0, series2, type3);
-//        dataset.addValue(8.0, series2, type4);
-//        dataset.addValue(4.0, series2, type5);
-//        dataset.addValue(4.0, series2, type6);
-//        dataset.addValue(2.0, series2, type7);
-//        dataset.addValue(1.0, series2, type8);
-//
-//        dataset.addValue(4.0, series3, type1);
-//        dataset.addValue(3.0, series3, type2);
-//        dataset.addValue(2.0, series3, type3);
-//        dataset.addValue(3.0, series3, type4);
-//        dataset.addValue(6.0, series3, type5);
-//        dataset.addValue(3.0, series3, type6);
-//        dataset.addValue(4.0, series3, type7);
-//        dataset.addValue(3.0, series3, type8);
-
-        /*
-         * for(Vector row : rowOfVectors )
-         *    for(int i = 0;i < row.size(); i++)
-         *      dataset.addValue(row.getElement(i),i,type+"i");
-         */
+         int col = 0;
+         int rowIndex = 0;
+         for(Vector<Object> row : chartTable.getRow())
+         {
+        	for(Object value: row)
+        		dataset.addValue(Math.abs(Double.parseDouble((String)value)),series.get(rowIndex),xAxis.get(col++));
+            rowIndex++;col = 0;
+         }
+        			 
         return dataset;       
     }
     
     //To create the chart
     private JFreeChart createChart(CategoryDataset dataset) {
-        
-        JFreeChart chart = ChartFactory.createLineChart(
-            "Title",       // chart title
-            "Type",                    // domain axis label
-            "Value",                   // range axis label
+        JFreeChart chart = ChartFactory.createBarChart(
+            this.title,       	   	   // chart title
+            "Trust Models",            // domain axis label
+            "Mean & Std Dev",          // range axis label
             dataset,                   // data
             PlotOrientation.VERTICAL,  // orientation
             true,                      // include legend
@@ -183,7 +155,7 @@ public class Chart_Display extends JPanel implements ActionListener{
         rangeAxis.setAutoRangeIncludesZero(true);
 
         //The renderer
-         LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
+/*         LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
 
         renderer.setSeriesStroke(
             0, new BasicStroke(
@@ -204,13 +176,15 @@ public class Chart_Display extends JPanel implements ActionListener{
                 2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
                 1.0f, new float[] {2.0f, 6.0f}, 0.0f
             )
-        );
+        );*/
         
         return chart;
     }
 
     //For action listener when clicking the drop box
-	public void actionPerformed(ActionEvent arg0) {
-		
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource().equals(this.chartComboBox))
+			chart_Main.initPanel(this.chartComboBox.getSelectedIndex());
+			
 	}
 }
